@@ -1,0 +1,89 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: fashion_postgres_prod
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-fashion_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-fashion_password}
+      POSTGRES_DB: ${POSTGRES_DB:-fashion_db}
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-fashion_user} -d ${POSTGRES_DB:-fashion_db}']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:8-alpine
+    container_name: fashion_redis_prod
+    restart: always
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_prod_data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: fashion_api_prod
+    restart: always
+    ports:
+      - '3000:3000'
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgresql://${POSTGRES_USER:-fashion_user}:${POSTGRES_PASSWORD:-fashion_password}@postgres:5432/${POSTGRES_DB:-fashion_db}?schema=public
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      JWT_SECRET: ${JWT_SECRET:-super-secret-access-token-key-change-in-prod}
+      JWT_EXPIRATION: 1d
+      STOREFRONT_URL: ${STOREFRONT_URL:-http://localhost:3001}
+      ADMIN_URL: ${ADMIN_URL:-http://localhost:3002}
+      STORE_WHATSAPP_NUMBER: ${STORE_WHATSAPP_NUMBER:-6281234567890}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  storefront:
+    build:
+      context: .
+      dockerfile: apps/storefront/Dockerfile
+    container_name: fashion_storefront_prod
+    restart: always
+    ports:
+      - '3001:3001'
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      NUXT_PUBLIC_API_BASE: http://localhost:3000/api/v1
+    depends_on:
+      - api
+
+  admin:
+    build:
+      context: .
+      dockerfile: apps/admin/Dockerfile
+    container_name: fashion_admin_prod
+    restart: always
+    ports:
+      - '3002:80'
+    depends_on:
+      - api
+
+volumes:
+  postgres_prod_data:
+  redis_prod_data:

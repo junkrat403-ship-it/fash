@@ -1,0 +1,106 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Lato', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-serif: 'Lato', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  
+  --color-brand-primary: #0A1931;
+  --color-brand-secondary: #1A3D63;
+  --color-brand-accent: #4A7FA7;
+  --color-brand-cta: #28537A;
+  --color-brand-light: #B3CFE5;
+  --color-brand-surface: #F6FAFD;
+  --color-brand-bg: #E6ECF0;
+}
+
+:root {
+  /* Brand Design Tokens */
+  --bg-page: #E6ECF0;
+  --color-primary: #0A1931;
+  --color-secondary-dark: #1A3D63;
+  --color-accent: #4A7FA7;
+  --color-cta-primary: #28537A;
+  --color-surface-light: #B3CFE5;
+  --color-surface-elevated: #F6FAFD;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    color: var(--color-primary);
+    background-color: var(--bg-page);
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  h1, h2, h3, .font-serif {
+    font-family: var(--font-sans);
+    color: var(--color-primary);
+  }
+
+  /* Tabular Numerals formatting rule for digits alignment */
+  .tnum,
+  .tabular-nums,
+  .font-numeric,
+  td,
+  th,
+  .stat-value {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum", "zero";
+  }
+
+  /* Global Interactive Cursor Standard Rules */
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  a,
+  summary,
+  select,
+  input[type="checkbox"],
+  input[type="radio"],
+  input[type="submit"],
+  input[type="button"] {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  [role="button"][aria-disabled="true"],
+  input:disabled {
+    cursor: not-allowed !important;
+  }
+}
+
+/* Custom Scrollbars */
+html, body {
+  scrollbar-width: thin;
+  scrollbar-color: #B3CFE5 #E6ECF0;
+}
+
+/* Primary Flat Button */
+.btn-primary-flat {
+  background-color: var(--color-cta-primary);
+  color: #ffffff;
+  border-radius: 1rem;
+  border: 1px solid transparent;
+  box-shadow: 0 4px 12px rgba(40, 83, 122, 0.25);
+  transition: transform 0.15s ease-out, background-color 0.15s ease-out, opacity 0.15s ease-out;
+  cursor: pointer;
+}
+
+.btn-primary-flat:hover:not(:disabled) {
+  background-color: #1F4364;
+  box-shadow: 0 6px 16px rgba(40, 83, 122, 0.35);
+  transform: translateY(-1px);
+}
+
+.btn-primary-flat:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.btn-primary-flat:disabled {
+  background-color: #CBD5E1;
+  color: #94A3B8;
+  cursor: not-allowed !important;
+  box-shadow: none;
+  transform: none;
+}
