@@ -8,7 +8,7 @@ services:
     region: singapore
     plan: free
     buildCommand: pnpm install --production=false --no-frozen-lockfile && pnpm --filter @fashion-store/shared-types build && pnpm --filter @fashion-store/api db:generate && pnpm --filter @fashion-store/api build
-    startCommand: npx prisma db push --schema=apps/api/src/prisma/schema.prisma && pnpm --filter @fashion-store/api db:seed && pnpm --filter @fashion-store/api start
+    startCommand: pnpm --filter @fashion-store/api db:push && pnpm --filter @fashion-store/api db:seed && pnpm --filter @fashion-store/api start
     envVars:
       - key: NODE_ENV
         value: production
