@@ -3,10 +3,10 @@
     
     <div>
       <!-- Title & Search Header -->
-      <div class="flex flex-col md:flex-row justify-between items-start md:items-center pb-8 border-b border-[#B3CFE5]/40 gap-4">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center pb-8 border-b border-[#E4D8CC] gap-4">
         <div>
-          <h1 class="font-serif text-3xl sm:text-4xl font-bold text-[#0A1931]">Catalog Collection</h1>
-          <p class="text-xs text-[#1A3D63] mt-1 font-light">Showing {{ meta.total }} product(s)</p>
+          <h1 class="font-serif text-3xl sm:text-4xl font-black text-[#1A170F]">Catalog Collection</h1>
+          <p class="text-xs text-[#1A170F]/70 mt-1 font-light">Showing {{ meta.total }} product(s)</p>
         </div>
 
         <!-- Search & Sort Controls -->
@@ -17,9 +17,9 @@
               @input="debounceSearch"
               type="text" 
               placeholder="Search catalog..." 
-              class="w-full pl-9 pr-4 py-2 rounded-xl border border-[#B3CFE5]/60 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#28537A] text-[#0A1931]"
+              class="w-full pl-9 pr-4 py-2 rounded-xl border border-[#E4D8CC] text-xs bg-[#FAF6F1] focus:outline-none focus:ring-2 focus:ring-[#E04F26] text-[#1A170F]"
             />
-            <svg class="w-4 h-4 absolute left-3 top-2.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-4 h-4 absolute left-3 top-2.5 text-[#1A170F]/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
             </svg>
           </div>
@@ -27,7 +27,7 @@
           <select 
             v-model="filters.sort" 
             @change="fetchProducts"
-            class="px-3 py-2 rounded-xl border border-[#B3CFE5]/60 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#28537A] font-medium text-[#0A1931]"
+            class="px-3 py-2 rounded-xl border border-[#E4D8CC] text-xs bg-[#FAF6F1] focus:outline-none focus:ring-2 focus:ring-[#E04F26] font-medium text-[#1A170F]"
           >
             <option value="newest">Newest Arrivals</option>
             <option value="bestselling">Best Selling</option>
@@ -146,39 +146,97 @@
           <div v-else-if="!products.length" class="py-20 text-center">
             <p class="text-lg font-serif text-[#0A1931]">No products match your criteria</p>
             <p class="text-xs text-[#1A3D63] mt-1 font-light">Try clearing some filters or searching for another term.</p>
-            <button @click="clearAllFilters" class="mt-4 px-5 py-2.5 rounded-2xl btn-primary-flat text-xs font-semibold cursor-pointer">
-              Clear Filters
-            </button>
           </div>
 
-          <!-- ENTIRE PRODUCT CARD IS CLICKABLE -->
+          <!-- ENTIRE PRODUCT CARD HAS SEPARATED NAVIGATION & QUICK ADD CONTAINER -->
           <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <NuxtLink 
+            <div 
               v-for="p in products" 
               :key="p.id"
-              :to="`/products/${p.slug}`"
-              class="group block bg-[#F6FAFD] rounded-2xl p-3 border border-[#B3CFE5]/50 hover:border-[#4A7FA7] shadow-xs hover:shadow-xl transition-all duration-300 cursor-pointer"
+              :class="[
+                isProductInStock(p) 
+                  ? 'bg-[#FAF6F1] text-[#1A170F]' 
+                  : 'bg-[#FAF6F1]/80 text-[#1A170F]/70 border-[#E4D8CC]/80'
+              ]"
+              class="group rounded-3xl p-4 shadow-lg hover:shadow-2xl transition-all duration-300 border border-[#E4D8CC] hover:border-[#E04F26] flex flex-col justify-between overflow-hidden h-[450px] sm:h-[490px]"
             >
-              <div class="relative aspect-3/4 rounded-xl overflow-hidden bg-slate-100 mb-4">
-                <img 
-                  :src="p.productImages?.[0]?.url || 'https://via.placeholder.com/400x500'" 
-                  :alt="p.name"
-                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <span class="absolute top-3 left-3 bg-[#0A1931]/90 text-white text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-md">
-                  {{ p.category?.name || 'Item' }}
-                </span>
+              <!-- Top Portion: Dedicated Clickable Navigation Area (Always Clickable) -->
+              <div 
+                @click="navigateToProduct(p.slug)"
+                class="flex-1 flex flex-col min-h-0 cursor-pointer"
+              >
+                <!-- Tall Image container (occupies flex-1, shrinks internally on hover) -->
+                <div class="relative w-full flex-1 rounded-2xl overflow-hidden bg-slate-200 min-h-0 transition-all duration-300 ease-in-out">
+                  <img 
+                    :src="p.productImages?.[0]?.url || 'https://via.placeholder.com/400x500'" 
+                    :alt="p.name"
+                    :class="[
+                      isProductInStock(p) 
+                        ? 'opacity-100 group-hover:scale-105' 
+                        : 'opacity-60 grayscale-[35%] group-hover:scale-105'
+                    ]"
+                    class="w-full h-full object-cover object-top transition-all duration-500"
+                  />
+                  
+                  <!-- Status Badges -->
+                  <span 
+                    v-if="!isProductInStock(p)"
+                    class="absolute top-3 left-3 bg-[#1A170F]/80 backdrop-blur-xs text-white text-[9px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-md z-10"
+                  >
+                    OUT OF STOCK
+                  </span>
+                  <span 
+                    v-else
+                    class="absolute top-3 left-3 bg-[#1A170F] text-white text-[9px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-md z-10"
+                  >
+                    {{ p.category?.name || 'Item' }}
+                  </span>
+                </div>
+
+                <!-- Product Title & Price -->
+                <div class="px-1 pt-3 shrink-0">
+                  <h3 
+                    :class="[isProductInStock(p) ? 'text-[#1A170F] group-hover:text-[#E04F26]' : 'text-[#1A170F]/60']"
+                    class="font-serif font-bold text-base transition leading-snug line-clamp-1"
+                  >
+                    {{ p.name }}
+                  </h3>
+                  <p 
+                    :class="[isProductInStock(p) ? 'text-[#1A170F]' : 'text-[#1A170F]/60']"
+                    class="text-sm font-extrabold mt-1 tnum"
+                  >
+                    Rp{{ formatPrice(p.basePrice) }}
+                  </p>
+                </div>
               </div>
 
-              <div class="px-2">
-                <h3 class="font-serif font-bold text-base text-[#0A1931] group-hover:text-[#4A7FA7] transition">
-                  {{ p.name }}
-                </h3>
-                <p class="text-sm font-semibold text-[#0A1931] mt-1">
-                  Rp{{ formatPrice(p.basePrice) }}
-                </p>
+              <!-- Bottom Portion: Isolated ADD TO CART Button -->
+              <div 
+                @click.stop.prevent
+                class="max-h-0 opacity-0 translate-y-2 group-hover:max-h-14 group-hover:opacity-100 group-hover:translate-y-0 group-hover:mt-3 transition-all duration-300 ease-in-out shrink-0 overflow-hidden"
+              >
+                <button 
+                  v-if="isProductInStock(p)"
+                  type="button"
+                  @click.stop.prevent="quickAddToCart(p, $event)"
+                  :disabled="addingProductId === p.id"
+                  class="w-full py-2.5 rounded-xl border-2 border-[#1A170F] text-[#1A170F] hover:bg-[#1A170F] hover:text-[#F4ECE5] font-extrabold text-xs uppercase tracking-wider transition-all duration-200 cursor-pointer shadow-xs disabled:opacity-50 flex items-center justify-center gap-1.5"
+                >
+                  <span v-if="addedProductId === p.id" class="text-emerald-700 font-black">ADDED ✓</span>
+                  <span v-else-if="addingProductId === p.id">ADDING...</span>
+                  <span v-else>ADD TO CART</span>
+                </button>
+
+                <button 
+                  v-else
+                  type="button"
+                  disabled
+                  class="w-full py-2.5 rounded-xl border-2 border-slate-300 bg-slate-200 text-slate-500 font-extrabold text-xs uppercase tracking-wider cursor-not-allowed opacity-80 flex items-center justify-center"
+                >
+                  OUT OF STOCK
+                </button>
               </div>
-            </NuxtLink>
+            </div>
           </div>
 
         </section>
@@ -211,15 +269,75 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { useCartStore } from '~/stores/cart';
 
 const route = useRoute();
 const router = useRouter();
 const { fetchApi } = useApi();
+const cartStore = useCartStore();
 
 const products = ref<any[]>([]);
 const categories = ref<any[]>([]);
 const loading = ref(true);
-const mobileFilterOpen = ref(false);
+const addingProductId = ref<string | null>(null);
+const addedProductId = ref<string | null>(null);
+
+const isProductInStock = (product: any) => {
+  const variants = product?.productVariants || product?.variants || [];
+  if (!variants.length) return true;
+  return variants.some((v: any) => (v.stockQuantity || 0) > 0 && v.isActive !== false);
+};
+
+const sortInStockFirst = (items: any[]) => {
+  if (!Array.isArray(items)) return [];
+  return [...items].sort((a, b) => {
+    const aStock = isProductInStock(a) ? 1 : 0;
+    const bStock = isProductInStock(b) ? 1 : 0;
+    return bStock - aStock;
+  });
+};
+
+const navigateToProduct = (slug: string) => {
+  navigateTo(`/products/${slug}`);
+};
+
+const quickAddToCart = async (product: any, e?: Event) => {
+  if (e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  if (addingProductId.value) return;
+
+  try {
+    addingProductId.value = product.id;
+    let variants = product.variants || [];
+    if (!variants.length) {
+      const fullProd = await fetchApi<any>(`/products/${product.slug}`).catch(() => null);
+      variants = fullProd?.productVariants || fullProd?.variants || [];
+    }
+
+    const defaultVariant = variants.find((v: any) => v.stockQuantity > 0 && v.isActive !== false) || variants[0];
+    const variantId = defaultVariant?.id;
+
+    if (variantId) {
+      await cartStore.addItem(variantId, 1);
+      addedProductId.value = product.id;
+      cartStore.isDrawerOpen = true;
+
+      setTimeout(() => {
+        if (addedProductId.value === product.id) {
+          addedProductId.value = null;
+        }
+      }, 2000);
+    }
+  } catch (err: any) {
+    console.error('Quick Add to Cart Error:', err);
+    alert(err?.data?.message || err?.message || 'Failed to add item to cart');
+  } finally {
+    addingProductId.value = null;
+  }
+};
 
 const availableSizes = ['S', 'M', 'L', 'XL', 'One Size'];
 const availableColors = ['Black', 'White', 'Beige', 'Navy', 'Olive', 'Brown'];
@@ -279,7 +397,7 @@ const fetchProducts = async () => {
     router.replace({ query: Object.fromEntries(queryParams.entries()) });
 
     const res = await fetchApi<any>(`/products?${queryParams.toString()}`);
-    products.value = res.items || [];
+    products.value = sortInStockFirst(res.items || []);
     meta.value = res.meta || { total: 0, page: 1, limit: 12, totalPages: 1 };
   } catch (e) {
     console.error(e);

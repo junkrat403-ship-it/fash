@@ -5,24 +5,24 @@
   --font-serif: 'Lato', sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
   
-  --color-brand-primary: #0A1931;
-  --color-brand-secondary: #1A3D63;
-  --color-brand-accent: #4A7FA7;
-  --color-brand-cta: #28537A;
-  --color-brand-light: #B3CFE5;
-  --color-brand-surface: #F6FAFD;
-  --color-brand-bg: #E6ECF0;
+  --color-brand-primary: #1A170F;
+  --color-brand-secondary: #2C2A24;
+  --color-brand-accent: #D84820;
+  --color-brand-cta: #E04F26;
+  --color-brand-light: #E4D8CC;
+  --color-brand-surface: #FAF6F1;
+  --color-brand-bg: #F4ECE5;
 }
 
 :root {
-  /* Site-Wide Design Tokens */
-  --bg-page: #E6ECF0;
-  --color-primary: #0A1931;
-  --color-secondary-dark: #1A3D63;
-  --color-accent: #4A7FA7;
-  --color-cta-primary: #28537A;
-  --color-surface-light: #B3CFE5;
-  --color-surface-elevated: #F6FAFD;
+  /* Site-Wide Warm Neutral Design Tokens (Winterella / Editorial Style) */
+  --bg-page: #F4ECE5;
+  --color-primary: #1A170F;
+  --color-secondary-dark: #2C2A24;
+  --color-accent: #D84820;
+  --color-cta-primary: #E04F26;
+  --color-surface-light: #E4D8CC;
+  --color-surface-elevated: #FAF6F1;
 }
 
 @layer base {
@@ -72,10 +72,10 @@
 
 /* Glassmorphism helpers */
 .glass-nav {
-  background: rgba(246, 250, 253, 0.95);
+  background: rgba(244, 236, 229, 0.96);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(179, 207, 229, 0.4);
+  border-bottom: 1px solid rgba(228, 216, 204, 0.6);
 }
 
 /* Hide native browser scrollbars completely across all browsers */
@@ -92,35 +92,35 @@ body::-webkit-scrollbar {
 }
 
 /* ==========================================================================
-   Clean Modern Flat Design Button & Selector Pill System (Site-Wide Standard)
+   Clean Modern Flat Design Button & Selector Pill System (Warm Palette)
    ========================================================================== */
 
-/* 1. Primary Flat CTA Button ("Add to Cart", "Explore Collection", Checkout CTAs) */
+/* 1. Primary Flat CTA Button ("Add to Cart", "Shop The Collection", Checkout CTAs) */
 .btn-primary-flat {
   background-color: var(--color-cta-primary);
   color: #ffffff;
   border-radius: 1rem;
   border: 1px solid transparent;
-  box-shadow: 0 4px 12px rgba(40, 83, 122, 0.25);
+  box-shadow: 0 4px 14px rgba(224, 79, 38, 0.28);
   transition: transform 0.15s ease-out, background-color 0.15s ease-out, opacity 0.15s ease-out;
   will-change: transform;
   cursor: pointer;
 }
 
 .btn-primary-flat:hover {
-  background-color: #1F4364;
-  box-shadow: 0 6px 16px rgba(40, 83, 122, 0.35);
+  background-color: #C8431E;
+  box-shadow: 0 6px 18px rgba(224, 79, 38, 0.38);
   transform: translateY(-1px);
 }
 
 .btn-primary-flat:active {
   transform: scale(0.98);
-  box-shadow: 0 2px 6px rgba(40, 83, 122, 0.2);
+  box-shadow: 0 2px 6px rgba(224, 79, 38, 0.2);
 }
 
 .btn-primary-flat:disabled {
-  background-color: #CBD5E1;
-  color: #94A3B8;
+  background-color: #E2D7CC;
+  color: #9C9186;
   cursor: not-allowed !important;
   box-shadow: none;
   transform: none;
@@ -131,8 +131,8 @@ body::-webkit-scrollbar {
   background-color: #ffffff;
   color: var(--color-primary);
   border-radius: 0.75rem;
-  border: 1px solid rgba(179, 207, 229, 0.6);
-  box-shadow: 0 1px 3px rgba(10, 25, 49, 0.05);
+  border: 1px solid rgba(228, 216, 204, 0.8);
+  box-shadow: 0 1px 3px rgba(26, 23, 15, 0.04);
   transition: transform 0.15s ease-out, background-color 0.15s ease-out, border-color 0.15s ease-out, opacity 0.15s ease-out;
   will-change: transform;
   cursor: pointer;
@@ -141,7 +141,7 @@ body::-webkit-scrollbar {
 .pill-flat:hover:not(:disabled) {
   background-color: var(--color-surface-elevated);
   border-color: var(--color-accent);
-  color: var(--color-secondary-dark);
+  color: var(--color-primary);
   transform: translateY(-1px);
 }
 
@@ -156,13 +156,13 @@ body::-webkit-scrollbar {
   box-shadow: none;
 }
 
-/* 3. Selected Flat Option Pill (Matches #28537A CTA Blue Tone) */
+/* 3. Selected Flat Option Pill (Matches #E04F26 Terracotta Accent) */
 .pill-flat-selected {
   background-color: var(--color-cta-primary);
   color: #ffffff;
   border-radius: 0.75rem;
   border: 1px solid var(--color-cta-primary);
-  box-shadow: 0 2px 6px rgba(40, 83, 122, 0.25);
+  box-shadow: 0 2px 6px rgba(224, 79, 38, 0.28);
   font-weight: 700;
   transition: transform 0.15s ease-out, background-color 0.15s ease-out, border-color 0.15s ease-out, opacity 0.15s ease-out;
   will-change: transform;
@@ -170,8 +170,8 @@ body::-webkit-scrollbar {
 }
 
 .pill-flat-selected:hover:not(:disabled) {
-  background-color: #1F4364;
-  border-color: #1F4364;
+  background-color: #C8431E;
+  border-color: #C8431E;
 }
 
 .pill-flat-selected:active:not(:disabled) {

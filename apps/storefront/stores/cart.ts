@@ -176,6 +176,24 @@ export const useCartStore = defineStore('cart', () => {
     }
   };
 
+  const updateItemVariant = async (itemId: string, newVariantId: string) => {
+    const { fetchApi } = useApi();
+    try {
+      isLoading.value = true;
+      error.value = null;
+      const data = await fetchApi<CartData>(`/cart/items/${itemId}`, {
+        method: 'PATCH',
+        body: { variantId: newVariantId },
+      });
+      cart.value = data;
+    } catch (e: any) {
+      error.value = e?.data?.message || e.message || 'Failed to update variant';
+      throw e;
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
   const toggleDrawer = () => {
     isDrawerOpen.value = !isDrawerOpen.value;
   };
@@ -189,9 +207,11 @@ export const useCartStore = defineStore('cart', () => {
     totalItems,
     subtotal,
     initCart,
+    initializeCart: initCart,
     fetchCart,
     addItem,
     updateQuantity,
+    updateItemVariant,
     removeItem,
     toggleDrawer,
   };

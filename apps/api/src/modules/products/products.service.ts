@@ -60,7 +60,7 @@ export class ProductsService {
       ];
     }
 
-    // Sorting logic
+    // Secondary sorting logic within stock groups
     let orderBy: Prisma.ProductOrderByWithRelationInput = { createdAt: 'desc' };
     if (sort === ProductSortOption.BESTSELLING) {
       orderBy = { salesCount: 'desc' };
@@ -72,46 +72,59 @@ export class ProductsService {
       orderBy = { createdAt: 'desc' };
     }
 
-    const [items, total] = await Promise.all([
-      this.prisma.product.findMany({
-        where,
-        orderBy,
-        skip,
-        take: limit,
-        include: {
-          category: {
-            select: { id: true, name: true, slug: true },
-          },
-          productImages: {
-            orderBy: { displayOrder: 'asc' },
-          },
-          productVariants: {
-            where: { isActive: true },
-          },
+    // Fetch entire matching dataset to apply primary stock status sorting across all pages before pagination
+    const allMatchingProducts = await this.prisma.product.findMany({
+      where,
+      orderBy,
+      include: {
+        category: {
+          select: { id: true, name: true, slug: true },
         },
-      }),
-      this.prisma.product.count({ where }),
-    ]);
+        productImages: {
+          orderBy: { displayOrder: 'asc' },
+        },
+        productVariants: {
+          where: { isActive: true },
+        },
+      },
+    });
+
+    // Primary sort: In-stock products first, out-of-stock products last
+    // Secondary sort: Preserves requested orderBy (Price, Newest, Bestselling) within each group
+    const sortedAll = allMatchingProducts.sort((a, b) => {
+      const aStock = a.productVariants?.reduce((sum, v) => sum + (v.stockQuantity || 0), 0) || 0;
+      const bStock = b.productVariants?.reduce((sum, v) => sum + (v.stockQuantity || 0), 0) || 0;
+      const aInStock = aStock > 0 ? 1 : 0;
+      const bInStock = bStock > 0 ? 1 : 0;
+
+      if (aInStock !== bInStock) {
+        return bInStock - aInStock;
+      }
+      return 0; // Preserves database secondary sort order within each group
+    });
+
+    const total = sortedAll.length;
+    const paginatedItems = sortedAll.slice(skip, skip + limit);
 
     return {
-      items,
+      items: paginatedItems,
       meta: {
         total,
         page,
         limit,
-        totalPages: Math.ceil(total / limit),
+        totalPages: Math.ceil(total / limit) || 1,
       },
     };
   }
 
   async findBySlug(slug: string) {
-    const normalizedSlug = slug.replace(/_/g, '-');
     const product = await this.prisma.product.findFirst({
       where: {
         OR: [
           { slug },
-          { slug: normalizedSlug },
+          { id: slug },
         ],
+        status: 'published',
       },
       include: {
         category: true,
@@ -120,45 +133,31 @@ export class ProductsService {
         },
         productVariants: {
           where: { isActive: true },
-          orderBy: [
-            { size: 'asc' },
-            { color: 'asc' },
-          ],
         },
       },
     });
 
-    if (!product || product.status !== 'published') {
+    if (!product) {
       throw new NotFoundException(`Product with slug "${slug}" not found`);
     }
 
     return product;
   }
 
-  async findRelated(slug: string, limit = 4) {
-    const normalizedSlug = slug.replace(/_/g, '-');
-    const product = await this.prisma.product.findFirst({
-      where: {
-        OR: [
-          { slug },
-          { slug: normalizedSlug },
-        ],
-      },
-      select: { id: true, categoryId: true },
-    });
+  async findRelated(slug: string) {
+    const targetProduct = await this.findBySlug(slug);
 
-    if (!product) return [];
-
-    // 1. Fetch products in the same category (excluding current product)
-    const sameCategory = await this.prisma.product.findMany({
+    const related = await this.prisma.product.findMany({
       where: {
         status: 'published',
-        id: { not: product.id },
-        ...(product.categoryId ? { categoryId: product.categoryId } : {}),
+        categoryId: targetProduct.categoryId,
+        id: { not: targetProduct.id },
       },
-      take: limit,
+      take: 4,
       include: {
-        category: true,
+        category: {
+          select: { id: true, name: true, slug: true },
+        },
         productImages: {
           orderBy: { displayOrder: 'asc' },
         },
@@ -168,32 +167,12 @@ export class ProductsService {
       },
     });
 
-    // If we have enough category matches, return them
-    if (sameCategory.length >= limit) {
-      return sameCategory;
-    }
-
-    // 2. Backfill with other published products if category has fewer than limit products
-    const existingIds = [product.id, ...sameCategory.map((p) => p.id)];
-    const backfillLimit = limit - sameCategory.length;
-
-    const backfill = await this.prisma.product.findMany({
-      where: {
-        status: 'published',
-        id: { notIn: existingIds },
-      },
-      take: backfillLimit,
-      include: {
-        category: true,
-        productImages: {
-          orderBy: { displayOrder: 'asc' },
-        },
-        productVariants: {
-          where: { isActive: true },
-        },
-      },
+    return related.sort((a, b) => {
+      const aStock = a.productVariants?.reduce((sum, v) => sum + (v.stockQuantity || 0), 0) || 0;
+      const bStock = b.productVariants?.reduce((sum, v) => sum + (v.stockQuantity || 0), 0) || 0;
+      const aInStock = aStock > 0 ? 1 : 0;
+      const bInStock = bStock > 0 ? 1 : 0;
+      return bInStock - aInStock;
     });
-
-    return [...sameCategory, ...backfill];
   }
 }

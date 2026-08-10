@@ -4,7 +4,7 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
-    "dev:tunnel": "devtunnel host -p 3000 -p 3001 -p 3002 --allow-anonymous",
+    "dev:tunnel": "devtunnel host -p 3001 -p 3002 --allow-anonymous",
     "lint": "turbo run lint",
     "test": "turbo run test",
     "db:generate": "pnpm --filter @fashion-store/api db:generate",

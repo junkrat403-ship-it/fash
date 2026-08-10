@@ -1,69 +1,176 @@
 <template>
-  <main class="space-y-20 pb-20">
+  <main class="bg-[#F4ECE5] text-[#1A170F] min-h-screen">
     
-    <!-- Hero Section — Exact 100% Viewport Height (h-screen) with Zero Gaps -->
-    <section class="relative bg-slate-950 text-white h-screen min-h-screen flex items-center overflow-hidden">
+    <!-- Hero Section — Exact 100% Viewport Height (100vh) with Bottom-Aligned Models -->
+    <section class="relative pt-20 sm:pt-24 pb-0 max-w-[1600px] mx-auto px-4 sm:px-8 min-h-screen h-[100vh] flex flex-col justify-between overflow-hidden">
       
-      <!-- Auto-Rotating Background Images Carousel (ONLY Images Rotate) -->
-      <div class="absolute inset-0 z-0">
-        <div 
-          v-for="(imgUrl, idx) in heroImages" 
-          :key="idx"
-          :class="[
-            currentImageIndex === idx ? 'opacity-60 scale-105' : 'opacity-0 scale-100 pointer-events-none'
-          ]"
-          class="absolute inset-0 transition-all duration-1000 ease-in-out"
-        >
-          <img 
-            :src="imgUrl" 
-            alt="Hero Background" 
-            class="w-full h-full object-cover object-center"
-          />
-        </div>
-        <!-- Gradient Overlay over all images for high text readability -->
-        <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent z-10"></div>
+      <!-- Centered Eyebrow Divider Row -->
+      <div class="flex items-center justify-center gap-6 mb-2 sm:mb-4 w-full shrink-0 z-20">
+        <div class="h-px bg-[#1A170F]/25 flex-1"></div>
+        <span class="text-[10px] sm:text-xs font-bold uppercase tracking-[0.35em] text-[#1A170F]/80 shrink-0">
+          Jubi & Lee
+        </span>
+        <div class="h-px bg-[#1A170F]/25 flex-1"></div>
       </div>
 
-      <!-- Static Fixed Text Content (Heading, Subtitle & Button STAY FIXED) -->
-      <div class="relative z-20 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-24 text-left w-full">
-        <span class="inline-block text-xs uppercase tracking-[0.3em] font-semibold text-amber-300 mb-4 bg-amber-950/60 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-amber-500/30">
-          NEW RELEASE — SUMMER 2026
-        </span>
-        
-        <h1 class="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight max-w-3xl leading-[1.1]">
-          Summer 2026 Capsule Collection
-        </h1>
-        
-        <p class="mt-6 text-base sm:text-lg text-slate-300 max-w-lg font-light leading-relaxed">
-          Effortless silhouettes, refined tailoring, and sustainable organic linens designed for modern living.
+      <!-- Giant Display Typography (Depth Layer) -->
+      <h1 class="font-serif text-5xl sm:text-8xl lg:text-[10.5rem] font-black tracking-tighter leading-none uppercase text-[#1A170F] opacity-95 select-none shrink-0 text-center z-10">
+        PURE COMFORT
+      </h1>
+
+      <!-- Transparent Model Portrait -->
+      <div class="relative z-20 flex-1 flex items-end justify-center w-full -mt-12 sm:-mt-24 md:-mt-36 pointer-events-none select-none pb-0">
+        <img 
+          src="/images/models-hero.png" 
+          alt="Jubi & Lee Collection Models"
+          class="max-h-[60vh] sm:max-h-[68vh] w-auto object-contain object-bottom drop-shadow-xl align-bottom"
+        />
+      </div>
+
+      <!-- Subtitle Descriptor & Right-Aligned Dual CTAs -->
+      <div class="absolute bottom-6 left-4 right-4 sm:left-8 sm:right-8 z-30 flex flex-col md:flex-row justify-between items-center md:items-end gap-4 pointer-events-auto">
+        <p class="text-xs sm:text-sm text-[#1A170F]/90 font-normal leading-relaxed text-center md:text-left max-w-md bg-[#F4ECE5]/85 backdrop-blur-md p-3 rounded-2xl border border-[#E4D8CC] shadow-xs">
+          Designed for everyday movement. Soft natural fibers, relaxed silhouettes, and effortless comfort.
         </p>
 
-        <div class="mt-10 flex flex-wrap gap-4">
+        <!-- Right-Aligned Dual Action Buttons -->
+        <div class="flex flex-col sm:flex-row justify-end items-center gap-3 w-full md:w-auto shrink-0">
           <NuxtLink 
             to="/products"
-            class="px-8 py-4 rounded-2xl btn-primary-flat text-sm font-bold flex items-center gap-2 group cursor-pointer"
+            class="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-[#E04F26] text-white hover:bg-[#C8431E] font-extrabold text-xs uppercase tracking-widest transition-all duration-200 shadow-xl hover:-translate-y-0.5 cursor-pointer text-center"
           >
-            <span>Explore Collection</span>
-            <svg class="w-4 h-4 transform group-hover:translate-x-1 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-            </svg>
+            SHOP THE COLLECTION
+          </NuxtLink>
+
+          <NuxtLink 
+            to="/products?sort=newest"
+            class="w-full sm:w-auto px-8 py-3.5 rounded-2xl border-2 border-[#1A170F] bg-[#F4ECE5]/85 backdrop-blur-md text-[#1A170F] hover:bg-[#1A170F] hover:text-[#F4ECE5] font-extrabold text-xs uppercase tracking-widest transition-all duration-200 cursor-pointer text-center"
+          >
+            EXPLORE NEW ARRIVALS
           </NuxtLink>
         </div>
       </div>
 
     </section>
 
-    <!-- Category Highlights Grid -->
-    <section class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10">
-        <div>
-          <span class="text-xs font-semibold tracking-widest text-[#4A7FA7] uppercase">Curated Catalog</span>
-          <h2 class="font-serif text-3xl md:text-4xl font-bold text-[#0A1931] mt-1">Shop by Category</h2>
+    <!-- Hot Picks / Bestsellers Section -->
+    <section class="bg-[#1A170F] text-[#F4ECE5] py-16 sm:py-24">
+      <div class="max-w-[1600px] mx-auto px-4 sm:px-8">
+        
+        <!-- Section Header -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
+          <div>
+            <span class="inline-block bg-[#E04F26] text-white text-[10px] uppercase font-black tracking-widest px-3 py-1 rounded-md mb-3">
+              HOT PICKS
+            </span>
+            <h2 class="font-serif text-3xl sm:text-5xl font-black uppercase tracking-tight leading-none text-white">
+              EVERYDAY STYLES WOMEN LOVE
+            </h2>
+          </div>
+          <p class="text-xs sm:text-sm text-slate-300 max-w-xs font-light leading-relaxed">
+            Carefully curated bestsellers designed for comfort, confidence, and everyday elegance.
+          </p>
         </div>
-        <NuxtLink to="/products" class="mt-4 md:mt-0 text-sm font-semibold text-[#0A1931] hover:text-[#4A7FA7] transition flex items-center gap-1">
-          <span>View All Categories</span>
-          <span>→</span>
-        </NuxtLink>
+
+        <!-- Product Cards Grid: Separated Card Navigation & Quick Add To Cart Button -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div 
+            v-for="product in featuredProducts" 
+            :key="product.id"
+            :class="[
+              isProductInStock(product) 
+                ? 'bg-[#FAF6F1] text-[#1A170F]' 
+                : 'bg-[#FAF6F1]/80 text-[#1A170F]/70 border-[#E4D8CC]/80'
+            ]"
+            class="group rounded-3xl p-4 shadow-lg hover:shadow-2xl transition-all duration-300 border border-white/10 flex flex-col justify-between overflow-hidden h-[450px] sm:h-[490px]"
+          >
+            <!-- Top Portion: Dedicated Clickable Navigation Area (Always Clickable) -->
+            <div 
+              @click="navigateToProduct(product.slug)"
+              class="flex-1 flex flex-col min-h-0 cursor-pointer"
+            >
+              <!-- Tall Image container (occupies flex-1, shrinks internally on hover) -->
+              <div class="relative w-full flex-1 rounded-2xl overflow-hidden bg-slate-200 min-h-0 transition-all duration-300 ease-in-out">
+                <img 
+                  :src="product.productImages?.[0]?.url || 'https://via.placeholder.com/400x500'" 
+                  :alt="product.name"
+                  :class="[
+                    isProductInStock(product) 
+                      ? 'opacity-100 group-hover:scale-105' 
+                      : 'opacity-60 grayscale-[35%] group-hover:scale-105'
+                  ]"
+                  class="w-full h-full object-cover object-top transition-all duration-500"
+                />
+                
+                <!-- Status Badges -->
+                <span 
+                  v-if="!isProductInStock(product)"
+                  class="absolute top-3 left-3 bg-[#1A170F]/80 backdrop-blur-xs text-white text-[9px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-md z-10"
+                >
+                  OUT OF STOCK
+                </span>
+                <span 
+                  v-else
+                  class="absolute top-3 left-3 bg-[#1A170F] text-white text-[9px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-md z-10"
+                >
+                  ● BEST SELLER
+                </span>
+              </div>
+
+              <!-- Product Title & Price -->
+              <div class="px-1 pt-3 shrink-0">
+                <h3 
+                  :class="[isProductInStock(product) ? 'text-[#1A170F] group-hover:text-[#E04F26]' : 'text-[#1A170F]/60']"
+                  class="font-serif font-bold text-base transition leading-snug line-clamp-1"
+                >
+                  {{ product.name }}
+                </h3>
+                <p 
+                  :class="[isProductInStock(product) ? 'text-[#1A170F]' : 'text-[#1A170F]/60']"
+                  class="text-sm font-extrabold mt-1 tnum"
+                >
+                  Rp{{ formatPrice(product.basePrice) }}
+                </p>
+              </div>
+            </div>
+
+            <!-- Bottom Portion: Isolated ADD TO CART Button -->
+            <div 
+              @click.stop.prevent
+              class="max-h-0 opacity-0 translate-y-2 group-hover:max-h-14 group-hover:opacity-100 group-hover:translate-y-0 group-hover:mt-3 transition-all duration-300 ease-in-out shrink-0 overflow-hidden"
+            >
+              <button 
+                v-if="isProductInStock(product)"
+                type="button"
+                @click.stop.prevent="quickAddToCart(product, $event)"
+                :disabled="addingProductId === product.id"
+                class="w-full py-2.5 rounded-xl border-2 border-[#1A170F] text-[#1A170F] hover:bg-[#1A170F] hover:text-[#F4ECE5] font-extrabold text-xs uppercase tracking-wider transition-all duration-200 cursor-pointer shadow-xs disabled:opacity-50 flex items-center justify-center gap-1.5"
+              >
+                <span v-if="addedProductId === product.id" class="text-emerald-700 font-black">ADDED ✓</span>
+                <span v-else-if="addingProductId === product.id">ADDING...</span>
+                <span v-else>ADD TO CART</span>
+              </button>
+
+              <button 
+                v-else
+                type="button"
+                disabled
+                class="w-full py-2.5 rounded-xl border-2 border-slate-300 bg-slate-200 text-slate-500 font-extrabold text-xs uppercase tracking-wider cursor-not-allowed opacity-80 flex items-center justify-center"
+              >
+                OUT OF STOCK
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Curated Categories Row -->
+    <section class="py-16 sm:py-24 max-w-[1600px] mx-auto px-4 sm:px-8">
+      <div class="text-center max-w-xl mx-auto mb-12">
+        <span class="text-xs font-bold uppercase tracking-widest text-[#E04F26]">ESSENTIAL WARDROBE</span>
+        <h2 class="font-serif text-3xl sm:text-4xl font-black text-[#1A170F] mt-1">Shop by Category</h2>
       </div>
 
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
@@ -71,82 +178,19 @@
           v-for="cat in categories" 
           :key="cat.id" 
           :to="`/products?category=${cat.slug}`"
-          class="group relative h-80 rounded-2xl overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 cursor-pointer border border-[#B3CFE5]/40"
+          class="group relative h-80 rounded-3xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 cursor-pointer border border-[#E4D8CC]"
         >
           <img 
             :src="cat.imageUrl || 'https://via.placeholder.com/400x500'" 
             :alt="cat.name"
             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
           />
-          <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent"></div>
+          <div class="absolute inset-0 bg-gradient-to-t from-[#1A170F]/85 via-[#1A170F]/20 to-transparent"></div>
           <div class="absolute bottom-6 left-6 right-6">
-            <h3 class="text-xl font-serif font-bold text-white group-hover:text-amber-200 transition">{{ cat.name }}</h3>
-            <p class="text-xs text-slate-300 mt-1 line-clamp-1 font-light">{{ cat.description }}</p>
+            <h3 class="text-xl font-serif font-bold text-white group-hover:text-amber-300 transition">{{ cat.name }}</h3>
+            <p class="text-xs text-slate-200 mt-1 line-clamp-1 font-light">{{ cat.description }}</p>
           </div>
         </NuxtLink>
-      </div>
-    </section>
-
-    <!-- Bestselling Products Rail -->
-    <section class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center max-w-xl mx-auto mb-12">
-        <span class="text-xs font-semibold tracking-widest text-[#4A7FA7] uppercase">Season Favorites</span>
-        <h2 class="font-serif text-3xl sm:text-4xl font-bold text-[#0A1931] mt-1">Featured Wardrobe</h2>
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-        <NuxtLink 
-          v-for="product in featuredProducts" 
-          :key="product.id"
-          :to="`/products/${product.slug}`"
-          class="group block bg-[#F6FAFD] rounded-2xl p-3 border border-[#B3CFE5]/50 hover:border-[#4A7FA7] shadow-xs hover:shadow-xl transition-all duration-300 cursor-pointer"
-        >
-          <div class="relative aspect-3/4 rounded-xl overflow-hidden bg-slate-100 mb-4">
-            <img 
-              :src="product.productImages?.[0]?.url || 'https://via.placeholder.com/400x500'" 
-              :alt="product.name"
-              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            />
-            <span class="absolute top-3 left-3 bg-[#0A1931]/90 backdrop-blur-xs text-white text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-md">
-              {{ product.category?.name || 'New' }}
-            </span>
-          </div>
-
-          <div class="px-2 pb-1">
-            <h3 class="font-serif font-bold text-base text-[#0A1931] group-hover:text-[#4A7FA7] transition">
-              {{ product.name }}
-            </h3>
-            <p class="text-sm font-semibold text-[#0A1931] mt-1">
-              Rp{{ formatPrice(product.basePrice) }}
-            </p>
-          </div>
-        </NuxtLink>
-      </div>
-    </section>
-
-    <!-- Brand Highlight Teaser -->
-    <section class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="bg-[#1A3D63] rounded-3xl p-8 sm:p-16 text-white grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-        <div>
-          <span class="text-xs uppercase tracking-widest text-amber-300 font-semibold">Craftsmanship & Sustainability</span>
-          <h2 class="font-serif text-3xl sm:text-5xl font-bold mt-2 leading-tight">Designed to endure season after season</h2>
-          <p class="mt-6 text-slate-200 leading-relaxed font-light text-sm sm:text-base">
-            At AURA, we believe in mindful fashion. Every piece is cut from high-grade natural fibers with meticulous attention to fit, durability, and modern minimalist aesthetics.
-          </p>
-          <div class="mt-8">
-            <NuxtLink to="/about" class="inline-flex items-center gap-2 px-6 py-3 rounded.2xl btn-primary-flat text-sm font-medium transition">
-              <span>Read Our Full Story</span>
-              <span>→</span>
-            </NuxtLink>
-          </div>
-        </div>
-        <div class="relative aspect-4/3 rounded-2xl overflow-hidden shadow-2xl">
-          <img 
-            src="https://images.unsplash.com/photo-1445205170230-053b83016050?q=80&w=1000&auto=format&fit=crop" 
-            alt="Atelier"
-            class="w-full h-full object-cover"
-          />
-        </div>
       </div>
     </section>
 
@@ -154,60 +198,85 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted } from 'vue';
+import { useCartStore } from '~/stores/cart';
 
 const { fetchApi } = useApi();
+const cartStore = useCartStore();
 
-const fetchedBanners = ref<any[]>([]);
 const categories = ref<any[]>([]);
 const featuredProducts = ref<any[]>([]);
-const currentImageIndex = ref<number>(0);
-let bgCarouselTimer: any = null;
+const addingProductId = ref<string | null>(null);
+const addedProductId = ref<string | null>(null);
 
-const defaultHeroImages = [
-  'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=1600&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1548883354-7622d03aca27?q=80&w=1600&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80&w=1600&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1445205170230-053b83016050?q=80&w=1600&auto=format&fit=crop',
-];
+const isProductInStock = (product: any) => {
+  const variants = product?.productVariants || product?.variants || [];
+  if (!variants.length) return true;
+  return variants.some((v: any) => (v.stockQuantity || 0) > 0 && v.isActive !== false);
+};
 
-const heroImages = computed(() => {
-  const customImages = fetchedBanners.value
-    .filter((b: any) => b.placement === 'hero' && b.imageUrl)
-    .map((b: any) => b.imageUrl);
-    
-  return customImages.length > 0 ? customImages : defaultHeroImages;
-});
+const sortInStockFirst = (items: any[]) => {
+  if (!Array.isArray(items)) return [];
+  return [...items].sort((a, b) => {
+    const aStock = isProductInStock(a) ? 1 : 0;
+    const bStock = isProductInStock(b) ? 1 : 0;
+    return bStock - aStock;
+  });
+};
 
-const startBackgroundCarousel = () => {
-  bgCarouselTimer = setInterval(() => {
-    if (heroImages.value.length > 0) {
-      currentImageIndex.value = (currentImageIndex.value + 1) % heroImages.value.length;
+const navigateToProduct = (slug: string) => {
+  navigateTo(`/products/${slug}`);
+};
+
+const quickAddToCart = async (product: any, e?: Event) => {
+  if (e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  if (!isProductInStock(product) || addingProductId.value) return;
+
+  try {
+    addingProductId.value = product.id;
+    let variants = product.variants || [];
+    if (!variants.length) {
+      const fullProd = await fetchApi<any>(`/products/${product.slug}`).catch(() => null);
+      variants = fullProd?.productVariants || fullProd?.variants || [];
     }
-  }, 4500);
+
+    const defaultVariant = variants.find((v: any) => v.stockQuantity > 0 && v.isActive !== false) || variants[0];
+    const variantId = defaultVariant?.id;
+
+    if (variantId) {
+      await cartStore.addItem(variantId, 1);
+      addedProductId.value = product.id;
+      cartStore.isDrawerOpen = true;
+
+      setTimeout(() => {
+        if (addedProductId.value === product.id) {
+          addedProductId.value = null;
+        }
+      }, 2000);
+    }
+  } catch (err: any) {
+    console.error('Quick Add to Cart Error:', err);
+    alert(err?.data?.message || err?.message || 'Failed to add item to cart');
+  } finally {
+    addingProductId.value = null;
+  }
 };
 
 onMounted(async () => {
   try {
-    const [bannersData, categoriesData, productsData] = await Promise.all([
-      fetchApi<any[]>('/banners').catch(() => []),
+    const [categoriesData, productsData] = await Promise.all([
       fetchApi<any[]>('/categories').catch(() => []),
       fetchApi<any>('/products?limit=4').catch(() => ({ items: [] })),
     ]);
 
-    fetchedBanners.value = bannersData || [];
     categories.value = categoriesData || [];
-    featuredProducts.value = productsData?.items || [];
+    featuredProducts.value = sortInStockFirst(productsData?.items || []);
   } catch (e) {
     console.error('Error loading homepage data', e);
-  }
-
-  startBackgroundCarousel();
-});
-
-onUnmounted(() => {
-  if (bgCarouselTimer) {
-    clearInterval(bgCarouselTimer);
   }
 });
 

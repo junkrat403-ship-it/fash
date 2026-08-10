@@ -105,16 +105,62 @@ export class CartService {
       throw new NotFoundException('Cart item not found');
     }
 
-    if (item.variant.stockQuantity < dto.quantity) {
-      throw new BadRequestException(
-        `Only ${item.variant.stockQuantity} item(s) available in stock`,
-      );
-    }
+    // Handle variant change
+    if (dto.variantId && dto.variantId !== item.variantId) {
+      const newVariant = await this.prisma.productVariant.findUnique({
+        where: { id: dto.variantId },
+      });
 
-    await this.prisma.cartItem.update({
-      where: { id: itemId },
-      data: { quantity: dto.quantity },
-    });
+      if (!newVariant || !newVariant.isActive) {
+        throw new NotFoundException('Target product variant is not available');
+      }
+
+      const targetQuantity = dto.quantity !== undefined ? dto.quantity : item.quantity;
+      if (newVariant.stockQuantity < targetQuantity) {
+        throw new BadRequestException(`Only ${newVariant.stockQuantity} item(s) available in stock`);
+      }
+
+      // Check if an item with newVariantId already exists in this cart
+      const existingSameVariantItem = await this.prisma.cartItem.findUnique({
+        where: {
+          cartId_variantId: {
+            cartId: item.cartId,
+            variantId: dto.variantId,
+          },
+        },
+      });
+
+      if (existingSameVariantItem) {
+        const combinedQuantity = existingSameVariantItem.quantity + targetQuantity;
+        if (newVariant.stockQuantity < combinedQuantity) {
+          throw new BadRequestException(`Cannot merge items. Total requested (${combinedQuantity}) exceeds stock (${newVariant.stockQuantity}).`);
+        }
+
+        await this.prisma.cartItem.delete({ where: { id: itemId } });
+        await this.prisma.cartItem.update({
+          where: { id: existingSameVariantItem.id },
+          data: { quantity: combinedQuantity },
+        });
+      } else {
+        await this.prisma.cartItem.update({
+          where: { id: itemId },
+          data: {
+            variantId: dto.variantId,
+            quantity: targetQuantity,
+          },
+        });
+      }
+    } else if (dto.quantity !== undefined) {
+      // Standard quantity update
+      if (item.variant.stockQuantity < dto.quantity) {
+        throw new BadRequestException(`Only ${item.variant.stockQuantity} item(s) available in stock`);
+      }
+
+      await this.prisma.cartItem.update({
+        where: { id: itemId },
+        data: { quantity: dto.quantity },
+      });
+    }
 
     return this.prisma.cart.findUnique({
       where: { id: item.cartId },
@@ -152,6 +198,9 @@ export class CartService {
                   productImages: {
                     where: { isPrimary: true },
                     take: 1,
+                  },
+                  productVariants: {
+                    where: { isActive: true },
                   },
                 },
               },

@@ -2,7 +2,7 @@
   <ClientOnly>
     <div 
       v-if="shouldShow" 
-      class="fixed top-4 bottom-4 right-3 sm:right-4 z-[9999] w-3 flex flex-col justify-start pointer-events-none select-none"
+      class="fixed top-3 bottom-3 right-1 sm:right-1.5 z-[9999] w-2 flex flex-col justify-start pointer-events-none select-none"
     >
       <!-- Track area (Clickable) -->
       <div 
@@ -10,7 +10,7 @@
         @click="handleTrackClick"
         class="relative w-full h-full pointer-events-auto cursor-pointer"
       >
-        <!-- Floating Pill Thumb -->
+        <!-- Floating Pill Thumb (Sleeker 6px width, closer 4px/6px viewport margin) -->
         <div 
           @mousedown.prevent="startDrag"
           @touchstart.prevent="startTouchDrag"
@@ -20,12 +20,12 @@
           }"
           :class="[
             isDragging || isHovered || isScrolling 
-              ? 'opacity-100 bg-slate-900 shadow-lg scale-110' 
-              : 'opacity-40 bg-slate-700 hover:opacity-90'
+              ? 'opacity-100 bg-[#1A170F] shadow-md scale-105' 
+              : 'opacity-40 bg-[#1A170F] hover:opacity-90'
           ]"
           @mouseenter="isHovered = true"
           @mouseleave="isHovered = false"
-          class="absolute right-0 w-2.5 rounded-full transition-opacity transition-transform duration-200 ease-out cursor-grab active:cursor-grabbing backdrop-blur-xs"
+          class="absolute right-0 w-1.5 rounded-full transition-opacity transition-transform duration-200 ease-out cursor-grab active:cursor-grabbing backdrop-blur-xs"
         ></div>
       </div>
     </div>
@@ -77,7 +77,7 @@ const updateScrollbar = () => {
 
   shouldShow.value = true;
 
-  const trackHeight = clientHeight - 32; // 16px top and bottom inset
+  const trackHeight = clientHeight - 24; // 12px top and bottom inset
   const calculatedHeight = Math.max(36, (clientHeight / scrollHeight) * trackHeight);
   thumbHeight.value = Math.min(calculatedHeight, trackHeight - 20);
 
@@ -129,7 +129,7 @@ const onDrag = (e: MouseEvent) => {
   const docEl = document.documentElement;
   const clientHeight = window.innerHeight;
   const maxScroll = docEl.scrollHeight - clientHeight;
-  const trackHeight = clientHeight - 32;
+  const trackHeight = clientHeight - 24;
   const maxThumbTop = trackHeight - thumbHeight.value;
 
   if (maxThumbTop <= 0) return;
@@ -161,7 +161,7 @@ const onTouchDrag = (e: TouchEvent) => {
   const docEl = document.documentElement;
   const clientHeight = window.innerHeight;
   const maxScroll = docEl.scrollHeight - clientHeight;
-  const trackHeight = clientHeight - 32;
+  const trackHeight = clientHeight - 24;
   const maxThumbTop = trackHeight - thumbHeight.value;
 
   if (maxThumbTop <= 0) return;

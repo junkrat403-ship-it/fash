@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-slate-50 text-slate-900 font-sans flex flex-col justify-between selection:bg-slate-900 selection:text-white relative">
+  <div class="min-h-screen bg-[#F4ECE5] text-[#1A170F] font-sans flex flex-col justify-between selection:bg-[#1A170F] selection:text-[#F4ECE5] relative">
     <AppHeader />
     
     <div class="flex-1 flex flex-col w-full">
