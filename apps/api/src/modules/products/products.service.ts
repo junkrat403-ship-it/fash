@@ -3,6 +3,8 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { ProductQueryDto, ProductSortOption } from './dto/product-query.dto';
 import { Prisma } from '@prisma/client';
 
+const UUID_REGEX = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+
 @Injectable()
 export class ProductsService {
   constructor(private readonly prisma: PrismaService) {}
@@ -15,12 +17,13 @@ export class ProductsService {
       status: 'published',
     };
 
-    // Category filter
+    // Category filter (safely check UUID before querying category.id)
     if (category) {
+      const isCategoryUuid = UUID_REGEX.test(category);
       where.category = {
         OR: [
           { slug: category },
-          { id: category },
+          ...(isCategoryUuid ? [{ id: category }] : []),
         ],
       };
     }
@@ -118,13 +121,12 @@ export class ProductsService {
   }
 
   async findBySlug(slug: string) {
+    const isUuid = UUID_REGEX.test(slug);
+
     const product = await this.prisma.product.findFirst({
       where: {
-        OR: [
-          { slug },
-          { id: slug },
-        ],
         status: 'published',
+        ...(isUuid ? { OR: [{ id: slug }, { slug }] } : { slug }),
       },
       include: {
         category: true,
