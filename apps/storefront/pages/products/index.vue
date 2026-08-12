@@ -2,14 +2,13 @@
   <main ref="catalogTopRef" class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-28 pb-10 flex-1 flex flex-col justify-between min-h-[calc(100vh-80px)] w-full">
     
     <div>
-      <!-- Title & Search Header -->
+      
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center pb-6 sm:pb-8 border-b border-[#E4D8CC] gap-4">
         <div>
           <h1 class="font-serif text-2xl sm:text-4xl font-black text-[#1A170F]">Catalog Collection</h1>
           <p class="text-xs text-[#1A170F]/70 mt-1 font-light">Showing {{ meta.total }} product(s)</p>
         </div>
 
-        <!-- Search & Sort Controls -->
         <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
           <div class="relative flex-1 md:w-64 min-w-[180px]">
             <input 
@@ -35,7 +34,6 @@
             <option value="price_desc">Price: High to Low</option>
           </select>
 
-          <!-- Mobile Filter Drawer Toggle Button -->
           <button 
             @click="mobileFilterOpen = true"
             class="lg:hidden px-3.5 py-2.5 rounded-xl bg-[#1A170F] text-[#F4ECE5] hover:bg-[#E04F26] text-xs font-bold flex items-center gap-1.5 cursor-pointer transition"
@@ -48,7 +46,6 @@
         </div>
       </div>
 
-      <!-- Active Filter Chips -->
       <div v-if="hasActiveFilters" class="flex flex-wrap items-center gap-2 pt-4">
         <span class="text-xs text-[#1A170F]/70 font-medium">Active Filters:</span>
         <span v-if="filters.q" class="inline-flex items-center gap-1.5 text-xs bg-[#1A170F] text-[#F4ECE5] px-3 py-1 rounded-full shadow-xs">
@@ -74,13 +71,10 @@
         <button @click="clearAllFilters" class="text-xs text-[#E04F26] font-semibold underline cursor-pointer hover:text-[#1A170F] ml-1">Reset All</button>
       </div>
 
-      <!-- Main Content Layout (Desktop Sidebar + Product Grid) -->
       <div class="mt-8 grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
-        
-        <!-- Desktop Filter Sidebar -->
+
         <aside class="hidden lg:block space-y-8 pr-6 border-r border-[#E4D8CC] sticky top-28 self-start max-h-[calc(100vh-130px)] overflow-y-auto">
-          
-          <!-- Category Filter -->
+
           <div>
             <h3 class="text-xs font-bold uppercase tracking-wider text-[#1A170F] mb-3">Categories</h3>
             <div class="space-y-2">
@@ -103,7 +97,6 @@
             </div>
           </div>
 
-          <!-- Size Filter -->
           <div>
             <h3 class="text-xs font-bold uppercase tracking-wider text-[#1A170F] mb-3">Sizes</h3>
             <div class="flex flex-wrap gap-2">
@@ -119,7 +112,6 @@
             </div>
           </div>
 
-          <!-- Color Filter -->
           <div>
             <h3 class="text-xs font-bold uppercase tracking-wider text-[#1A170F] mb-3">Colors</h3>
             <div class="flex flex-wrap gap-2">
@@ -137,10 +129,9 @@
 
         </aside>
 
-        <!-- Product Grid -->
         <section class="lg:col-span-3">
           <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div v-for="n in 6" :key="n" class="animate-pulse bg-[#FAF6F1] aspect-3/4 rounded-3xl border border-[#E4D8CC]"></div>
+            <ProductCardSkeleton v-for="n in 6" :key="n" />
           </div>
 
           <div v-else-if="!products.length" class="py-20 text-center bg-[#FAF6F1] rounded-3xl border border-[#E4D8CC]">
@@ -151,7 +142,6 @@
             </button>
           </div>
 
-          <!-- ENTIRE PRODUCT CARD HAS SEPARATED NAVIGATION & QUICK ADD CONTAINER -->
           <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <div 
               v-for="p in products" 
@@ -163,12 +153,12 @@
               ]"
               class="group rounded-3xl p-4 shadow-lg hover:shadow-2xl transition-all duration-300 border border-[#E4D8CC] hover:border-[#E04F26] flex flex-col justify-between overflow-hidden h-[450px] sm:h-[490px]"
             >
-              <!-- Top Portion: Dedicated Clickable Navigation Area (Always Clickable) -->
+              
               <div 
                 @click="navigateToProduct(p.slug)"
                 class="flex-1 flex flex-col min-h-0 cursor-pointer"
               >
-                <!-- Tall Image container (occupies flex-1, shrinks internally on hover) -->
+                
                 <div class="relative w-full flex-1 rounded-2xl overflow-hidden bg-slate-200 min-h-0 transition-all duration-300 ease-in-out">
                   <img 
                     :src="p.productImages?.[0]?.url || 'https://via.placeholder.com/400x500'" 
@@ -180,8 +170,7 @@
                     ]"
                     class="w-full h-full object-cover object-top transition-all duration-500"
                   />
-                  
-                  <!-- Status Badges -->
+
                   <span 
                     v-if="!isProductInStock(p)"
                     class="absolute top-3 left-3 bg-[#1A170F]/80 backdrop-blur-xs text-white text-[9px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-md z-10"
@@ -196,7 +185,6 @@
                   </span>
                 </div>
 
-                <!-- Product Title & Price -->
                 <div class="px-1 pt-3 shrink-0">
                   <h3 
                     :class="[isProductInStock(p) ? 'text-[#1A170F] group-hover:text-[#E04F26]' : 'text-[#1A170F]/60']"
@@ -213,7 +201,6 @@
                 </div>
               </div>
 
-              <!-- Bottom Portion: Isolated ADD TO CART Button -->
               <div 
                 @click.stop.prevent
                 class="max-h-0 opacity-0 translate-y-2 group-hover:max-h-14 group-hover:opacity-100 group-hover:translate-y-0 group-hover:mt-3 transition-all duration-300 ease-in-out shrink-0 overflow-hidden"
@@ -247,7 +234,6 @@
       </div>
     </div>
 
-    <!-- Pagination Controls -->
     <div v-if="meta.totalPages > 1" class="mt-12 mb-8 flex justify-center items-center gap-2">
       <button 
         @click="changePage(meta.page - 1)" 
@@ -266,7 +252,6 @@
       </button>
     </div>
 
-    <!-- Mobile Filter Slide-over Drawer Modal -->
     <div 
       v-if="mobileFilterOpen" 
       class="lg:hidden fixed inset-0 z-50 flex justify-end bg-slate-950/60 backdrop-blur-xs transition-opacity"
@@ -287,7 +272,6 @@
             </button>
           </div>
 
-          <!-- Categories -->
           <div>
             <h3 class="text-xs font-bold uppercase tracking-wider text-[#1A170F] mb-3">Categories</h3>
             <div class="space-y-2">
@@ -310,7 +294,6 @@
             </div>
           </div>
 
-          <!-- Sizes -->
           <div>
             <h3 class="text-xs font-bold uppercase tracking-wider text-[#1A170F] mb-3">Sizes</h3>
             <div class="flex flex-wrap gap-2">
@@ -326,7 +309,6 @@
             </div>
           </div>
 
-          <!-- Colors -->
           <div>
             <h3 class="text-xs font-bold uppercase tracking-wider text-[#1A170F] mb-3">Colors</h3>
             <div class="flex flex-wrap gap-2">
@@ -343,7 +325,6 @@
           </div>
         </div>
 
-        <!-- Bottom Actions -->
         <div class="pt-6 border-t border-[#E4D8CC] space-y-3">
           <button 
             @click="clearAllFilters(); mobileFilterOpen = false"
@@ -376,6 +357,22 @@ const cartStore = useCartStore();
 
 const products = ref<any[]>([]);
 const categories = ref<any[]>([]);
+
+const pageTitle = computed(() => {
+  if (route.query.search) return `Search: "${route.query.search}" — Catalog | Jubi & Lee Studio`;
+  if (route.query.category) {
+    const cat = categories.value.find(c => c.slug === route.query.category);
+    if (cat) return `${cat.name} — Catalog | Jubi & Lee Studio`;
+  }
+  return 'Shop All Apparel — Catalog | Jubi & Lee Studio';
+});
+
+useSeoMeta({
+  title: pageTitle,
+  description: 'Explore our full collection of women\'s luxury apparel, tops, dresses, outerwear, and wardrobe essentials at Jubi & Lee Studio.',
+  ogTitle: pageTitle,
+  ogDescription: 'Explore our full collection of women\'s luxury apparel at Jubi & Lee Studio.',
+});
 const loading = ref(true);
 const mobileFilterOpen = ref(false);
 const addingProductId = ref<string | null>(null);

@@ -1,6 +1,6 @@
 <template>
   <div v-if="cartStore.isDrawerOpen" class="relative z-[110]">
-    <!-- Backdrop -->
+    
     <div 
       @click="cartStore.toggleDrawer()" 
       class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs transition-opacity cursor-pointer"
@@ -9,8 +9,7 @@
 
     <div class="fixed inset-y-0 right-0 max-w-full flex pl-0 sm:pl-10">
       <div class="w-screen max-w-md bg-[#F4ECE5] text-[#1A170F] shadow-2xl flex flex-col isolate contain-content border-l border-[#E4D8CC]">
-        
-        <!-- Header -->
+
         <div class="px-6 py-6 border-b border-[#E4D8CC] flex items-center justify-between">
           <h2 class="text-lg font-serif font-black text-[#1A170F] flex items-center gap-2">
             <span>Shopping Cart</span>
@@ -29,10 +28,21 @@
           </button>
         </div>
 
-        <!-- Items List -->
         <div class="flex-1 overflow-y-auto p-6 space-y-4">
-          <div v-if="cartStore.isLoading && !cartStore.cart?.cartItems?.length" class="py-12 text-center text-[#1A170F]/60">
-            Loading cart details...
+          <div v-if="cartStore.isLoading && !cartStore.cart?.cartItems?.length" class="space-y-4 animate-pulse">
+            <div v-for="i in 2" :key="i" class="flex space-x-4 p-4 rounded-2xl bg-[#FAF6F1] border border-[#E4D8CC]">
+              <div class="w-20 h-24 rounded-xl bg-[#E4D8CC]/50 border border-[#E4D8CC] shrink-0"></div>
+              <div class="flex-1 flex flex-col justify-between py-0.5">
+                <div class="space-y-1.5">
+                  <div class="h-4 bg-[#E4D8CC] rounded-md w-3/4"></div>
+                  <div class="h-3 bg-[#E4D8CC]/70 rounded-md w-1/2"></div>
+                </div>
+                <div class="flex justify-between items-center pt-2">
+                  <div class="w-20 h-7 bg-[#E4D8CC]/60 rounded-lg"></div>
+                  <div class="h-4 bg-[#E4D8CC] rounded-md w-16"></div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div v-else-if="!cartStore.cart?.cartItems?.length" class="py-16 text-center">
@@ -67,7 +77,6 @@
                     {{ item.variant?.product?.name }}
                   </h3>
 
-                  <!-- Red Destructive Trash Icon Button -->
                   <button 
                     @click="promptRemoveItem(item)" 
                     class="p-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer shrink-0"
@@ -79,7 +88,7 @@
                     </svg>
                   </button>
                 </div>
-                <!-- In-Cart Variant Editing: Size & Color Dropdown -->
+                
                 <div v-if="item.variant?.product?.productVariants?.length > 1" class="mt-1.5">
                   <select 
                     :value="item.variantId" 
@@ -134,7 +143,6 @@
           </div>
         </div>
 
-        <!-- Footer / Subtotal -->
         <div v-if="cartStore.cart?.cartItems?.length" class="p-6 border-t border-[#E4D8CC] bg-[#FAF6F1]">
           <div class="flex justify-between text-sm font-bold text-[#1A170F] mb-2">
             <span>Subtotal</span>
@@ -156,7 +164,6 @@
       </div>
     </div>
 
-    <!-- Confirmation Modal Dialog for Item Removal -->
     <Teleport to="body">
       <Transition name="modal-fade">
         <div 

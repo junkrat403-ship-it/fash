@@ -1,9 +1,7 @@
 <template>
   <main class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-28 pb-12 flex-1 min-h-screen">
     
-    <div v-if="loading" class="animate-pulse space-y-8">
-      <div class="h-96 bg-slate-100 rounded-3xl max-w-4xl mx-auto"></div>
-    </div>
+    <ProductDetailSkeleton v-if="loading" />
 
     <div v-else-if="!product" class="py-20 text-center">
       <h1 class="font-serif text-2xl font-black text-[#1A170F]">Product Not Found</h1>
@@ -13,13 +11,11 @@
     </div>
 
     <div v-else class="space-y-16">
-      
-      <!-- PDP Main Content: Well-proportioned gallery and natural info column flow -->
+
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
-        
-        <!-- Gallery Column -->
+
         <div class="space-y-3">
-          <!-- Main Image Display with Lightbox Click Trigger -->
+          
           <div 
             @click="isLightboxOpen = true"
             class="max-h-110 sm:max-h-[480px] lg:max-h-[500px] aspect-4/5 w-full rounded-3xl overflow-hidden bg-[#FAF6F1] border border-[#E4D8CC] shadow-md relative group cursor-zoom-in"
@@ -31,8 +27,6 @@
               class="w-full h-full object-cover transition-all duration-300 group-hover:scale-105"
             />
 
-
-            <!-- Stock Status Badges -->
             <span 
               v-if="selectedVariant && selectedVariant.stockQuantity <= 0"
               class="absolute top-4 right-4 bg-rose-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-md"
@@ -47,7 +41,6 @@
             </span>
           </div>
 
-          <!-- Thumbnails Gallery Row -->
           <div v-if="allImages.length > 0" class="flex space-x-3 overflow-x-auto pb-1 pt-1 shrink-0">
             <button 
               v-for="(img, idx) in allImages" 
@@ -65,7 +58,6 @@
           </div>
         </div>
 
-        <!-- Info Column -->
         <div class="space-y-6 sm:space-y-8">
           <div>
             <span class="text-xs uppercase tracking-widest text-[#E04F26] font-bold">
@@ -79,7 +71,6 @@
             </p>
           </div>
 
-          <!-- Color Selector -->
           <div v-if="availableColors.length">
             <label class="block text-xs font-bold uppercase tracking-wider text-[#1A170F] mb-2">
               Color: <span class="text-[#E04F26] font-extrabold">{{ selectedColor }}</span>
@@ -97,7 +88,6 @@
             </div>
           </div>
 
-          <!-- Clean Modern Flat Size Selector Pills -->
           <div v-if="availableSizes.length">
             <div class="flex justify-between items-center mb-2">
               <label class="block text-xs font-semibold uppercase tracking-wider text-[#1A3D63]">
@@ -122,7 +112,6 @@
             </div>
           </div>
 
-          <!-- Quantity Stepper & Add to Cart -->
           <div class="space-y-4 pt-4 border-t border-[#E4D8CC]">
             <div class="flex items-center space-x-4">
               <label class="text-xs font-bold uppercase tracking-wider text-[#1A170F]">Quantity</label>
@@ -145,7 +134,6 @@
               </div>
             </div>
 
-            <!-- Primary CTA Button -->
             <button 
               @click="handleAddToCart"
               :disabled="!selectedVariant || selectedVariant.stockQuantity <= 0 || adding"
@@ -160,7 +148,6 @@
             </button>
           </div>
 
-          <!-- Accordion Details immediately following Add to Cart CTA -->
           <div class="pt-6 border-t border-[#B3CFE5]/50 space-y-4">
             <details class="group">
               <summary class="flex justify-between items-center font-serif font-bold text-[#0A1931] cursor-pointer list-none text-sm">
@@ -187,7 +174,6 @@
 
       </div>
 
-      <!-- Related Products Section ("You May Also Like") -->
       <section v-if="relatedProducts.length" class="pt-12 border-t border-[#B3CFE5]/50 space-y-6">
         <div class="flex justify-between items-end">
           <div>
@@ -210,12 +196,12 @@
             ]"
             class="group rounded-3xl p-4 shadow-lg hover:shadow-2xl transition-all duration-300 border border-[#E4D8CC] hover:border-[#E04F26] flex flex-col justify-between overflow-hidden h-[420px] sm:h-[460px]"
           >
-            <!-- Top Portion: Dedicated Clickable Navigation Area (Always Clickable) -->
+            
             <div 
               @click="navigateToProduct(rel.slug)"
               class="flex-1 flex flex-col min-h-0 cursor-pointer"
             >
-              <!-- Tall Image container (occupies flex-1, shrinks internally on hover) -->
+              
               <div class="relative w-full flex-1 rounded-2xl overflow-hidden bg-slate-200 min-h-0 transition-all duration-300 ease-in-out">
                 <img 
                   :src="rel.productImages?.[0]?.url || 'https://via.placeholder.com/400x500'" 
@@ -227,8 +213,7 @@
                   ]"
                   class="w-full h-full object-cover object-top transition-all duration-500" 
                 />
-                
-                <!-- Status Badges -->
+
                 <span 
                   v-if="!isProductInStock(rel)"
                   class="absolute top-3 left-3 bg-[#1A170F]/80 backdrop-blur-xs text-white text-[9px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-md z-10"
@@ -243,7 +228,6 @@
                 </span>
               </div>
 
-              <!-- Product Title & Price -->
               <div class="px-1 pt-3 shrink-0">
                 <h3 
                   :class="[isProductInStock(rel) ? 'text-[#1A170F] group-hover:text-[#E04F26]' : 'text-[#1A170F]/60']"
@@ -260,7 +244,6 @@
               </div>
             </div>
 
-            <!-- Bottom Portion: Isolated ADD TO CART Button -->
             <div 
               @click.stop.prevent
               class="max-h-0 opacity-0 translate-y-2 group-hover:max-h-14 group-hover:opacity-100 group-hover:translate-y-0 group-hover:mt-3 transition-all duration-300 ease-in-out shrink-0 overflow-hidden"
@@ -292,7 +275,6 @@
 
     </div>
 
-    <!-- Product Lightbox Modal Component -->
     <ProductLightbox
       :is-open="isLightboxOpen"
       :images="allImages"
@@ -316,6 +298,15 @@ const cartStore = useCartStore();
 const { fetchApi } = useApi();
 
 const product = ref<any>(null);
+
+useSeoMeta({
+  title: computed(() => product.value ? `${product.value.name} — Jubi & Lee Studio` : 'Product Details — Jubi & Lee Studio'),
+  description: computed(() => product.value?.description || 'Discover luxury apparel and modern wardrobe essentials at Jubi & Lee Studio.'),
+  ogTitle: computed(() => product.value ? `${product.value.name} — Jubi & Lee Studio` : 'Product Details — Jubi & Lee Studio'),
+  ogDescription: computed(() => product.value?.description || 'Discover luxury apparel at Jubi & Lee Studio.'),
+  ogImage: computed(() => product.value?.productImages?.[0]?.url || ''),
+});
+
 const relatedProducts = ref<any[]>([]);
 const loading = ref(true);
 const adding = ref(false);
@@ -451,7 +442,6 @@ const handleAddToCart = async () => {
     adding.value = true;
     await cartStore.addItem(selectedVariant.value.id, quantity.value);
 
-    // Trigger Sonner-style toast notification
     const variantDesc = [selectedColor.value, selectedVariant.value.size].filter(Boolean).join(' / ');
     toast.showAddedToCart(
       product.value?.name || 'Item',

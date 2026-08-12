@@ -2,7 +2,9 @@
   <main class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-12 pt-24 sm:pt-28 text-[#1A170F]">
     <h1 class="font-serif text-3xl font-black text-[#1A170F] mb-8">Shopping Cart</h1>
 
-    <div v-if="!cartStore.cart?.cartItems?.length" class="py-16 text-center bg-[#FAF6F1] rounded-3xl border border-[#E4D8CC] shadow-md max-w-xl mx-auto">
+    <CartPageSkeleton v-if="cartStore.isLoading && !cartStore.cart" />
+
+    <div v-else-if="!cartStore.cart?.cartItems?.length" class="py-16 text-center bg-[#FAF6F1] rounded-3xl border border-[#E4D8CC] shadow-md max-w-xl mx-auto">
       <svg class="w-16 h-16 mx-auto text-[#1A170F]/30 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
       </svg>
@@ -14,8 +16,7 @@
     </div>
 
     <div v-else class="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
-      
-      <!-- Left Column: Cart Items List -->
+
       <div class="lg:col-span-2 space-y-4">
         <div 
           v-for="item in cartStore.cart?.cartItems" 
@@ -47,7 +48,7 @@
                   </svg>
                 </button>
               </div>
-              <!-- In-Cart Variant Editing: Size & Color Dropdown -->
+              
               <div v-if="item.variant?.product?.productVariants?.length > 1" class="mt-1.5">
                 <select 
                   :value="item.variantId" 
@@ -107,7 +108,6 @@
         </div>
       </div>
 
-      <!-- Right Column: Order Summary & Customer Info Checkout Form -->
       <div class="bg-[#FAF6F1] p-6 sm:p-8 rounded-3xl border border-[#E4D8CC] shadow-md space-y-6">
         <h2 class="font-serif font-black text-xl text-[#1A170F] pb-4 border-b border-[#E4D8CC]">Order Summary</h2>
 
@@ -127,7 +127,6 @@
           <span class="tnum">Rp{{ formatPrice(cartStore.subtotal) }}</span>
         </div>
 
-        <!-- Customer Checkout Form -->
         <form @submit.prevent="handleCheckout" class="space-y-4 pt-4 border-t border-[#E4D8CC]" novalidate>
           <div v-if="error" class="p-3 bg-rose-50 text-rose-800 rounded-xl text-xs font-medium border border-rose-200">
             {{ error }}
@@ -140,7 +139,6 @@
             </span>
           </h3>
 
-          <!-- Field 1: Full Name -->
           <div>
             <label class="block text-[11px] font-bold text-[#1A170F] uppercase tracking-wider mb-1">Full Name *</label>
             <input 
@@ -156,7 +154,6 @@
             </span>
           </div>
 
-          <!-- Field 2: WhatsApp Phone -->
           <div>
             <label class="block text-[11px] font-bold text-[#1A170F] uppercase tracking-wider mb-1">WhatsApp Phone *</label>
             <input 
@@ -172,7 +169,6 @@
             </span>
           </div>
 
-          <!-- Field 3: Email (Optional) -->
           <div>
             <label class="block text-[11px] font-bold text-[#1A170F] uppercase tracking-wider mb-1">Email (Optional)</label>
             <input 
@@ -188,7 +184,6 @@
             </span>
           </div>
 
-          <!-- Field 4: Street Address -->
           <div>
             <label class="block text-[11px] font-bold text-[#1A170F] uppercase tracking-wider mb-1">Street Address *</label>
             <input 
@@ -204,7 +199,6 @@
             </span>
           </div>
 
-          <!-- Field 5: City / District & Postal Code -->
           <div class="grid grid-cols-2 gap-2">
             <div>
               <label class="block text-[11px] font-bold text-[#1A170F] uppercase tracking-wider mb-1">City / District *</label>
@@ -232,7 +226,6 @@
             </div>
           </div>
 
-          <!-- Field 6: Order Notes (Optional) -->
           <div>
             <label class="block text-[11px] font-bold text-[#1A170F] uppercase tracking-wider mb-1">Order Notes (Optional)</label>
             <textarea 
@@ -243,7 +236,6 @@
             ></textarea>
           </div>
 
-          <!-- Save Info Checkbox -->
           <label class="flex items-center space-x-2 text-xs text-[#1A170F]/80 cursor-pointer pt-1">
             <input 
               v-model="saveInfo" 
@@ -253,7 +245,6 @@
             <span>Save my info for faster checkout next time</span>
           </label>
 
-          <!-- Primary Action Button: Checkout -->
           <button 
             type="submit" 
             :disabled="submitting"
@@ -272,7 +263,6 @@
 
     </div>
 
-    <!-- Confirmation Modal Dialog for Item Removal -->
     <Teleport to="body">
       <Transition name="modal-fade">
         <div 
@@ -324,6 +314,13 @@ import { useCartStore } from '~/stores/cart';
 const router = useRouter();
 const cartStore = useCartStore();
 const { fetchApi } = useApi();
+
+useSeoMeta({
+  title: 'Your Shopping Cart — Jubi & Lee Studio',
+  description: 'Review items in your shopping cart and complete your order via WhatsApp with Jubi & Lee Studio.',
+  ogTitle: 'Your Shopping Cart — Jubi & Lee Studio',
+  ogDescription: 'Review items in your shopping cart and complete your order via WhatsApp with Jubi & Lee Studio.',
+});
 
 const itemToRemove = ref<{ id: string; name: string } | null>(null);
 const changingVariantItemId = ref<string | null>(null);
@@ -425,7 +422,6 @@ const validateForm = (): boolean => {
   fieldErrors.value = {};
   let isValid = true;
 
-  // 1. Full Name: required, min 2 chars
   const trimmedName = form.value.customer.name.trim();
   if (!trimmedName) {
     fieldErrors.value.name = 'Please enter your full name.';
@@ -446,7 +442,6 @@ const validateForm = (): boolean => {
     isValid = false;
   }
 
-  // 3. Email: OPTIONAL! Only validate format if non-empty
   const trimmedEmail = form.value.customer.email.trim();
   if (trimmedEmail !== '') {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -456,7 +451,6 @@ const validateForm = (): boolean => {
     }
   }
 
-  // 4. Street Address: required, min 5 chars
   const trimmedLine1 = form.value.shippingAddress.line1.trim();
   if (!trimmedLine1) {
     fieldErrors.value.line1 = 'Please enter your street address.';
@@ -466,7 +460,6 @@ const validateForm = (): boolean => {
     isValid = false;
   }
 
-  // 5. City / District: required, min 2 chars
   const trimmedCity = form.value.shippingAddress.city.trim();
   if (!trimmedCity) {
     fieldErrors.value.city = 'Please enter your city or district.';
@@ -486,7 +479,6 @@ const validateForm = (): boolean => {
 const handleCheckout = async () => {
   if (!cartStore.cart?.cartItems?.length) return;
 
-  // Run client-side validation
   if (!validateForm()) {
     return;
   }
@@ -495,7 +487,6 @@ const handleCheckout = async () => {
     submitting.value = true;
     error.value = '';
 
-    // Sanitize payload (trim whitespace and map empty optional strings to undefined)
     const sanitizedPayload = {
       customer: {
         name: form.value.customer.name.trim(),
@@ -515,7 +506,6 @@ const handleCheckout = async () => {
       guestToken: cartStore.guestToken,
     };
 
-    // 1. Save or clear customer info from localStorage based on checkbox
     if (saveInfo.value) {
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({
         customer: sanitizedPayload.customer,
@@ -525,25 +515,24 @@ const handleCheckout = async () => {
       localStorage.removeItem(LOCAL_STORAGE_KEY);
     }
 
-    // 2. Submit order creation to API backend
     const res = await fetchApi<any>('/checkout', {
       method: 'POST',
       body: sanitizedPayload,
     });
 
-    // 3. Refresh cart state after order creation
     await cartStore.fetchCart();
 
-    // 4. Redirect to Order Confirmation page with autoRedirect flag to trigger WhatsApp deep link
-    router.push(`/order/confirmation/${res.orderNumber}?autoRedirect=true`);
+    if (res?.whatsappRedirectUrl) {
+      window.location.href = res.whatsappRedirectUrl;
+    } else {
+      router.push(`/order/confirmation/${res.orderNumber}`);
+    }
   } catch (e: any) {
     const rawMsg = e?.data?.message || e.message || '';
     if (typeof rawMsg === 'string' && rawMsg.length > 0) {
-      // Clean raw object paths like "customer.email" => "email"
       const cleaned = rawMsg.replace(/^customer\./i, '').replace(/^shippingAddress\./i, '');
       error.value = cleaned;
 
-      // Map to inline field errors if matching field name
       if (/email/i.test(cleaned)) fieldErrors.value.email = cleaned;
       if (/name/i.test(cleaned)) fieldErrors.value.name = cleaned;
       if (/phone/i.test(cleaned)) fieldErrors.value.phone = cleaned;
