@@ -7,7 +7,7 @@
       title="Close cart drawer"
     ></div>
 
-    <div class="fixed inset-y-0 right-0 max-w-full flex pl-10">
+    <div class="fixed inset-y-0 right-0 max-w-full flex pl-0 sm:pl-10">
       <div class="w-screen max-w-md bg-[#F4ECE5] text-[#1A170F] shadow-2xl flex flex-col isolate contain-content border-l border-[#E4D8CC]">
         
         <!-- Header -->

@@ -3,23 +3,23 @@
     
     <div>
       <!-- Title & Search Header -->
-      <div class="flex flex-col md:flex-row justify-between items-start md:items-center pb-8 border-b border-[#E4D8CC] gap-4">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center pb-6 sm:pb-8 border-b border-[#E4D8CC] gap-4">
         <div>
-          <h1 class="font-serif text-3xl sm:text-4xl font-black text-[#1A170F]">Catalog Collection</h1>
+          <h1 class="font-serif text-2xl sm:text-4xl font-black text-[#1A170F]">Catalog Collection</h1>
           <p class="text-xs text-[#1A170F]/70 mt-1 font-light">Showing {{ meta.total }} product(s)</p>
         </div>
 
         <!-- Search & Sort Controls -->
-        <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
-          <div class="relative flex-1 md:w-64">
+        <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
+          <div class="relative flex-1 md:w-64 min-w-[180px]">
             <input 
               v-model="filters.q" 
               @input="debounceSearch"
               type="text" 
               placeholder="Search catalog..." 
-              class="w-full pl-9 pr-4 py-2 rounded-xl border border-[#E4D8CC] text-xs bg-[#FAF6F1] focus:outline-none focus:ring-2 focus:ring-[#E04F26] text-[#1A170F]"
+              class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-[#E4D8CC] text-xs bg-[#FAF6F1] focus:outline-none focus:ring-2 focus:ring-[#E04F26] text-[#1A170F]"
             />
-            <svg class="w-4 h-4 absolute left-3 top-2.5 text-[#1A170F]/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-4 h-4 absolute left-3 top-3 text-[#1A170F]/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
             </svg>
           </div>
@@ -27,7 +27,7 @@
           <select 
             v-model="filters.sort" 
             @change="fetchProducts"
-            class="px-3 py-2 rounded-xl border border-[#E4D8CC] text-xs bg-[#FAF6F1] focus:outline-none focus:ring-2 focus:ring-[#E04F26] font-medium text-[#1A170F]"
+            class="px-3 py-2.5 rounded-xl border border-[#E4D8CC] text-xs bg-[#FAF6F1] focus:outline-none focus:ring-2 focus:ring-[#E04F26] font-medium text-[#1A170F]"
           >
             <option value="newest">Newest Arrivals</option>
             <option value="bestselling">Best Selling</option>
@@ -37,8 +37,8 @@
 
           <!-- Mobile Filter Drawer Toggle Button -->
           <button 
-            @click="mobileFilterOpen = !mobileFilterOpen"
-            class="lg:hidden px-3.5 py-2 pill-flat text-xs font-semibold text-[#0A1931] flex items-center gap-1.5 cursor-pointer"
+            @click="mobileFilterOpen = true"
+            class="lg:hidden px-3.5 py-2.5 rounded-xl bg-[#1A170F] text-[#F4ECE5] hover:bg-[#E04F26] text-xs font-bold flex items-center gap-1.5 cursor-pointer transition"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0m-9.75 0h9.75" />
@@ -50,44 +50,44 @@
 
       <!-- Active Filter Chips -->
       <div v-if="hasActiveFilters" class="flex flex-wrap items-center gap-2 pt-4">
-        <span class="text-xs text-[#1A3D63] font-medium">Active Filters:</span>
-        <span v-if="filters.q" class="inline-flex items-center gap-1.5 text-xs bg-[#28537A] text-white px-3 py-1 rounded-full shadow-xs">
+        <span class="text-xs text-[#1A170F]/70 font-medium">Active Filters:</span>
+        <span v-if="filters.q" class="inline-flex items-center gap-1.5 text-xs bg-[#1A170F] text-[#F4ECE5] px-3 py-1 rounded-full shadow-xs">
           Search: {{ filters.q }}
-          <button @click="clearFilter('q')" class="hover:text-amber-300 font-bold ml-0.5 cursor-pointer" title="Remove search filter">×</button>
+          <button @click="clearFilter('q')" class="hover:text-[#E04F26] font-bold ml-0.5 cursor-pointer" title="Remove search filter">×</button>
         </span>
-        <span v-if="filters.category" class="inline-flex items-center gap-1.5 text-xs bg-[#28537A] text-white px-3 py-1 rounded-full shadow-xs">
+        <span v-if="filters.category" class="inline-flex items-center gap-1.5 text-xs bg-[#1A170F] text-[#F4ECE5] px-3 py-1 rounded-full shadow-xs">
           Category: {{ filters.category }}
-          <button @click="clearFilter('category')" class="hover:text-amber-300 font-bold ml-0.5 cursor-pointer" title="Remove category filter">×</button>
+          <button @click="clearFilter('category')" class="hover:text-[#E04F26] font-bold ml-0.5 cursor-pointer" title="Remove category filter">×</button>
         </span>
-        <span v-if="filters.size" class="inline-flex items-center gap-1.5 text-xs bg-[#28537A] text-white px-3 py-1 rounded-full shadow-xs">
+        <span v-if="filters.size" class="inline-flex items-center gap-1.5 text-xs bg-[#1A170F] text-[#F4ECE5] px-3 py-1 rounded-full shadow-xs">
           Size: {{ filters.size }}
-          <button @click="clearFilter('size')" class="hover:text-amber-300 font-bold ml-0.5 cursor-pointer" title="Remove size filter">×</button>
+          <button @click="clearFilter('size')" class="hover:text-[#E04F26] font-bold ml-0.5 cursor-pointer" title="Remove size filter">×</button>
         </span>
-        <span v-if="filters.color" class="inline-flex items-center gap-1.5 text-xs bg-[#28537A] text-white px-3 py-1 rounded-full shadow-xs">
+        <span v-if="filters.color" class="inline-flex items-center gap-1.5 text-xs bg-[#1A170F] text-[#F4ECE5] px-3 py-1 rounded-full shadow-xs">
           Color: {{ filters.color }}
-          <button @click="clearFilter('color')" class="hover:text-amber-300 font-bold ml-0.5 cursor-pointer" title="Remove color filter">×</button>
+          <button @click="clearFilter('color')" class="hover:text-[#E04F26] font-bold ml-0.5 cursor-pointer" title="Remove color filter">×</button>
         </span>
-        <span v-if="filters.maxPrice" class="inline-flex items-center gap-1.5 text-xs bg-[#28537A] text-white px-3 py-1 rounded-full shadow-xs">
+        <span v-if="filters.maxPrice" class="inline-flex items-center gap-1.5 text-xs bg-[#1A170F] text-[#F4ECE5] px-3 py-1 rounded-full shadow-xs">
           Max Price: Rp{{ formatPrice(filters.maxPrice) }}
-          <button @click="clearFilter('maxPrice')" class="hover:text-amber-300 font-bold ml-0.5 cursor-pointer" title="Remove price filter">×</button>
+          <button @click="clearFilter('maxPrice')" class="hover:text-[#E04F26] font-bold ml-0.5 cursor-pointer" title="Remove price filter">×</button>
         </span>
-        <button @click="clearAllFilters" class="text-xs text-[#4A7FA7] font-semibold underline cursor-pointer hover:text-[#1A3D63] ml-1">Reset All</button>
+        <button @click="clearAllFilters" class="text-xs text-[#E04F26] font-semibold underline cursor-pointer hover:text-[#1A170F] ml-1">Reset All</button>
       </div>
 
-      <!-- Main Content Layout (Sidebar + Product Grid) -->
+      <!-- Main Content Layout (Desktop Sidebar + Product Grid) -->
       <div class="mt-8 grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
         
         <!-- Desktop Filter Sidebar -->
-        <aside class="hidden lg:block space-y-8 pr-6 border-r border-[#B3CFE5]/40 sticky top-28 self-start max-h-[calc(100vh-130px)] overflow-y-auto">
+        <aside class="hidden lg:block space-y-8 pr-6 border-r border-[#E4D8CC] sticky top-28 self-start max-h-[calc(100vh-130px)] overflow-y-auto">
           
           <!-- Category Filter -->
           <div>
-            <h3 class="text-xs font-semibold uppercase tracking-wider text-[#0A1931] mb-3">Categories</h3>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-[#1A170F] mb-3">Categories</h3>
             <div class="space-y-2">
               <button 
                 @click="setCategory('')"
-                :class="[!filters.category ? 'font-bold text-[#0A1931]' : 'text-[#1A3D63]']"
-                class="block text-xs hover:text-[#28537A] transition text-left cursor-pointer"
+                :class="[!filters.category ? 'font-bold text-[#E04F26]' : 'text-[#1A170F]/80']"
+                class="block text-xs hover:text-[#E04F26] transition text-left cursor-pointer"
               >
                 All Categories
               </button>
@@ -95,8 +95,8 @@
                 v-for="cat in categories" 
                 :key="cat.id"
                 @click="setCategory(cat.slug)"
-                :class="[filters.category === cat.slug ? 'font-bold text-[#0A1931]' : 'text-[#1A3D63]']"
-                class="block text-xs hover:text-[#28537A] transition text-left cursor-pointer"
+                :class="[filters.category === cat.slug ? 'font-bold text-[#E04F26]' : 'text-[#1A170F]/80']"
+                class="block text-xs hover:text-[#E04F26] transition text-left cursor-pointer"
               >
                 {{ cat.name }}
               </button>
@@ -105,14 +105,14 @@
 
           <!-- Size Filter -->
           <div>
-            <h3 class="text-xs font-semibold uppercase tracking-wider text-[#0A1931] mb-3">Sizes</h3>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-[#1A170F] mb-3">Sizes</h3>
             <div class="flex flex-wrap gap-2">
               <button 
                 v-for="size in availableSizes" 
                 :key="size"
                 @click="toggleSize(size)"
-                :class="[filters.size === size ? 'pill-flat-selected' : 'pill-flat']"
-                class="w-9 h-9 text-xs font-semibold transition cursor-pointer flex items-center justify-center"
+                :class="[filters.size === size ? 'bg-[#1A170F] text-[#F4ECE5]' : 'bg-[#FAF6F1] text-[#1A170F] border border-[#E4D8CC]']"
+                class="w-9 h-9 text-xs font-semibold rounded-xl transition cursor-pointer flex items-center justify-center"
               >
                 {{ size }}
               </button>
@@ -121,14 +121,14 @@
 
           <!-- Color Filter -->
           <div>
-            <h3 class="text-xs font-semibold uppercase tracking-wider text-[#0A1931] mb-3">Colors</h3>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-[#1A170F] mb-3">Colors</h3>
             <div class="flex flex-wrap gap-2">
               <button 
                 v-for="c in availableColors" 
                 :key="c"
                 @click="toggleColor(c)"
-                :class="[filters.color === c ? 'pill-flat-selected' : 'pill-flat']"
-                class="px-3 py-1.5 text-xs font-medium transition cursor-pointer"
+                :class="[filters.color === c ? 'bg-[#1A170F] text-[#F4ECE5]' : 'bg-[#FAF6F1] text-[#1A170F] border border-[#E4D8CC]']"
+                class="px-3 py-1.5 text-xs font-medium rounded-xl transition cursor-pointer"
               >
                 {{ c }}
               </button>
@@ -140,12 +140,15 @@
         <!-- Product Grid -->
         <section class="lg:col-span-3">
           <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div v-for="n in 6" :key="n" class="animate-pulse bg-white/60 aspect-3/4 rounded-2xl"></div>
+            <div v-for="n in 6" :key="n" class="animate-pulse bg-[#FAF6F1] aspect-3/4 rounded-3xl border border-[#E4D8CC]"></div>
           </div>
 
-          <div v-else-if="!products.length" class="py-20 text-center">
-            <p class="text-lg font-serif text-[#0A1931]">No products match your criteria</p>
-            <p class="text-xs text-[#1A3D63] mt-1 font-light">Try clearing some filters or searching for another term.</p>
+          <div v-else-if="!products.length" class="py-20 text-center bg-[#FAF6F1] rounded-3xl border border-[#E4D8CC]">
+            <p class="text-lg font-serif font-black text-[#1A170F]">No products match your criteria</p>
+            <p class="text-xs text-[#1A170F]/70 mt-1 font-light">Try clearing some filters or searching for another term.</p>
+            <button @click="clearAllFilters" class="mt-4 px-5 py-2.5 rounded-xl bg-[#E04F26] text-white text-xs font-bold uppercase tracking-wider">
+              Clear All Filters
+            </button>
           </div>
 
           <!-- ENTIRE PRODUCT CARD HAS SEPARATED NAVIGATION & QUICK ADD CONTAINER -->
@@ -244,23 +247,118 @@
       </div>
     </div>
 
-    <!-- Pagination / Load More -->
+    <!-- Pagination Controls -->
     <div v-if="meta.totalPages > 1" class="mt-12 mb-8 flex justify-center items-center gap-2">
       <button 
         @click="changePage(meta.page - 1)" 
         :disabled="meta.page <= 1"
-        class="px-4 py-2 rounded-xl pill-flat text-xs font-semibold text-[#0A1931] disabled:opacity-40 cursor-pointer"
+        class="px-4 py-2 rounded-xl bg-[#FAF6F1] border border-[#E4D8CC] text-xs font-bold text-[#1A170F] disabled:opacity-40 cursor-pointer hover:bg-[#F4ECE5]"
       >
         Previous
       </button>
-      <span class="text-xs text-[#1A3D63] px-3 font-medium">Page {{ meta.page }} of {{ meta.totalPages }}</span>
+      <span class="text-xs text-[#1A170F]/80 px-3 font-semibold">Page {{ meta.page }} of {{ meta.totalPages }}</span>
       <button 
         @click="changePage(meta.page + 1)" 
         :disabled="meta.page >= meta.totalPages"
-        class="px-4 py-2 rounded-xl pill-flat text-xs font-semibold text-[#0A1931] disabled:opacity-40 cursor-pointer"
+        class="px-4 py-2 rounded-xl bg-[#FAF6F1] border border-[#E4D8CC] text-xs font-bold text-[#1A170F] disabled:opacity-40 cursor-pointer hover:bg-[#F4ECE5]"
       >
         Next
       </button>
+    </div>
+
+    <!-- Mobile Filter Slide-over Drawer Modal -->
+    <div 
+      v-if="mobileFilterOpen" 
+      class="lg:hidden fixed inset-0 z-50 flex justify-end bg-slate-950/60 backdrop-blur-xs transition-opacity"
+      @click="mobileFilterOpen = false"
+    >
+      <div 
+        class="bg-[#FAF6F1] text-[#1A170F] w-full max-w-xs h-full p-6 overflow-y-auto flex flex-col justify-between shadow-2xl border-l border-[#E4D8CC]"
+        @click.stop
+      >
+        <div class="space-y-6">
+          <div class="flex justify-between items-center pb-4 border-b border-[#E4D8CC]">
+            <h2 class="font-serif text-lg font-bold text-[#1A170F]">Filter Products</h2>
+            <button 
+              @click="mobileFilterOpen = false" 
+              class="p-1 rounded-lg text-[#1A170F]/60 hover:text-[#1A170F] hover:bg-[#E4D8CC]/40 transition text-sm font-bold"
+            >
+              ✕
+            </button>
+          </div>
+
+          <!-- Categories -->
+          <div>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-[#1A170F] mb-3">Categories</h3>
+            <div class="space-y-2">
+              <button 
+                @click="setCategory(''); mobileFilterOpen = false"
+                :class="[!filters.category ? 'font-bold text-[#E04F26] bg-[#F4ECE5]' : 'text-[#1A170F]/80']"
+                class="w-full text-left text-xs px-3 py-2 rounded-xl transition cursor-pointer"
+              >
+                All Categories
+              </button>
+              <button 
+                v-for="cat in categories" 
+                :key="cat.id"
+                @click="setCategory(cat.slug); mobileFilterOpen = false"
+                :class="[filters.category === cat.slug ? 'font-bold text-[#E04F26] bg-[#F4ECE5]' : 'text-[#1A170F]/80']"
+                class="w-full text-left text-xs px-3 py-2 rounded-xl transition cursor-pointer"
+              >
+                {{ cat.name }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Sizes -->
+          <div>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-[#1A170F] mb-3">Sizes</h3>
+            <div class="flex flex-wrap gap-2">
+              <button 
+                v-for="size in availableSizes" 
+                :key="size"
+                @click="toggleSize(size)"
+                :class="[filters.size === size ? 'bg-[#1A170F] text-[#F4ECE5]' : 'bg-[#F4ECE5] text-[#1A170F] border border-[#E4D8CC]']"
+                class="w-10 h-10 text-xs font-bold rounded-xl transition cursor-pointer flex items-center justify-center"
+              >
+                {{ size }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Colors -->
+          <div>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-[#1A170F] mb-3">Colors</h3>
+            <div class="flex flex-wrap gap-2">
+              <button 
+                v-for="c in availableColors" 
+                :key="c"
+                @click="toggleColor(c)"
+                :class="[filters.color === c ? 'bg-[#1A170F] text-[#F4ECE5]' : 'bg-[#F4ECE5] text-[#1A170F] border border-[#E4D8CC]']"
+                class="px-3 py-2 text-xs font-semibold rounded-xl transition cursor-pointer"
+              >
+                {{ c }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Actions -->
+        <div class="pt-6 border-t border-[#E4D8CC] space-y-3">
+          <button 
+            @click="clearAllFilters(); mobileFilterOpen = false"
+            class="w-full py-2.5 rounded-xl border border-[#E4D8CC] text-[#1A170F] font-bold text-xs uppercase tracking-wider hover:bg-[#F4ECE5] transition"
+          >
+            Clear All Filters
+          </button>
+          <button 
+            @click="mobileFilterOpen = false"
+            class="w-full py-3 rounded-xl bg-[#E04F26] text-white font-extrabold text-xs uppercase tracking-wider shadow-md hover:bg-[#C8431E] transition"
+          >
+            Apply & View Results
+          </button>
+        </div>
+      </div>
     </div>
 
   </main>
@@ -279,6 +377,7 @@ const cartStore = useCartStore();
 const products = ref<any[]>([]);
 const categories = ref<any[]>([]);
 const loading = ref(true);
+const mobileFilterOpen = ref(false);
 const addingProductId = ref<string | null>(null);
 const addedProductId = ref<string | null>(null);
 
@@ -307,7 +406,7 @@ const quickAddToCart = async (product: any, e?: Event) => {
     e.stopPropagation();
   }
 
-  if (addingProductId.value) return;
+  if (!isProductInStock(product) || addingProductId.value) return;
 
   try {
     addingProductId.value = product.id;
@@ -359,8 +458,16 @@ const meta = ref({
   totalPages: 1,
 });
 
+const catalogTopRef = ref<HTMLElement | null>(null);
+
 const hasActiveFilters = computed(() => {
-  return !!(filters.value.category || filters.value.size || filters.value.color || filters.value.maxPrice || filters.value.q);
+  return !!(
+    filters.value.category ||
+    filters.value.size ||
+    filters.value.color ||
+    filters.value.maxPrice ||
+    filters.value.q
+  );
 });
 
 watch(() => route.query, (newQuery) => {
@@ -425,45 +532,50 @@ const toggleColor = (c: string) => {
 };
 
 const clearFilter = (key: keyof typeof filters.value) => {
-  (filters.value as any)[key] = '';
+  if (key === 'page') {
+    filters.value.page = 1;
+  } else if (key === 'sort') {
+    filters.value.sort = 'newest';
+  } else {
+    (filters.value[key] as string) = '';
+  }
   filters.value.page = 1;
   fetchProducts();
 };
 
 const clearAllFilters = () => {
-  filters.value.category = '';
-  filters.value.size = '';
-  filters.value.color = '';
-  filters.value.maxPrice = '';
-  filters.value.q = '';
-  filters.value.page = 1;
+  filters.value = {
+    category: '',
+    size: '',
+    color: '',
+    maxPrice: '',
+    sort: 'newest',
+    q: '',
+    page: 1,
+  };
   fetchProducts();
 };
 
-const catalogTopRef = ref<HTMLElement | null>(null);
-
-const scrollToTop = () => {
+const changePage = (newPage: number) => {
+  if (newPage < 1 || newPage > meta.value.totalPages) return;
+  filters.value.page = newPage;
+  fetchProducts();
   if (typeof window !== 'undefined') {
-    if (catalogTopRef.value) {
-      catalogTopRef.value.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 };
 
-const changePage = (p: number) => {
-  filters.value.page = p;
-  fetchProducts();
-  scrollToTop();
+const formatPrice = (val: any) => {
+  return Number(val || 0).toLocaleString('id-ID');
 };
 
 onMounted(async () => {
   try {
-    categories.value = await fetchApi<any[]>('/categories').catch(() => []);
-  } catch {}
-  await fetchProducts();
+    const categoriesData = await fetchApi<any[]>('/categories').catch(() => []);
+    categories.value = categoriesData || [];
+  } catch (e) {
+    console.error(e);
+  }
+  fetchProducts();
 });
-
-const formatPrice = (val: any) => Number(val || 0).toLocaleString('id-ID');
 </script>
