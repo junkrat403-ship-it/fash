@@ -1,11 +1,9 @@
 <template>
   <main class="bg-[#F4ECE5] text-[#1A170F] min-h-screen">
-    
-    <!-- Hero Section — Responsive Height & Mobile Typography -->
-    <section class="relative pt-20 sm:pt-24 pb-12 sm:pb-0 max-w-[1600px] mx-auto px-4 sm:px-8 min-h-[92vh] sm:min-h-screen h-auto sm:h-[100vh] flex flex-col justify-between overflow-hidden">
-      
-      <!-- Centered Eyebrow Divider Row -->
-      <div class="flex items-center justify-center gap-4 sm:gap-6 mb-2 sm:mb-4 w-full shrink-0 z-20">
+
+    <section class="relative pt-16 xs:pt-18 sm:pt-24 pb-0 max-w-[1600px] mx-auto px-4 sm:px-8 h-screen min-h-[560px] max-h-[1080px] flex flex-col justify-between overflow-hidden">
+
+      <div class="flex items-center justify-center gap-4 sm:gap-6 mb-1 sm:mb-2 w-full shrink-0 z-30">
         <div class="h-px bg-[#1A170F]/25 flex-1"></div>
         <span class="text-[9px] sm:text-xs font-bold uppercase tracking-[0.3em] text-[#1A170F]/80 shrink-0">
           Jubi & Lee Studio
@@ -13,38 +11,57 @@
         <div class="h-px bg-[#1A170F]/25 flex-1"></div>
       </div>
 
-      <!-- Display Typography (Single Line on 375px+ Mobile) -->
-      <h1 class="font-serif text-3xl xs:text-4xl sm:text-7xl md:text-8xl lg:text-[10.5rem] font-black tracking-tighter leading-none uppercase text-[#1A170F] opacity-95 select-none shrink-0 text-center z-10 my-1 sm:my-0">
-        PURE COMFORT
+      <h1 class="font-serif text-[2.75rem] xs:text-5xl sm:text-7xl md:text-8xl lg:text-[9.5rem] xl:text-[12rem] 2xl:text-[14rem] font-black tracking-tighter leading-[0.84] uppercase text-[#1A170F] opacity-95 select-none text-center shrink-0 z-10 relative">
+        PURE<br />COMFORT
       </h1>
 
-      <!-- Transparent Model Portrait -->
-      <div class="relative z-20 flex-1 flex items-end justify-center w-full -mt-4 sm:-mt-24 md:-mt-36 pointer-events-none select-none pb-0 min-h-[260px] sm:min-h-[380px]">
+      <div class="relative z-20 flex-1 flex items-end justify-center w-full -mt-10 xs:-mt-14 sm:-mt-16 md:-mt-28 lg:-mt-44 xl:-mt-60 2xl:-mt-76 pointer-events-none select-none">
+
+        <img 
+          src="/images/models-solo.png" 
+          alt="Jubi & Lee Solo Model"
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
+          class="block sm:hidden h-[60vh] xs:h-[64vh] max-h-[560px] w-auto object-contain object-bottom drop-shadow-xl align-bottom"
+        />
+
+        <img 
+          src="/images/models-duo.png" 
+          alt="Jubi & Lee Duo Collection Models"
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
+          class="hidden sm:block lg:hidden h-[58vh] md:h-[64vh] max-h-[640px] w-auto object-contain object-bottom drop-shadow-xl align-bottom"
+        />
+
         <img 
           src="/images/models-hero.png" 
           alt="Jubi & Lee Collection Models"
-          class="max-h-[48vh] sm:max-h-[68vh] w-auto object-contain object-bottom drop-shadow-xl align-bottom"
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
+          class="hidden lg:block h-[60vh] xl:h-[65vh] 2xl:h-[68vh] max-h-[780px] w-auto object-contain object-bottom drop-shadow-2xl align-bottom"
         />
       </div>
 
-      <!-- Subtitle Descriptor & Right-Aligned Dual CTAs -->
-      <div class="relative sm:absolute sm:bottom-6 sm:left-8 sm:right-8 z-30 flex flex-col md:flex-row justify-between items-center md:items-end gap-4 pointer-events-auto mt-4 sm:mt-0">
-        <p class="text-xs sm:text-sm text-[#1A170F]/90 font-normal leading-relaxed text-center md:text-left max-w-md bg-[#F4ECE5]/90 backdrop-blur-md p-3 sm:p-3.5 rounded-2xl border border-[#E4D8CC] shadow-xs">
+      <div class="absolute bottom-3 left-3 right-3 sm:bottom-6 sm:left-6 sm:right-6 lg:left-8 lg:right-8 z-30 flex flex-row justify-between items-end gap-2.5 sm:gap-4 pointer-events-auto">
+        
+        <p class="text-[10px] xs:text-xs md:text-sm text-[#1A170F]/90 font-normal leading-relaxed text-left max-w-[160px] xs:max-w-[210px] sm:max-w-xs md:max-w-md bg-[#F4ECE5]/95 backdrop-blur-md p-2 xs:p-3 sm:p-3.5 rounded-2xl border border-[#E4D8CC] shadow-xs">
           Designed for everyday movement. Soft natural fibers, relaxed silhouettes, and effortless comfort.
         </p>
 
-        <!-- Right-Aligned Dual Action Buttons -->
-        <div class="flex flex-col sm:flex-row justify-end items-center gap-3 w-full md:w-auto shrink-0">
+        <div class="flex flex-col sm:flex-col lg:flex-row justify-end items-end lg:items-center gap-2 xs:gap-2.5 sm:gap-3 shrink-0">
           <NuxtLink 
             to="/products"
-            class="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-[#E04F26] text-white hover:bg-[#C8431E] font-extrabold text-xs uppercase tracking-widest transition-all duration-200 shadow-xl cursor-pointer text-center"
+            class="px-3 xs:px-6 sm:px-8 lg:px-8 xl:px-12 py-2 xs:py-3 sm:py-3.5 lg:py-4 xl:py-5 rounded-2xl bg-[#E04F26] text-white hover:bg-[#C8431E] font-extrabold text-[9px] xs:text-xs lg:text-sm xl:text-base uppercase tracking-widest transition-all duration-200 shadow-xl cursor-pointer text-center"
           >
             SHOP THE COLLECTION
           </NuxtLink>
 
           <NuxtLink 
             to="/products?sort=newest"
-            class="w-full sm:w-auto px-8 py-3.5 rounded-2xl border-2 border-[#1A170F] bg-[#F4ECE5]/85 backdrop-blur-md text-[#1A170F] hover:bg-[#1A170F] hover:text-[#F4ECE5] font-extrabold text-xs uppercase tracking-widest transition-all duration-200 cursor-pointer text-center"
+            class="px-3 xs:px-6 sm:px-8 lg:px-8 xl:px-12 py-2 xs:py-3 sm:py-3.5 lg:py-4 xl:py-5 rounded-2xl border-2 border-[#1A170F] bg-[#F4ECE5]/85 backdrop-blur-md text-[#1A170F] hover:bg-[#1A170F] hover:text-[#F4ECE5] font-extrabold text-[9px] xs:text-xs lg:text-sm xl:text-base uppercase tracking-widest transition-all duration-200 cursor-pointer text-center"
           >
             EXPLORE NEW ARRIVALS
           </NuxtLink>
@@ -53,11 +70,9 @@
 
     </section>
 
-    <!-- Hot Picks / Bestsellers Section -->
     <section class="bg-[#1A170F] text-[#F4ECE5] py-12 sm:py-24">
       <div class="max-w-[1600px] mx-auto px-4 sm:px-8">
-        
-        <!-- Section Header -->
+
         <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 sm:mb-12 gap-4 sm:gap-6">
           <div>
             <span class="inline-block bg-[#E04F26] text-white text-[10px] uppercase font-black tracking-widest px-3 py-1 rounded-md mb-2 sm:mb-3">
@@ -72,7 +87,6 @@
           </p>
         </div>
 
-        <!-- Product Cards Grid: Responsive 1-col on mobile, 2-col on sm, 4-col on lg -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           <div 
             v-for="product in featuredProducts" 
@@ -84,16 +98,18 @@
             ]"
             class="group rounded-3xl p-4 shadow-lg hover:shadow-2xl transition-all duration-300 border border-white/10 flex flex-col justify-between overflow-hidden h-[430px] sm:h-[490px]"
           >
-            <!-- Top Portion: Dedicated Clickable Navigation Area -->
+            
             <div 
               @click="navigateToProduct(product.slug)"
               class="flex-1 flex flex-col min-h-0 cursor-pointer"
             >
-              <!-- Tall Image container -->
+              
               <div class="relative w-full flex-1 rounded-2xl overflow-hidden bg-slate-200 min-h-0 transition-all duration-300 ease-in-out">
                 <img 
                   :src="product.productImages?.[0]?.url || 'https://via.placeholder.com/400x500'" 
                   :alt="product.name"
+                  loading="lazy"
+                  decoding="async"
                   :class="[
                     isProductInStock(product) 
                       ? 'opacity-100 group-hover:scale-105' 
@@ -101,8 +117,7 @@
                   ]"
                   class="w-full h-full object-cover object-top transition-all duration-500"
                 />
-                
-                <!-- Status Badges -->
+
                 <span 
                   v-if="!isProductInStock(product)"
                   class="absolute top-3 left-3 bg-[#1A170F]/80 backdrop-blur-xs text-white text-[9px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-md z-10"
@@ -117,7 +132,6 @@
                 </span>
               </div>
 
-              <!-- Product Title & Price -->
               <div class="px-1 pt-3 shrink-0">
                 <h3 
                   :class="[isProductInStock(product) ? 'text-[#1A170F] group-hover:text-[#E04F26]' : 'text-[#1A170F]/60']"
@@ -134,7 +148,6 @@
               </div>
             </div>
 
-            <!-- Bottom Portion: Isolated ADD TO CART Button -->
             <div 
               @click.stop.prevent
               class="max-h-0 opacity-0 translate-y-2 group-hover:max-h-14 group-hover:opacity-100 group-hover:translate-y-0 group-hover:mt-3 transition-all duration-300 ease-in-out shrink-0 overflow-hidden"
@@ -166,7 +179,6 @@
       </div>
     </section>
 
-    <!-- Curated Categories Row -->
     <section class="py-12 sm:py-24 max-w-[1600px] mx-auto px-4 sm:px-8">
       <div class="text-center max-w-xl mx-auto mb-8 sm:mb-12">
         <span class="text-xs font-bold uppercase tracking-widest text-[#E04F26]">ESSENTIAL WARDROBE</span>
@@ -183,6 +195,8 @@
           <img 
             :src="cat.imageUrl || 'https://via.placeholder.com/400x500'" 
             :alt="cat.name"
+            loading="lazy"
+            decoding="async"
             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
           />
           <div class="absolute inset-0 bg-gradient-to-t from-[#1A170F]/85 via-[#1A170F]/20 to-transparent"></div>
@@ -203,6 +217,13 @@ import { useCartStore } from '~/stores/cart';
 
 const { fetchApi } = useApi();
 const cartStore = useCartStore();
+
+useSeoMeta({
+  title: 'Jubi & Lee Studio — Modern Editorial Fashion & Luxury Apparel',
+  description: 'Discover curated luxury apparel, everyday essentials, and modern wardrobe pieces designed for movement and elegance at Jubi & Lee Studio.',
+  ogTitle: 'Jubi & Lee Studio — Modern Editorial Fashion',
+  ogDescription: 'Discover curated luxury apparel, everyday essentials, and modern wardrobe pieces.',
+});
 
 const categories = ref<any[]>([]);
 const featuredProducts = ref<any[]>([]);

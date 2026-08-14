@@ -6,7 +6,7 @@
         class="fixed inset-0 z-[120] bg-black/90 flex items-center justify-center select-none overflow-hidden cursor-default"
         @click="handleContainerClick"
       >
-        <!-- Top Right Control Cluster -->
+        
         <div class="absolute top-4 right-4 sm:top-6 sm:right-6 z-30 flex items-center space-x-2 bg-slate-900/80 p-1.5 rounded-2xl border border-slate-800 text-white shadow-2xl backdrop-blur-md cursor-default">
           <button 
             @click.stop="zoomOut" 
@@ -34,7 +34,6 @@
           </button>
         </div>
 
-        <!-- Left / Right Navigation Arrows -->
         <button 
           v-if="images.length > 1"
           @click.stop="prevImage" 
@@ -53,7 +52,6 @@
           ›
         </button>
 
-        <!-- Main Image Stage -->
         <div 
           class="relative w-full h-full p-4 flex items-center justify-center overflow-hidden cursor-default"
           @wheel.prevent="handleWheel"
@@ -65,13 +63,14 @@
           @touchmove="handleTouchMove"
           @touchend="handleTouchEnd"
         >
-          <!-- Image Element (Zoom-in / Zoom-out cursors, native drag disabled) -->
+          
           <img 
             @click="handleImageClick"
             @dragstart.prevent
             draggable="false"
             :src="images[currentIndex]?.url" 
             :alt="images[currentIndex]?.altText || productName || 'Product Image'"
+            decoding="async"
             class="max-w-full max-h-[90vh] object-contain rounded-xl shadow-2xl pointer-events-auto select-none"
             :class="[
               isDragging 
@@ -236,7 +235,6 @@ const updatePan = (newX: number, newY: number) => {
   });
 };
 
-// Panning Handlers (Mouse)
 const startPan = (e: MouseEvent) => {
   e.preventDefault(); // Disable native browser image/file dragging & text selection
   clickStartX.value = e.clientX;
@@ -267,7 +265,6 @@ const endPan = () => {
   isDragging.value = false;
 };
 
-// Panning & Pinch Handlers (Mobile Touch)
 const getTouchDistance = (touches: TouchList) => {
   const dx = touches[0].clientX - touches[1].clientX;
   const dy = touches[0].clientY - touches[1].clientY;
@@ -304,7 +301,6 @@ const handleTouchEnd = () => {
   touchStartDist.value = 0;
 };
 
-// Global Keyboard Shortcuts
 const handleKeydown = (e: KeyboardEvent) => {
   if (!props.isOpen) return;
   if (e.key === 'Escape') {

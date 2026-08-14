@@ -24,6 +24,9 @@
             <img 
               :src="activeMainImage" 
               :alt="product.name" 
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
               class="w-full h-full object-cover transition-all duration-300 group-hover:scale-105"
             />
 
@@ -53,7 +56,7 @@
               ]"
               class="w-16 h-20 sm:w-20 sm:h-24 rounded-2xl overflow-hidden bg-[#FAF6F1] shrink-0 border transition-all duration-200 cursor-pointer"
             >
-              <img :src="img.url" :alt="img.altText || product.name" class="w-full h-full object-cover" />
+              <img :src="img.url" :alt="img.altText || product.name" loading="lazy" decoding="async" class="w-full h-full object-cover" />
             </button>
           </div>
         </div>
@@ -206,6 +209,8 @@
                 <img 
                   :src="rel.productImages?.[0]?.url || 'https://via.placeholder.com/400x500'" 
                   :alt="rel.name" 
+                  loading="lazy"
+                  decoding="async"
                   :class="[
                     isProductInStock(rel) 
                       ? 'opacity-100 group-hover:scale-105' 

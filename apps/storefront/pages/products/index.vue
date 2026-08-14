@@ -163,6 +163,8 @@
                   <img 
                     :src="p.productImages?.[0]?.url || 'https://via.placeholder.com/400x500'" 
                     :alt="p.name"
+                    loading="lazy"
+                    decoding="async"
                     :class="[
                       isProductInStock(p) 
                         ? 'opacity-100 group-hover:scale-105' 

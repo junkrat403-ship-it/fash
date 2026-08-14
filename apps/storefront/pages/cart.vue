@@ -26,6 +26,8 @@
           <img 
             :src="item.variant?.product?.productImages?.[0]?.url" 
             :alt="item.variant?.product?.name" 
+            loading="lazy"
+            decoding="async"
             class="w-24 h-32 object-cover rounded-2xl bg-slate-200 border border-[#E4D8CC] shrink-0"
           />
 

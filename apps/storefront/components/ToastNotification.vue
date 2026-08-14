@@ -10,9 +10,9 @@
         :key="t.id"
         class="pointer-events-auto bg-[#0A1931] text-white p-3.5 sm:p-4 rounded-2xl shadow-2xl border border-[#4A7FA7]/40 flex items-center space-x-3.5 w-full transform transition-all duration-300 backdrop-blur-md"
       >
-        <!-- Product Thumbnail Image if present -->
+        
         <div v-if="t.imageUrl" class="w-12 h-14 rounded-xl overflow-hidden bg-slate-800 border border-slate-700 shrink-0">
-          <img :src="t.imageUrl" :alt="t.title" class="w-full h-full object-cover" />
+          <img :src="t.imageUrl" :alt="t.title" loading="lazy" decoding="async" class="w-full h-full object-cover" />
         </div>
         <div v-else class="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500/30">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -20,7 +20,6 @@
           </svg>
         </div>
 
-        <!-- Toast Text Content -->
         <div class="flex-1 min-w-0">
           <div class="flex items-center space-x-1.5">
             <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
@@ -39,7 +38,6 @@
           </button>
         </div>
 
-        <!-- Close button -->
         <button 
           @click="removeToast(t.id)" 
           class="text-slate-400 hover:text-white p-1 transition cursor-pointer shrink-0 text-sm font-bold"

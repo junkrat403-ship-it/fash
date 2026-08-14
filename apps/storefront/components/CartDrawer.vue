@@ -68,6 +68,8 @@
             <img 
               :src="item.variant?.product?.productImages?.[0]?.url || 'https://via.placeholder.com/150'" 
               :alt="item.variant?.product?.name"
+              loading="lazy"
+              decoding="async"
               class="w-20 h-24 object-cover rounded-xl bg-slate-200 border border-[#E4D8CC] shrink-0"
             />
             <div class="flex-1 flex flex-col justify-between">
