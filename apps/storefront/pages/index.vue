@@ -63,43 +63,40 @@
           </NuxtLink>
 
           <NuxtLink 
-            to="/products?category=outerwear"
-            class="px-3 xs:px-5 sm:px-6 lg:px-6 xl:px-8 py-2 xs:py-3 sm:py-3.5 lg:py-4 xl:py-5 rounded-2xl bg-white/60 hover:bg-white text-[#1A170F] font-bold text-[9px] xs:text-xs lg:text-sm xl:text-base uppercase tracking-widest transition-all duration-200 border border-[#1A170F]/20 cursor-pointer text-center"
+            to="/products?sort=newest"
+            class="px-3 xs:px-6 sm:px-8 lg:px-8 xl:px-12 py-2 xs:py-3 sm:py-3.5 lg:py-4 xl:py-5 rounded-2xl border-2 border-[#1A170F] bg-[#F4ECE5]/85 backdrop-blur-md text-[#1A170F] hover:bg-[#1A170F] hover:text-[#F4ECE5] font-extrabold text-[9px] xs:text-xs lg:text-sm xl:text-base uppercase tracking-widest transition-all duration-200 cursor-pointer text-center"
           >
-            DISCOVER
+            EXPLORE NEW ARRIVALS
           </NuxtLink>
         </div>
       </div>
 
     </section>
 
-    <!-- Everyday Styles Section -->
-    <section class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 border-t border-[#E4D8CC]">
-      <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 sm:mb-12 gap-4">
-        <div>
-          <span class="text-xs uppercase tracking-widest text-[#E04F26] font-bold">Featured Pieces</span>
-          <h2 class="font-serif text-2xl sm:text-4xl font-black text-[#1A170F] mt-2">Everyday Styles Women Love</h2>
-        </div>
-        <NuxtLink 
-          to="/products"
-          class="text-xs uppercase tracking-wider font-extrabold text-[#E04F26] hover:text-[#1A170F] transition inline-flex items-center gap-1 group"
-        >
-          View All Collection 
-          <span class="group-hover:translate-x-1 transition-transform">→</span>
-        </NuxtLink>
-      </div>
+    <section class="bg-[#1A170F] text-[#F4ECE5] py-12 sm:py-24">
+      <div class="max-w-[1600px] mx-auto px-4 sm:px-8">
 
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
-        <template v-if="loading">
-          <ProductCardSkeleton v-for="n in 8" :key="n" />
-        </template>
-        <template v-else>
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 sm:mb-12 gap-4 sm:gap-6">
+          <div>
+            <span class="inline-block bg-[#E04F26] text-white text-[10px] uppercase font-black tracking-widest px-3 py-1 rounded-md mb-2 sm:mb-3">
+              HOT PICKS
+            </span>
+            <h2 class="font-serif text-2xl sm:text-5xl font-black uppercase tracking-tight leading-none text-white">
+              EVERYDAY STYLES WOMEN LOVE
+            </h2>
+          </div>
+          <p class="text-xs sm:text-sm text-slate-300 max-w-xs font-light leading-relaxed">
+            Carefully curated bestsellers designed for comfort, confidence, and everyday elegance.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
           <div 
             v-for="product in featuredProducts" 
             :key="product.id"
             :class="[
               isProductInStock(product) 
-                ? 'bg-[#FAF6F1] text-[#1A170F] border-[#E4D8CC]' 
+                ? 'bg-[#FAF6F1] text-[#1A170F]' 
                 : 'bg-[#FAF6F1]/80 text-[#1A170F]/70 border-[#E4D8CC]/80'
             ]"
             class="group rounded-2xl sm:rounded-3xl p-2.5 sm:p-4 shadow-lg hover:shadow-2xl transition-all duration-300 border border-white/10 flex flex-col justify-between overflow-hidden h-[300px] xs:h-[350px] sm:h-[490px]"
@@ -112,7 +109,7 @@
               
               <div class="relative w-full flex-1 rounded-xl sm:rounded-2xl overflow-hidden bg-slate-200 min-h-0 transition-all duration-300 ease-in-out">
                 <img 
-                  :src="formatImageUrl(product.productImages?.[0]?.url)" 
+                  :src="product.productImages?.[0]?.url || 'https://via.placeholder.com/400x500'" 
                   :alt="product.name"
                   loading="lazy"
                   decoding="async"
@@ -180,7 +177,7 @@
               </button>
             </div>
           </div>
-        </template>
+        </div>
 
       </div>
     </section>
