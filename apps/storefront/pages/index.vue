@@ -18,10 +18,7 @@
         PURE<br />COMFORT
       </h1>
 
-      <div 
-        :style="modelParallaxStyle"
-        class="relative z-20 flex-1 flex items-end justify-center w-full -mt-10 xs:-mt-14 sm:-mt-16 md:-mt-28 lg:-mt-44 xl:-mt-60 2xl:-mt-76 pointer-events-none select-none"
-      >
+      <div class="relative z-20 flex-1 flex items-end justify-center w-full -mt-10 xs:-mt-14 sm:-mt-16 md:-mt-28 lg:-mt-44 xl:-mt-60 2xl:-mt-76 pointer-events-none select-none">
 
         <img 
           src="/images/models-solo.png" 
@@ -255,20 +252,10 @@ const updateHeroHeight = () => {
   }
 };
 
-const modelParallaxStyle = computed(() => {
-  const y = scrollY.value;
-  if (y === 0) return {};
-  const translateY = y * 0.65;
-  return {
-    transform: `translate3d(0, ${translateY.toFixed(1)}px, 0)`,
-    willChange: 'transform',
-  };
-});
-
 const headingParallaxStyle = computed(() => {
   const y = scrollY.value;
   if (y === 0) return {};
-  const translateY = y * 0.15;
+  const translateY = y * 0.35;
   return {
     transform: `translate3d(0, ${translateY.toFixed(1)}px, 0)`,
     willChange: 'transform',
