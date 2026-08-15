@@ -90,7 +90,7 @@
           </p>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
           <div 
             v-for="product in featuredProducts" 
             :key="product.id"
@@ -99,7 +99,7 @@
                 ? 'bg-[#FAF6F1] text-[#1A170F]' 
                 : 'bg-[#FAF6F1]/80 text-[#1A170F]/70 border-[#E4D8CC]/80'
             ]"
-            class="group rounded-3xl p-4 shadow-lg hover:shadow-2xl transition-all duration-300 border border-white/10 flex flex-col justify-between overflow-hidden h-[430px] sm:h-[490px]"
+            class="group rounded-2xl sm:rounded-3xl p-2.5 sm:p-4 shadow-lg hover:shadow-2xl transition-all duration-300 border border-white/10 flex flex-col justify-between overflow-hidden h-[300px] xs:h-[350px] sm:h-[490px]"
           >
             
             <div 
@@ -107,7 +107,7 @@
               class="flex-1 flex flex-col min-h-0 cursor-pointer"
             >
               
-              <div class="relative w-full flex-1 rounded-2xl overflow-hidden bg-slate-200 min-h-0 transition-all duration-300 ease-in-out">
+              <div class="relative w-full flex-1 rounded-xl sm:rounded-2xl overflow-hidden bg-slate-200 min-h-0 transition-all duration-300 ease-in-out">
                 <img 
                   :src="product.productImages?.[0]?.url || 'https://via.placeholder.com/400x500'" 
                   :alt="product.name"
@@ -123,28 +123,28 @@
 
                 <span 
                   v-if="!isProductInStock(product)"
-                  class="absolute top-3 left-3 bg-[#1A170F]/80 backdrop-blur-xs text-white text-[9px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-md z-10"
+                  class="absolute top-2 left-2 xs:top-3 xs:left-3 bg-[#1A170F]/80 backdrop-blur-xs text-white text-[7px] xs:text-[9px] uppercase font-bold tracking-wider px-1.5 xs:px-2.5 py-0.5 xs:py-1 rounded-md z-10"
                 >
                   OUT OF STOCK
                 </span>
                 <span 
                   v-else
-                  class="absolute top-3 left-3 bg-[#1A170F] text-white text-[9px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-md z-10"
+                  class="absolute top-2 left-2 xs:top-3 xs:left-3 bg-[#1A170F] text-white text-[7px] xs:text-[9px] uppercase font-bold tracking-wider px-1.5 xs:px-2.5 py-0.5 xs:py-1 rounded-md z-10"
                 >
                   ● BEST SELLER
                 </span>
               </div>
 
-              <div class="px-1 pt-3 shrink-0">
+              <div class="px-0.5 xs:px-1 pt-2 sm:pt-3 shrink-0">
                 <h3 
                   :class="[isProductInStock(product) ? 'text-[#1A170F] group-hover:text-[#E04F26]' : 'text-[#1A170F]/60']"
-                  class="font-serif font-bold text-base transition leading-snug line-clamp-1"
+                  class="font-serif font-bold text-xs xs:text-sm sm:text-base transition leading-snug line-clamp-1"
                 >
                   {{ product.name }}
                 </h3>
                 <p 
                   :class="[isProductInStock(product) ? 'text-[#1A170F]' : 'text-[#1A170F]/60']"
-                  class="text-sm font-extrabold mt-1 tnum"
+                  class="text-xs xs:text-sm sm:text-base font-extrabold mt-0.5 xs:mt-1 tnum"
                 >
                   Rp{{ formatPrice(product.basePrice) }}
                 </p>
@@ -153,14 +153,14 @@
 
             <div 
               @click.stop.prevent
-              class="max-h-0 opacity-0 translate-y-2 group-hover:max-h-14 group-hover:opacity-100 group-hover:translate-y-0 group-hover:mt-3 transition-all duration-300 ease-in-out shrink-0 overflow-hidden"
+              class="max-h-0 opacity-0 translate-y-2 group-hover:max-h-14 group-hover:opacity-100 group-hover:translate-y-0 group-hover:mt-2 sm:group-hover:mt-3 transition-all duration-300 ease-in-out shrink-0 overflow-hidden"
             >
               <button 
                 v-if="isProductInStock(product)"
                 type="button"
                 @click.stop.prevent="quickAddToCart(product, $event)"
                 :disabled="addingProductId === product.id"
-                class="w-full py-2.5 rounded-xl border-2 border-[#1A170F] text-[#1A170F] hover:bg-[#1A170F] hover:text-[#F4ECE5] font-extrabold text-xs uppercase tracking-wider transition-all duration-200 cursor-pointer shadow-xs disabled:opacity-50 flex items-center justify-center gap-1.5"
+                class="w-full py-1.5 xs:py-2 sm:py-2.5 rounded-xl border-2 border-[#1A170F] text-[#1A170F] hover:bg-[#1A170F] hover:text-[#F4ECE5] font-extrabold text-[9px] xs:text-[11px] sm:text-xs uppercase tracking-wider transition-all duration-200 cursor-pointer shadow-xs disabled:opacity-50 flex items-center justify-center gap-1"
               >
                 <span v-if="addedProductId === product.id" class="text-emerald-700 font-black">ADDED ✓</span>
                 <span v-else-if="addingProductId === product.id">ADDING...</span>
@@ -171,7 +171,7 @@
                 v-else
                 type="button"
                 disabled
-                class="w-full py-2.5 rounded-xl border-2 border-slate-300 bg-slate-200 text-slate-500 font-extrabold text-xs uppercase tracking-wider cursor-not-allowed opacity-80 flex items-center justify-center"
+                class="w-full py-1.5 xs:py-2 sm:py-2.5 rounded-xl border-2 border-slate-300 bg-slate-200 text-slate-500 font-extrabold text-[9px] xs:text-[11px] sm:text-xs uppercase tracking-wider cursor-not-allowed opacity-80 flex items-center justify-center"
               >
                 OUT OF STOCK
               </button>
