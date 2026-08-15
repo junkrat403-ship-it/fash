@@ -192,10 +192,6 @@
         class="bg-[#F4ECE5] w-full p-6 space-y-4 border-b border-[#E4D8CC] shadow-xl text-[#1A170F]"
         @click.stop
       >
-        <div class="flex justify-between items-center pb-3 border-b border-[#E4D8CC]">
-          <span class="font-serif font-bold text-lg">Navigation</span>
-          <button @click="mobileMenuOpen = false" class="text-xs text-[#1A170F]/60 hover:text-[#1A170F] font-bold p-1">Close ✕</button>
-        </div>
         <NuxtLink 
           v-for="item in navLinks"
           :key="item.path"
