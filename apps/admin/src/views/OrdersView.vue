@@ -7,7 +7,21 @@
         <p class="text-xs text-slate-500 mt-1">Manage order status transitions, inspect line item snapshots, and view WhatsApp messages</p>
       </div>
 
-      <!-- Pipeline Tabs -->
+      <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-2xs flex flex-wrap items-center gap-4">
+        <div class="relative flex-1 min-w-[240px]">
+          <input 
+            v-model="searchQuery" 
+            @input="debounceSearch"
+            type="text" 
+            placeholder="Search orders by ref number, customer name, phone..." 
+            class="w-full pl-9 pr-3.5 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-slate-900 bg-white text-slate-900"
+          />
+          <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+          </svg>
+        </div>
+      </div>
+
       <div class="flex flex-wrap gap-2 border-b border-slate-200 pb-3">
         <button 
           v-for="tab in pipelineTabs" 
@@ -20,7 +34,6 @@
         </button>
       </div>
 
-      <!-- Orders List Table -->
       <div class="bg-white rounded-2xl border border-slate-200/80 shadow-2xs overflow-hidden">
         <div v-if="loading" class="p-12 text-center text-xs text-slate-400">Loading orders pipeline...</div>
         <div v-else-if="!orders.length" class="p-12 text-center text-xs text-slate-500">No orders found in this pipeline state.</div>
@@ -70,7 +83,6 @@
         </table>
       </div>
 
-      <!-- Order Detail Modal -->
       <div v-if="showModal && selectedOrder" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center z-50 p-4 overflow-y-auto">
         <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-3xl w-full space-y-6 shadow-2xl max-h-[90vh] overflow-y-auto text-xs">
           
@@ -82,7 +94,6 @@
             <button @click="showModal = false" class="text-slate-400 hover:text-slate-600 text-base font-bold">✕</button>
           </div>
 
-          <!-- Status Pipeline Action Bar -->
           <div v-if="authStore.hasPermission('orders.write')" class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
             <h3 class="font-bold text-slate-900">Update Pipeline Status</h3>
             <div class="flex flex-wrap gap-2">
@@ -99,7 +110,6 @@
             </div>
           </div>
 
-          <!-- Customer & Address Snapshots -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
               <h4 class="font-bold text-slate-900 mb-2">Customer Info (Snapshot)</h4>
@@ -116,7 +126,6 @@
             </div>
           </div>
 
-          <!-- Order Item Snapshots Table -->
           <div>
             <h4 class="font-serif font-bold text-sm text-slate-900 mb-2">Ordered Items (Price Snapshot)</h4>
             <div class="space-y-2">
@@ -132,7 +141,6 @@
             </div>
           </div>
 
-          <!-- Exact WhatsApp Message -->
           <div>
             <h4 class="font-bold text-slate-900 mb-1">Generated WhatsApp Order Message</h4>
             <pre class="bg-slate-900 text-emerald-400 p-4 rounded-xl font-mono text-[11px] whitespace-pre-wrap">{{ selectedOrder.whatsappMessage }}</pre>
@@ -168,10 +176,23 @@ const pipelineTabs = [
   { label: 'Cancelled', value: 'cancelled' },
 ];
 
+const searchQuery = ref('');
+
+let debounceTimer: any = null;
+const debounceSearch = () => {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => {
+    fetchOrders();
+  }, 400);
+};
+
 const fetchOrders = async () => {
   try {
     loading.value = true;
-    const url = `http://localhost:3000/api/v1/admin/orders?status=${activeTab.value}`;
+    let url = `http://localhost:3000/api/v1/admin/orders?status=${activeTab.value}`;
+    if (searchQuery.value) {
+      url += `&search=${encodeURIComponent(searchQuery.value)}`;
+    }
     const res = await fetch(url, {
       headers: { Authorization: `Bearer ${authStore.token}` },
     });

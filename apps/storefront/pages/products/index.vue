@@ -484,6 +484,7 @@ let debounceTimer: any = null;
 const debounceSearch = () => {
   clearTimeout(debounceTimer);
   debounceTimer = setTimeout(() => {
+    filters.value.page = 1;
     fetchProducts();
   }, 400);
 };

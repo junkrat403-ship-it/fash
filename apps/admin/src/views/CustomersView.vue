@@ -10,7 +10,7 @@
       <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-2xs">
         <input 
           v-model="searchQuery" 
-          @input="fetchCustomers" 
+          @input="debounceSearch" 
           type="text" 
           placeholder="Search by customer name, phone, email..." 
           class="w-full sm:w-80 px-3.5 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-slate-900"
@@ -62,6 +62,14 @@ const authStore = useAuthStore();
 const customers = ref<any[]>([]);
 const loading = ref(true);
 const searchQuery = ref('');
+
+let debounceTimer: any = null;
+const debounceSearch = () => {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => {
+    fetchCustomers();
+  }, 400);
+};
 
 const fetchCustomers = async () => {
   try {

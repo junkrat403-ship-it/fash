@@ -1,8 +1,7 @@
 <template>
   <AdminLayout>
     <div class="space-y-6">
-      
-      <!-- Top Header & Actions -->
+
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 class="text-2xl font-serif font-bold text-slate-900">Product Management</h1>
@@ -18,11 +17,10 @@
         </button>
       </div>
 
-      <!-- Filters & Search -->
       <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-2xs flex flex-wrap items-center gap-4">
         <input 
           v-model="searchQuery" 
-          @input="fetchProducts"
+          @input="debounceSearch"
           type="text" 
           placeholder="Search products by name, SKU prefix, slug..." 
           class="px-3.5 py-2 rounded-xl border border-slate-200 text-xs flex-1 min-w-[200px] focus:outline-none focus:ring-2 focus:ring-slate-900"
@@ -40,7 +38,6 @@
         </select>
       </div>
 
-      <!-- Table Container -->
       <div class="bg-white rounded-2xl border border-slate-200/80 shadow-2xs overflow-hidden">
         <div v-if="loading" class="p-12 text-center text-xs text-slate-400">
           Loading products...
@@ -119,7 +116,6 @@
         </table>
       </div>
 
-      <!-- Create / Edit Modal -->
       <div v-if="showModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center z-50 p-4 overflow-y-auto">
         <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-2xl w-full space-y-6 shadow-2xl max-h-[90vh] overflow-y-auto">
           
@@ -172,13 +168,11 @@
               <textarea v-model="form.description" rows="3" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs"></textarea>
             </div>
 
-            <!-- Primary Image URL -->
             <div>
               <label class="block font-semibold text-slate-700 uppercase tracking-wider mb-1">Primary Image URL</label>
               <input v-model="form.imageUrl" type="url" placeholder="https://images.unsplash.com/..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs" />
             </div>
 
-            <!-- Variant Creator (for new products) -->
             <div v-if="!editingId" class="pt-4 border-t border-slate-200 space-y-3">
               <div class="flex justify-between items-center">
                 <h3 class="font-bold text-slate-900">Product Variants & Initial Stock</h3>
@@ -254,6 +248,14 @@ const addVariantRow = () => {
 
 const removeVariantRow = (idx: number) => {
   form.value.variants.splice(idx, 1);
+};
+
+let debounceTimer: any = null;
+const debounceSearch = () => {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => {
+    fetchProducts();
+  }, 400);
 };
 
 const fetchProducts = async () => {

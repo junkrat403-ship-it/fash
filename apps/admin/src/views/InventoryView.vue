@@ -1,8 +1,7 @@
 <template>
   <AdminLayout>
     <div class="space-y-6">
-      
-      <!-- Top Header -->
+
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 class="text-2xl font-serif font-bold text-[#0A1931]">Inventory & Stock Audit</h1>
@@ -10,12 +9,11 @@
         </div>
       </div>
 
-      <!-- Search & Filters Bar (Matches Products Page Styling & Behavior) -->
       <div class="bg-white p-4 rounded-2xl border border-[#B3CFE5]/50 shadow-2xs flex flex-wrap items-center gap-4">
         <div class="relative flex-1 min-w-[240px]">
           <input 
             v-model="searchQuery" 
-            @input="fetchInventory"
+            @input="debounceSearch"
             type="text" 
             placeholder="Search inventory by product name or SKU..." 
             class="w-full pl-9 pr-3.5 py-2 rounded-xl border border-[#B3CFE5]/60 text-xs focus:outline-none focus:ring-2 focus:ring-[#28537A] bg-white text-[#0A1931]"
@@ -31,7 +29,6 @@
         </label>
       </div>
 
-      <!-- Inventory Table Grouped by Product -->
       <div class="bg-white rounded-2xl border border-[#B3CFE5]/50 shadow-2xs overflow-hidden">
         <div v-if="loading" class="p-12 text-center text-xs text-slate-400">Loading inventory...</div>
         <div v-else-if="!groupedInventory.length" class="p-12 text-center text-slate-500 text-xs">
@@ -51,8 +48,7 @@
           </thead>
           <tbody>
             <template v-for="group in groupedInventory" :key="group.product?.id || group.product?.name">
-              
-              <!-- Product Group Section Header -->
+
               <tr class="bg-slate-100/80 border-t-2 border-b border-slate-200">
                 <td colspan="6" class="py-3 px-4">
                   <div class="flex items-center justify-between">
@@ -78,7 +74,6 @@
                 </td>
               </tr>
 
-              <!-- Variant Sub-Rows -->
               <tr v-for="v in group.variants" :key="v.id" class="hover:bg-slate-50/80 border-b border-slate-100 transition">
                 <td class="py-3 px-4 font-mono font-semibold text-[#0A1931] pl-8">
                   <span class="text-slate-400 mr-1 font-sans">└</span> {{ v.sku }}
@@ -125,7 +120,6 @@
         </table>
       </div>
 
-      <!-- Stock Adjustment Modal -->
       <div v-if="showAdjustModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full space-y-4 shadow-2xl border border-slate-100">
           <h2 class="font-serif font-bold text-lg text-[#0A1931]">Record Stock Adjustment</h2>
@@ -197,6 +191,14 @@ const groupedInventory = computed(() => {
 
   return Array.from(map.values());
 });
+
+let debounceTimer: any = null;
+const debounceSearch = () => {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => {
+    fetchInventory();
+  }, 400);
+};
 
 const fetchInventory = async () => {
   try {
