@@ -53,7 +53,7 @@
           <button @click="clearFilter('q')" class="hover:text-[#E04F26] font-bold ml-0.5 cursor-pointer" title="Remove search filter">×</button>
         </span>
         <span v-if="filters.category" class="inline-flex items-center gap-1.5 text-xs bg-[#1A170F] text-[#F4ECE5] px-3 py-1 rounded-full shadow-xs">
-          Category: {{ filters.category }}
+          Category: {{ getCategoryName(filters.category) }}
           <button @click="clearFilter('category')" class="hover:text-[#E04F26] font-bold ml-0.5 cursor-pointer" title="Remove category filter">×</button>
         </span>
         <span v-if="filters.size" class="inline-flex items-center gap-1.5 text-xs bg-[#1A170F] text-[#F4ECE5] px-3 py-1 rounded-full shadow-xs">
@@ -61,12 +61,13 @@
           <button @click="clearFilter('size')" class="hover:text-[#E04F26] font-bold ml-0.5 cursor-pointer" title="Remove size filter">×</button>
         </span>
         <span v-if="filters.color" class="inline-flex items-center gap-1.5 text-xs bg-[#1A170F] text-[#F4ECE5] px-3 py-1 rounded-full shadow-xs">
+          <span :style="getColorStyle(filters.color)" class="w-2.5 h-2.5 rounded-full inline-block border border-white/40"></span>
           Color: {{ filters.color }}
           <button @click="clearFilter('color')" class="hover:text-[#E04F26] font-bold ml-0.5 cursor-pointer" title="Remove color filter">×</button>
         </span>
-        <span v-if="filters.maxPrice" class="inline-flex items-center gap-1.5 text-xs bg-[#1A170F] text-[#F4ECE5] px-3 py-1 rounded-full shadow-xs">
-          Max Price: Rp{{ formatPrice(filters.maxPrice) }}
-          <button @click="clearFilter('maxPrice')" class="hover:text-[#E04F26] font-bold ml-0.5 cursor-pointer" title="Remove price filter">×</button>
+        <span v-if="activePriceRangeLabel" class="inline-flex items-center gap-1.5 text-xs bg-[#1A170F] text-[#F4ECE5] px-3 py-1 rounded-full shadow-xs">
+          Price: {{ activePriceRangeLabel }}
+          <button @click="clearPriceFilter" class="hover:text-[#E04F26] font-bold ml-0.5 cursor-pointer" title="Remove price filter">×</button>
         </span>
         <button @click="clearAllFilters" class="text-xs text-[#E04F26] font-semibold underline cursor-pointer hover:text-[#1A170F] ml-1">Reset All</button>
       </div>
@@ -104,7 +105,7 @@
                 v-for="size in availableSizes" 
                 :key="size"
                 @click="toggleSize(size)"
-                :class="[filters.size === size ? 'bg-[#1A170F] text-[#F4ECE5]' : 'bg-[#FAF6F1] text-[#1A170F] border border-[#E4D8CC]']"
+                :class="[filters.size === size ? 'bg-[#1A170F] text-[#F4ECE5]' : 'bg-[#FAF6F1] text-[#1A170F] border border-[#E4D8CC] hover:border-[#1A170F]']"
                 class="w-9 h-9 text-xs font-semibold rounded-xl transition cursor-pointer flex items-center justify-center"
               >
                 {{ size }}
@@ -114,16 +115,64 @@
 
           <div>
             <h3 class="text-xs font-bold uppercase tracking-wider text-[#1A170F] mb-3">Colors</h3>
-            <div class="flex flex-wrap gap-2">
-              <button 
+            <div class="flex flex-wrap gap-2.5">
+              <div 
                 v-for="c in availableColors" 
                 :key="c"
-                @click="toggleColor(c)"
-                :class="[filters.color === c ? 'bg-[#1A170F] text-[#F4ECE5]' : 'bg-[#FAF6F1] text-[#1A170F] border border-[#E4D8CC]']"
-                class="px-3 py-1.5 text-xs font-medium rounded-xl transition cursor-pointer"
+                class="relative group/swatch flex items-center justify-center"
               >
-                {{ c }}
-              </button>
+                <button 
+                  @click="toggleColor(c)"
+                  :style="getColorStyle(c)"
+                  :class="[
+                    filters.color === c 
+                      ? 'ring-2 ring-[#E04F26] ring-offset-2 ring-offset-[#FAF6F1] scale-110' 
+                      : 'hover:scale-105 border border-[#1A170F]/15 shadow-2xs'
+                  ]"
+                  class="w-7 h-7 sm:w-8 sm:h-8 rounded-full transition-all duration-200 cursor-pointer relative flex items-center justify-center"
+                  :aria-label="`Filter by ${c}`"
+                >
+                  <svg 
+                    v-if="filters.color === c" 
+                    :class="isDarkColor(c) ? 'text-white' : 'text-[#1A170F]'" 
+                    class="w-3.5 h-3.5 font-bold" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    stroke-width="3" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                  </svg>
+                </button>
+
+                <div class="absolute bottom-full mb-1.5 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-[#1A170F] text-[#FAF6F1] text-[10px] font-bold rounded-md shadow-md opacity-0 pointer-events-none group-hover/swatch:opacity-100 group-hover/swatch:-translate-y-0.5 transition-all duration-150 whitespace-nowrap z-30">
+                  {{ c }}
+                  <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[#1A170F]"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-[#1A170F] mb-3">Price</h3>
+            <div class="space-y-2.5">
+              <label 
+                v-for="range in priceRanges" 
+                :key="range.id"
+                class="flex items-center gap-2.5 text-xs text-[#1A170F]/80 hover:text-[#E04F26] cursor-pointer group transition select-none"
+              >
+                <input 
+                  type="radio" 
+                  name="priceRangeDesktop" 
+                  :value="range.id" 
+                  :checked="filters.priceRange === range.id"
+                  @click="selectPriceRange(range)"
+                  class="w-3.5 h-3.5 text-[#E04F26] border-[#E4D8CC] focus:ring-[#E04F26] accent-[#E04F26] cursor-pointer"
+                />
+                <span :class="[filters.priceRange === range.id ? 'font-bold text-[#E04F26]' : 'font-normal']">
+                  {{ range.label }}
+                </span>
+              </label>
             </div>
           </div>
 
@@ -254,95 +303,165 @@
       </button>
     </div>
 
-    <div 
-      v-if="mobileFilterOpen" 
-      class="lg:hidden fixed inset-0 z-50 flex justify-end bg-slate-950/60 backdrop-blur-xs transition-opacity"
-      @click="mobileFilterOpen = false"
+    <!-- Centered Mobile Filter Popup Modal -->
+    <Transition
+      enter-active-class="transition duration-200 ease-out"
+      enter-from-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-active-class="transition duration-150 ease-in"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
     >
       <div 
-        class="bg-[#FAF6F1] text-[#1A170F] w-full max-w-xs h-full p-6 overflow-y-auto flex flex-col justify-between shadow-2xl border-l border-[#E4D8CC]"
-        @click.stop
+        v-if="mobileFilterOpen" 
+        class="lg:hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1A170F]/70 backdrop-blur-xs"
+        @click="mobileFilterOpen = false"
       >
-        <div class="space-y-6">
-          <div class="flex justify-between items-center pb-4 border-b border-[#E4D8CC]">
-            <h2 class="font-serif text-lg font-bold text-[#1A170F]">Filter Products</h2>
+        <div 
+          class="bg-[#FAF6F1] text-[#1A170F] w-full max-w-md max-h-[85vh] rounded-3xl p-6 shadow-2xl border border-[#E4D8CC] flex flex-col justify-between overflow-hidden relative"
+          @click.stop
+        >
+          <!-- Modal Header -->
+          <div class="flex justify-between items-center pb-4 border-b border-[#E4D8CC] shrink-0">
+            <div>
+              <span class="text-[10px] uppercase font-black tracking-widest text-[#E04F26]">Refine Catalog</span>
+              <h2 class="font-serif text-xl font-bold text-[#1A170F]">Filter Products</h2>
+            </div>
             <button 
               @click="mobileFilterOpen = false" 
-              class="p-1 rounded-lg text-[#1A170F]/60 hover:text-[#1A170F] hover:bg-[#E4D8CC]/40 transition text-sm font-bold"
+              class="w-8 h-8 rounded-full bg-[#E4D8CC]/50 hover:bg-[#E4D8CC] text-[#1A170F] flex items-center justify-center transition cursor-pointer text-sm font-bold"
+              title="Close filter modal"
+              aria-label="Close"
             >
               ✕
             </button>
           </div>
 
-          <div>
-            <h3 class="text-xs font-bold uppercase tracking-wider text-[#1A170F] mb-3">Categories</h3>
-            <div class="space-y-2">
-              <button 
-                @click="setCategory(''); mobileFilterOpen = false"
-                :class="[!filters.category ? 'font-bold text-[#E04F26] bg-[#F4ECE5]' : 'text-[#1A170F]/80']"
-                class="w-full text-left text-xs px-3 py-2 rounded-xl transition cursor-pointer"
-              >
-                All Categories
-              </button>
-              <button 
-                v-for="cat in categories" 
-                :key="cat.id"
-                @click="setCategory(cat.slug); mobileFilterOpen = false"
-                :class="[filters.category === cat.slug ? 'font-bold text-[#E04F26] bg-[#F4ECE5]' : 'text-[#1A170F]/80']"
-                class="w-full text-left text-xs px-3 py-2 rounded-xl transition cursor-pointer"
-              >
-                {{ cat.name }}
-              </button>
+          <!-- Scrollable Filter Content -->
+          <div class="py-4 space-y-6 overflow-y-auto flex-1 pr-1">
+            <!-- Categories -->
+            <div>
+              <h3 class="text-xs font-bold uppercase tracking-wider text-[#1A170F] mb-3">Categories</h3>
+              <div class="grid grid-cols-2 gap-2">
+                <button 
+                  @click="setCategory('')"
+                  :class="[!filters.category ? 'font-bold text-[#E04F26] bg-[#F4ECE5] border-[#E04F26]' : 'text-[#1A170F]/80 bg-white/60 border-[#E4D8CC]']"
+                  class="w-full text-left text-xs px-3 py-2.5 rounded-xl border transition cursor-pointer truncate"
+                >
+                  All Categories
+                </button>
+                <button 
+                  v-for="cat in categories" 
+                  :key="cat.id"
+                  @click="setCategory(cat.slug)"
+                  :class="[filters.category === cat.slug ? 'font-bold text-[#E04F26] bg-[#F4ECE5] border-[#E04F26]' : 'text-[#1A170F]/80 bg-white/60 border-[#E4D8CC]']"
+                  class="w-full text-left text-xs px-3 py-2.5 rounded-xl border transition cursor-pointer truncate"
+                >
+                  {{ cat.name }}
+                </button>
+              </div>
+            </div>
+
+            <!-- Sizes -->
+            <div>
+              <h3 class="text-xs font-bold uppercase tracking-wider text-[#1A170F] mb-3">Sizes</h3>
+              <div class="flex flex-wrap gap-2">
+                <button 
+                  v-for="size in availableSizes" 
+                  :key="size"
+                  @click="toggleSize(size)"
+                  :class="[filters.size === size ? 'bg-[#1A170F] text-[#F4ECE5]' : 'bg-[#F4ECE5] text-[#1A170F] border border-[#E4D8CC]']"
+                  class="w-10 h-10 text-xs font-bold rounded-xl transition cursor-pointer flex items-center justify-center"
+                >
+                  {{ size }}
+                </button>
+              </div>
+            </div>
+
+            <!-- Colors (Swatches with Tooltip) -->
+            <div>
+              <h3 class="text-xs font-bold uppercase tracking-wider text-[#1A170F] mb-3">Colors</h3>
+              <div class="flex flex-wrap gap-3">
+                <div 
+                  v-for="c in availableColors" 
+                  :key="c"
+                  class="relative group/swatch flex items-center justify-center"
+                >
+                  <button 
+                    @click="toggleColor(c)"
+                    :style="getColorStyle(c)"
+                    :class="[
+                      filters.color === c 
+                        ? 'ring-2 ring-[#E04F26] ring-offset-2 ring-offset-[#FAF6F1] scale-110' 
+                        : 'border border-[#1A170F]/15 shadow-2xs'
+                    ]"
+                    class="w-8 h-8 rounded-full transition-all duration-200 cursor-pointer relative flex items-center justify-center"
+                    :aria-label="`Filter by ${c}`"
+                  >
+                    <svg 
+                      v-if="filters.color === c" 
+                      :class="isDarkColor(c) ? 'text-white' : 'text-[#1A170F]'" 
+                      class="w-4 h-4 font-bold" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      stroke-width="3" 
+                      viewBox="0 0 24 24"
+                    >
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                    </svg>
+                  </button>
+
+                  <div class="absolute bottom-full mb-1.5 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-[#1A170F] text-[#FAF6F1] text-[10px] font-bold rounded-md shadow-md opacity-0 pointer-events-none group-hover/swatch:opacity-100 transition-all duration-150 whitespace-nowrap z-30">
+                    {{ c }}
+                    <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[#1A170F]"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Price Range -->
+            <div>
+              <h3 class="text-xs font-bold uppercase tracking-wider text-[#1A170F] mb-3">Price</h3>
+              <div class="space-y-2.5">
+                <label 
+                  v-for="range in priceRanges" 
+                  :key="range.id"
+                  class="flex items-center gap-3 text-xs text-[#1A170F]/80 hover:text-[#E04F26] cursor-pointer group transition select-none bg-white/60 p-2.5 rounded-xl border border-[#E4D8CC]"
+                >
+                  <input 
+                    type="radio" 
+                    name="mobilePriceRange" 
+                    :value="range.id" 
+                    :checked="filters.priceRange === range.id"
+                    @click="selectPriceRange(range)"
+                    class="w-4 h-4 text-[#E04F26] border-[#E4D8CC] focus:ring-[#E04F26] accent-[#E04F26] cursor-pointer"
+                  />
+                  <span :class="[filters.priceRange === range.id ? 'font-bold text-[#E04F26]' : 'font-normal']">
+                    {{ range.label }}
+                  </span>
+                </label>
+              </div>
             </div>
           </div>
 
-          <div>
-            <h3 class="text-xs font-bold uppercase tracking-wider text-[#1A170F] mb-3">Sizes</h3>
-            <div class="flex flex-wrap gap-2">
-              <button 
-                v-for="size in availableSizes" 
-                :key="size"
-                @click="toggleSize(size)"
-                :class="[filters.size === size ? 'bg-[#1A170F] text-[#F4ECE5]' : 'bg-[#F4ECE5] text-[#1A170F] border border-[#E4D8CC]']"
-                class="w-10 h-10 text-xs font-bold rounded-xl transition cursor-pointer flex items-center justify-center"
-              >
-                {{ size }}
-              </button>
-            </div>
+          <!-- Modal Footer -->
+          <div class="pt-4 border-t border-[#E4D8CC] flex items-center gap-3 shrink-0">
+            <button 
+              @click="clearAllFilters"
+              class="flex-1 py-3 rounded-xl border border-[#E4D8CC] text-[#1A170F] font-bold text-xs uppercase tracking-wider hover:bg-[#F4ECE5] transition cursor-pointer"
+            >
+              Clear All
+            </button>
+            <button 
+              @click="mobileFilterOpen = false"
+              class="flex-1 py-3 rounded-xl bg-[#E04F26] text-white font-extrabold text-xs uppercase tracking-wider shadow-md hover:bg-[#C8431E] transition cursor-pointer text-center"
+            >
+              Apply & View
+            </button>
           </div>
-
-          <div>
-            <h3 class="text-xs font-bold uppercase tracking-wider text-[#1A170F] mb-3">Colors</h3>
-            <div class="flex flex-wrap gap-2">
-              <button 
-                v-for="c in availableColors" 
-                :key="c"
-                @click="toggleColor(c)"
-                :class="[filters.color === c ? 'bg-[#1A170F] text-[#F4ECE5]' : 'bg-[#F4ECE5] text-[#1A170F] border border-[#E4D8CC]']"
-                class="px-3 py-2 text-xs font-semibold rounded-xl transition cursor-pointer"
-              >
-                {{ c }}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div class="pt-6 border-t border-[#E4D8CC] space-y-3">
-          <button 
-            @click="clearAllFilters(); mobileFilterOpen = false"
-            class="w-full py-2.5 rounded-xl border border-[#E4D8CC] text-[#1A170F] font-bold text-xs uppercase tracking-wider hover:bg-[#F4ECE5] transition"
-          >
-            Clear All Filters
-          </button>
-          <button 
-            @click="mobileFilterOpen = false"
-            class="w-full py-3 rounded-xl bg-[#E04F26] text-white font-extrabold text-xs uppercase tracking-wider shadow-md hover:bg-[#C8431E] transition"
-          >
-            Apply & View Results
-          </button>
         </div>
       </div>
-    </div>
+    </Transition>
 
   </main>
 </template>
@@ -438,13 +557,62 @@ const quickAddToCart = async (product: any, e?: Event) => {
 };
 
 const availableSizes = ['S', 'M', 'L', 'XL', 'One Size'];
-const availableColors = ['Black', 'White', 'Beige', 'Navy', 'Olive', 'Brown'];
+const availableColors = ['Black', 'White', 'Beige', 'Navy', 'Olive', 'Brown', 'Cream', 'Terracotta'];
+
+const colorHexMap: Record<string, { bg: string; border?: string; textDark?: boolean }> = {
+  black: { bg: '#1A170F' },
+  white: { bg: '#FFFFFF', border: '#D1C7BD', textDark: true },
+  cream: { bg: '#FAF6F0', border: '#E2D7CC', textDark: true },
+  beige: { bg: '#D8C7B5', border: '#C4B19E' },
+  brown: { bg: '#6E473B' },
+  navy: { bg: '#1E293B' },
+  olive: { bg: '#556B2F' },
+  terracotta: { bg: '#E04F26' },
+  sage: { bg: '#879F84' },
+  grey: { bg: '#71717A' },
+  gray: { bg: '#71717A' },
+  khaki: { bg: '#BDB092' },
+  pink: { bg: '#E2B4BD' },
+  blush: { bg: '#E2B4BD' },
+  rust: { bg: '#B7410E' },
+};
+
+const getColorStyle = (colorName: string) => {
+  const normalized = (colorName || '').toLowerCase().trim();
+  const found = colorHexMap[normalized] || { bg: '#A89F91' };
+  return {
+    backgroundColor: found.bg,
+    borderColor: found.border || 'transparent',
+  };
+};
+
+const isDarkColor = (colorName: string) => {
+  const normalized = (colorName || '').toLowerCase().trim();
+  const found = colorHexMap[normalized];
+  return !found?.textDark;
+};
+
+interface PriceRangeOption {
+  id: string;
+  label: string;
+  min: number | null;
+  max: number | null;
+}
+
+const priceRanges: PriceRangeOption[] = [
+  { id: 'under-200k', label: 'Under Rp200,000', min: null, max: 200000 },
+  { id: '200k-350k', label: 'Rp200,000 – Rp350,000', min: 200000, max: 350000 },
+  { id: '350k-500k', label: 'Rp350,000 – Rp500,000', min: 350000, max: 500000 },
+  { id: '500k-plus', label: 'Rp500,000+', min: 500000, max: null },
+];
 
 const filters = ref({
   category: (route.query.category as string) || '',
   size: (route.query.size as string) || '',
   color: (route.query.color as string) || '',
+  minPrice: (route.query.minPrice as string) || '',
   maxPrice: (route.query.maxPrice as string) || '',
+  priceRange: (route.query.priceRange as string) || '',
   sort: (route.query.sort as string) || 'newest',
   q: (route.query.q as string) || '',
   page: Number(route.query.page || 1),
@@ -459,12 +627,25 @@ const meta = ref({
 
 const catalogTopRef = ref<HTMLElement | null>(null);
 
+const getCategoryName = (slug: string) => {
+  const cat = categories.value.find(c => c.slug === slug);
+  return cat ? cat.name : slug;
+};
+
+const activePriceRangeLabel = computed(() => {
+  if (!filters.value.priceRange) return '';
+  const found = priceRanges.find(r => r.id === filters.value.priceRange);
+  return found ? found.label : '';
+});
+
 const hasActiveFilters = computed(() => {
   return !!(
     filters.value.category ||
     filters.value.size ||
     filters.value.color ||
+    filters.value.minPrice ||
     filters.value.maxPrice ||
+    filters.value.priceRange ||
     filters.value.q
   );
 });
@@ -473,7 +654,9 @@ watch(() => route.query, (newQuery) => {
   filters.value.category = (newQuery.category as string) || '';
   filters.value.size = (newQuery.size as string) || '';
   filters.value.color = (newQuery.color as string) || '';
+  filters.value.minPrice = (newQuery.minPrice as string) || '';
   filters.value.maxPrice = (newQuery.maxPrice as string) || '';
+  filters.value.priceRange = (newQuery.priceRange as string) || '';
   filters.value.sort = (newQuery.sort as string) || 'newest';
   filters.value.q = (newQuery.q as string) || '';
   filters.value.page = Number(newQuery.page || 1);
@@ -496,7 +679,9 @@ const fetchProducts = async () => {
     if (filters.value.category) queryParams.set('category', filters.value.category);
     if (filters.value.size) queryParams.set('size', filters.value.size);
     if (filters.value.color) queryParams.set('color', filters.value.color);
+    if (filters.value.minPrice) queryParams.set('minPrice', filters.value.minPrice);
     if (filters.value.maxPrice) queryParams.set('maxPrice', filters.value.maxPrice);
+    if (filters.value.priceRange) queryParams.set('priceRange', filters.value.priceRange);
     if (filters.value.sort) queryParams.set('sort', filters.value.sort);
     if (filters.value.q) queryParams.set('q', filters.value.q);
     queryParams.set('page', String(filters.value.page));
@@ -531,11 +716,36 @@ const toggleColor = (c: string) => {
   fetchProducts();
 };
 
+const selectPriceRange = (range: PriceRangeOption) => {
+  if (filters.value.priceRange === range.id) {
+    filters.value.priceRange = '';
+    filters.value.minPrice = '';
+    filters.value.maxPrice = '';
+  } else {
+    filters.value.priceRange = range.id;
+    filters.value.minPrice = range.min !== null ? String(range.min) : '';
+    filters.value.maxPrice = range.max !== null ? String(range.max) : '';
+  }
+  filters.value.page = 1;
+  fetchProducts();
+};
+
+const clearPriceFilter = () => {
+  filters.value.priceRange = '';
+  filters.value.minPrice = '';
+  filters.value.maxPrice = '';
+  filters.value.page = 1;
+  fetchProducts();
+};
+
 const clearFilter = (key: keyof typeof filters.value) => {
   if (key === 'page') {
     filters.value.page = 1;
   } else if (key === 'sort') {
     filters.value.sort = 'newest';
+  } else if (key === 'priceRange' || key === 'minPrice' || key === 'maxPrice') {
+    clearPriceFilter();
+    return;
   } else {
     (filters.value[key] as string) = '';
   }
@@ -548,7 +758,9 @@ const clearAllFilters = () => {
     category: '',
     size: '',
     color: '',
+    minPrice: '',
     maxPrice: '',
+    priceRange: '',
     sort: 'newest',
     q: '',
     page: 1,
