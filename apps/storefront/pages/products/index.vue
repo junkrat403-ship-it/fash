@@ -23,10 +23,11 @@
             </svg>
           </div>
 
+          <!-- Desktop Sort Dropdown -->
           <select 
             v-model="filters.sort" 
             @change="fetchProducts"
-            class="px-3 py-2.5 rounded-xl border border-[#E4D8CC] text-xs bg-[#FAF6F1] focus:outline-none focus:ring-2 focus:ring-[#E04F26] font-medium text-[#1A170F]"
+            class="hidden lg:block px-3 py-2.5 rounded-xl border border-[#E4D8CC] text-xs bg-[#FAF6F1] focus:outline-none focus:ring-2 focus:ring-[#E04F26] font-medium text-[#1A170F] cursor-pointer"
           >
             <option value="newest">Newest Arrivals</option>
             <option value="bestselling">Best Selling</option>
@@ -34,9 +35,22 @@
             <option value="price_desc">Price: High to Low</option>
           </select>
 
+          <!-- Mobile Sort Button (Opens Centered Sort Modal) -->
+          <button 
+            @click="mobileSortOpen = true"
+            class="lg:hidden px-3.5 py-2.5 rounded-xl bg-[#FAF6F1] border border-[#E4D8CC] text-[#1A170F] hover:border-[#E04F26] text-xs font-bold flex items-center gap-1.5 cursor-pointer transition shadow-2xs"
+            title="Sort catalog"
+          >
+            <svg class="w-3.5 h-3.5 text-[#E04F26]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5" />
+            </svg>
+            <span>{{ currentSortLabel }}</span>
+          </button>
+
+          <!-- Mobile Filters Button (Opens Centered Filter Modal) -->
           <button 
             @click="mobileFilterOpen = true"
-            class="lg:hidden px-3.5 py-2.5 rounded-xl bg-[#1A170F] text-[#F4ECE5] hover:bg-[#E04F26] text-xs font-bold flex items-center gap-1.5 cursor-pointer transition"
+            class="lg:hidden px-3.5 py-2.5 rounded-xl bg-[#1A170F] text-[#F4ECE5] hover:bg-[#E04F26] text-xs font-bold flex items-center gap-1.5 cursor-pointer transition shadow-2xs"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0m-9.75 0h9.75" />
@@ -74,7 +88,7 @@
 
       <div class="mt-8 grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
 
-        <aside class="hidden lg:block space-y-8 pr-6 border-r border-[#E4D8CC] sticky top-28 self-start max-h-[calc(100vh-130px)] overflow-y-auto">
+        <aside class="hidden lg:block space-y-8 pl-1 pr-6 border-r border-[#E4D8CC] sticky top-28 self-start max-h-[calc(100vh-130px)] overflow-y-auto">
 
           <div>
             <h3 class="text-xs font-bold uppercase tracking-wider text-[#1A170F] mb-3">Categories</h3>
@@ -115,11 +129,11 @@
 
           <div>
             <h3 class="text-xs font-bold uppercase tracking-wider text-[#1A170F] mb-3">Colors</h3>
-            <div class="flex flex-wrap gap-2.5">
+            <div class="flex flex-wrap gap-3 p-1 -m-1">
               <div 
                 v-for="c in availableColors" 
                 :key="c"
-                class="relative group/swatch flex items-center justify-center"
+                class="relative group/swatch flex items-center justify-center p-0.5"
               >
                 <button 
                   @click="toggleColor(c)"
@@ -129,7 +143,7 @@
                       ? 'ring-2 ring-[#E04F26] ring-offset-2 ring-offset-[#FAF6F1] scale-110' 
                       : 'hover:scale-105 border border-[#1A170F]/15 shadow-2xs'
                   ]"
-                  class="w-7 h-7 sm:w-8 sm:h-8 rounded-full transition-all duration-200 cursor-pointer relative flex items-center justify-center"
+                  class="w-7 h-7 sm:w-8 sm:h-8 rounded-full transition-all duration-200 cursor-pointer relative flex items-center justify-center origin-center"
                   :aria-label="`Filter by ${c}`"
                 >
                   <svg 
@@ -145,7 +159,7 @@
                   </svg>
                 </button>
 
-                <div class="absolute bottom-full mb-1.5 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-[#1A170F] text-[#FAF6F1] text-[10px] font-bold rounded-md shadow-md opacity-0 pointer-events-none group-hover/swatch:opacity-100 group-hover/swatch:-translate-y-0.5 transition-all duration-150 whitespace-nowrap z-30">
+                <div class="absolute bottom-full mb-1.5 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-[#1A170F] text-[#FAF6F1] text-[10px] font-bold rounded-md shadow-md opacity-0 pointer-events-none group-hover/swatch:opacity-100 group-hover/swatch:-translate-y-0.5 transition-all duration-150 whitespace-nowrap z-50">
                   {{ c }}
                   <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[#1A170F]"></div>
                 </div>
@@ -306,20 +320,21 @@
     <!-- Centered Mobile Filter Popup Modal -->
     <Transition
       enter-active-class="transition duration-200 ease-out"
-      enter-from-class="opacity-0"
-      enter-to-class="opacity-100"
+      enter-from-class="opacity-0 scale-95"
+      enter-to-class="opacity-100 scale-100"
       leave-active-class="transition duration-150 ease-in"
-      leave-from-class="opacity-100"
-      leave-to-class="opacity-0"
+      leave-from-class="opacity-100 scale-100"
+      leave-to-class="opacity-0 scale-95"
     >
       <div 
         v-if="mobileFilterOpen" 
-        class="lg:hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1A170F]/70 backdrop-blur-xs"
+        class="lg:hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/65"
         @click="mobileFilterOpen = false"
       >
         <div 
           class="bg-[#FAF6F1] text-[#1A170F] w-full max-w-md max-h-[85vh] rounded-3xl p-6 shadow-2xl border border-[#E4D8CC] flex flex-col justify-between overflow-hidden relative"
           @click.stop
+          data-lenis-prevent
         >
           <!-- Modal Header -->
           <div class="flex justify-between items-center pb-4 border-b border-[#E4D8CC] shrink-0">
@@ -463,11 +478,86 @@
       </div>
     </Transition>
 
+    <!-- Centered Mobile Sort Popup Modal -->
+    <Transition
+      enter-active-class="transition duration-200 ease-out"
+      enter-from-class="opacity-0 scale-95"
+      enter-to-class="opacity-100 scale-100"
+      leave-active-class="transition duration-150 ease-in"
+      leave-from-class="opacity-100 scale-100"
+      leave-to-class="opacity-0 scale-95"
+    >
+      <div 
+        v-if="mobileSortOpen" 
+        class="lg:hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/65"
+        @click="mobileSortOpen = false"
+      >
+        <div 
+          class="bg-[#FAF6F1] text-[#1A170F] w-full max-w-sm rounded-3xl p-6 shadow-2xl border border-[#E4D8CC] flex flex-col justify-between overflow-hidden relative"
+          @click.stop
+          data-lenis-prevent
+        >
+          <!-- Modal Header -->
+          <div class="flex justify-between items-center pb-4 border-b border-[#E4D8CC] shrink-0">
+            <div>
+              <span class="text-[10px] uppercase font-black tracking-widest text-[#E04F26]">Order Catalog</span>
+              <h2 class="font-serif text-xl font-bold text-[#1A170F]">Sort Products</h2>
+            </div>
+            <button 
+              @click="mobileSortOpen = false" 
+              class="w-8 h-8 rounded-full bg-[#E4D8CC]/50 hover:bg-[#E4D8CC] text-[#1A170F] flex items-center justify-center transition cursor-pointer text-sm font-bold"
+              title="Close sort modal"
+              aria-label="Close"
+            >
+              ✕
+            </button>
+          </div>
+
+          <!-- Sort Options List -->
+          <div class="py-4 space-y-2.5">
+            <button 
+              v-for="opt in sortOptions" 
+              :key="opt.value"
+              @click="selectSortOption(opt.value)"
+              :class="[
+                filters.sort === opt.value 
+                  ? 'bg-[#1A170F] text-[#FAF6F1] font-bold border-[#1A170F] shadow-sm' 
+                  : 'bg-white/70 text-[#1A170F] hover:bg-white border-[#E4D8CC]'
+              ]"
+              class="w-full text-left px-4 py-3.5 rounded-2xl border text-xs transition flex items-center justify-between cursor-pointer"
+            >
+              <span>{{ opt.label }}</span>
+              <svg 
+                v-if="filters.sort === opt.value" 
+                class="w-4 h-4 text-[#E04F26]" 
+                fill="none" 
+                stroke="currentColor" 
+                stroke-width="2.5" 
+                viewBox="0 0 24 24"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Modal Footer -->
+          <div class="pt-4 border-t border-[#E4D8CC] shrink-0">
+            <button 
+              @click="mobileSortOpen = false"
+              class="w-full py-3 rounded-xl bg-[#E04F26] text-white font-extrabold text-xs uppercase tracking-wider shadow-md hover:bg-[#C8431E] transition cursor-pointer text-center"
+            >
+              Apply & View
+            </button>
+          </div>
+        </div>
+      </div>
+    </Transition>
+
   </main>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useCartStore } from '~/stores/cart';
 
@@ -496,6 +586,7 @@ useSeoMeta({
 });
 const loading = ref(true);
 const mobileFilterOpen = ref(false);
+const mobileSortOpen = ref(false);
 const addingProductId = ref<string | null>(null);
 const addedProductId = ref<string | null>(null);
 
@@ -558,6 +649,55 @@ const quickAddToCart = async (product: any, e?: Event) => {
 
 const availableSizes = ['S', 'M', 'L', 'XL', 'One Size'];
 const availableColors = ['Black', 'White', 'Beige', 'Navy', 'Olive', 'Brown', 'Cream', 'Terracotta'];
+
+const sortOptions = [
+  { value: 'newest', label: 'Newest Arrivals' },
+  { value: 'bestselling', label: 'Best Selling' },
+  { value: 'price_asc', label: 'Price: Low to High' },
+  { value: 'price_desc', label: 'Price: High to Low' },
+];
+
+const currentSortLabel = computed(() => {
+  const found = sortOptions.find(o => o.value === filters.value.sort);
+  return found ? found.label : 'Sort';
+});
+
+const selectSortOption = (val: string) => {
+  filters.value.sort = val;
+  filters.value.page = 1;
+  fetchProducts();
+  mobileSortOpen.value = false;
+};
+
+// Background scroll lock when mobile filter or sort modal is open
+watch([mobileFilterOpen, mobileSortOpen], ([filterOpen, sortOpen]) => {
+  if (typeof document !== 'undefined') {
+    const isModalOpen = filterOpen || sortOpen;
+    if (isModalOpen) {
+      document.body.style.overflow = 'hidden';
+      const nuxtApp = useNuxtApp();
+      if ((nuxtApp as any).$lenis) {
+        (nuxtApp as any).$lenis.stop();
+      }
+    } else {
+      document.body.style.overflow = '';
+      const nuxtApp = useNuxtApp();
+      if ((nuxtApp as any).$lenis) {
+        (nuxtApp as any).$lenis.start();
+      }
+    }
+  }
+});
+
+onUnmounted(() => {
+  if (typeof document !== 'undefined') {
+    document.body.style.overflow = '';
+    const nuxtApp = useNuxtApp();
+    if ((nuxtApp as any).$lenis) {
+      (nuxtApp as any).$lenis.start();
+    }
+  }
+});
 
 const colorHexMap: Record<string, { bg: string; border?: string; textDark?: boolean }> = {
   black: { bg: '#1A170F' },
