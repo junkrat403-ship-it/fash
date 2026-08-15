@@ -255,7 +255,7 @@ const updateHeroHeight = () => {
 const headingParallaxStyle = computed(() => {
   const y = scrollY.value;
   if (y === 0) return {};
-  const translateY = y * 0.35;
+  const translateY = y * 0.65;
   return {
     transform: `translate3d(0, ${translateY.toFixed(1)}px, 0)`,
     willChange: 'transform',
