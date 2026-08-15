@@ -1,7 +1,7 @@
 <template>
   <main class="bg-[#F4ECE5] text-[#1A170F] min-h-screen">
 
-    <section class="relative pt-16 xs:pt-18 sm:pt-24 pb-0 max-w-[1600px] mx-auto px-4 sm:px-8 h-screen min-h-[560px] max-h-[1080px] flex flex-col justify-between overflow-hidden">
+    <section ref="heroRef" class="relative pt-16 xs:pt-18 sm:pt-24 pb-0 max-w-[1600px] mx-auto px-4 sm:px-8 h-screen min-h-[560px] max-h-[1080px] flex flex-col justify-between overflow-hidden">
 
       <div class="flex items-center justify-center gap-4 sm:gap-6 mb-1 sm:mb-2 w-full shrink-0 z-30">
         <div class="h-px bg-[#1A170F]/25 flex-1"></div>
@@ -11,11 +11,17 @@
         <div class="h-px bg-[#1A170F]/25 flex-1"></div>
       </div>
 
-      <h1 class="font-serif text-[2.75rem] xs:text-5xl sm:text-7xl md:text-8xl lg:text-[9.5rem] xl:text-[12rem] 2xl:text-[14rem] font-black tracking-tighter leading-[0.84] uppercase text-[#1A170F] opacity-95 select-none text-center shrink-0 z-10 relative">
+      <h1 
+        :style="headingParallaxStyle"
+        class="font-serif text-[2.75rem] xs:text-5xl sm:text-7xl md:text-8xl lg:text-[9.5rem] xl:text-[12rem] 2xl:text-[14rem] font-black tracking-tighter leading-[0.84] uppercase text-[#1A170F] opacity-95 select-none text-center shrink-0 z-10 relative"
+      >
         PURE<br />COMFORT
       </h1>
 
-      <div class="relative z-20 flex-1 flex items-end justify-center w-full -mt-10 xs:-mt-14 sm:-mt-16 md:-mt-28 lg:-mt-44 xl:-mt-60 2xl:-mt-76 pointer-events-none select-none">
+      <div 
+        :style="modelParallaxStyle"
+        class="relative z-20 flex-1 flex items-end justify-center w-full -mt-10 xs:-mt-14 sm:-mt-16 md:-mt-28 lg:-mt-44 xl:-mt-60 2xl:-mt-76 pointer-events-none select-none"
+      >
 
         <img 
           src="/images/models-solo.png" 
@@ -212,7 +218,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useCartStore } from '~/stores/cart';
 
 const { fetchApi } = useApi();
@@ -223,6 +229,57 @@ useSeoMeta({
   description: 'Discover curated luxury apparel, everyday essentials, and modern wardrobe pieces designed for movement and elegance at Jubi & Lee Studio.',
   ogTitle: 'Jubi & Lee Studio — Modern Editorial Fashion',
   ogDescription: 'Discover curated luxury apparel, everyday essentials, and modern wardrobe pieces.',
+});
+
+const heroRef = ref<HTMLElement | null>(null);
+const scrollY = ref(0);
+const heroHeight = ref(800);
+let ticking = false;
+
+const updateScroll = () => {
+  if (typeof window === 'undefined') return;
+  scrollY.value = window.scrollY;
+  ticking = false;
+};
+
+const onScroll = () => {
+  if (!ticking) {
+    window.requestAnimationFrame(updateScroll);
+    ticking = true;
+  }
+};
+
+const updateHeroHeight = () => {
+  if (heroRef.value) {
+    heroHeight.value = heroRef.value.offsetHeight || window.innerHeight;
+  }
+};
+
+const heroProgress = computed(() => {
+  if (!heroHeight.value) return 0;
+  return Math.min(Math.max(scrollY.value / heroHeight.value, 0), 1);
+});
+
+const modelParallaxStyle = computed(() => {
+  const p = heroProgress.value;
+  if (p === 0) return {};
+  const translateY = p * 160;
+  const opacity = Math.max(1 - p * 1.3, 0);
+  return {
+    transform: `translate3d(0, ${translateY.toFixed(1)}px, 0)`,
+    opacity: opacity.toFixed(3),
+    willChange: 'transform, opacity',
+  };
+});
+
+const headingParallaxStyle = computed(() => {
+  const p = heroProgress.value;
+  if (p === 0) return {};
+  const translateY = p * 65;
+  return {
+    transform: `translate3d(0, ${translateY.toFixed(1)}px, 0)`,
+    willChange: 'transform',
+  };
 });
 
 const categories = ref<any[]>([]);
@@ -288,6 +345,13 @@ const quickAddToCart = async (product: any, e?: Event) => {
 };
 
 onMounted(async () => {
+  if (typeof window !== 'undefined') {
+    updateHeroHeight();
+    updateScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', updateHeroHeight, { passive: true });
+  }
+
   try {
     const [categoriesData, productsData] = await Promise.all([
       fetchApi<any[]>('/categories').catch(() => []),
@@ -298,6 +362,13 @@ onMounted(async () => {
     featuredProducts.value = sortInStockFirst(productsData?.items || []);
   } catch (e) {
     console.error('Error loading homepage data', e);
+  }
+});
+
+onUnmounted(() => {
+  if (typeof window !== 'undefined') {
+    window.removeEventListener('scroll', onScroll);
+    window.removeEventListener('resize', updateHeroHeight);
   }
 });
 
