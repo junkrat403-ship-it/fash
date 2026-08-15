@@ -224,7 +224,7 @@
                 
                 <div class="relative w-full flex-1 rounded-xl sm:rounded-2xl overflow-hidden bg-slate-200 min-h-0 transition-all duration-300 ease-in-out">
                   <img 
-                    :src="p.productImages?.[0]?.url || 'https://via.placeholder.com/400x500'" 
+                    :src="formatImageUrl(p.productImages?.[0]?.url)" 
                     :alt="p.name"
                     loading="lazy"
                     decoding="async"

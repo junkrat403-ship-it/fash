@@ -68,7 +68,7 @@
             @click="handleImageClick"
             @dragstart.prevent
             draggable="false"
-            :src="images[currentIndex]?.url" 
+            :src="formatImageUrl(images[currentIndex]?.url)" 
             :alt="images[currentIndex]?.altText || productName || 'Product Image'"
             decoding="async"
             class="max-w-full max-h-[90vh] object-contain rounded-xl shadow-2xl pointer-events-auto select-none"

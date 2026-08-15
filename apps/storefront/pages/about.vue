@@ -11,7 +11,7 @@
     <div class="space-y-12 text-[#1A170F] leading-relaxed font-light">
       <div class="aspect-21/9 rounded-3xl overflow-hidden shadow-xl bg-[#FAF6F1] border border-[#E4D8CC]">
         <img 
-          src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80&w=1400&auto=format&fit=crop" 
+          src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80&w=1400&auto=format&fit=crop&fm=webp" 
           alt="Studio lookbook" 
           class="w-full h-full object-cover"
         />

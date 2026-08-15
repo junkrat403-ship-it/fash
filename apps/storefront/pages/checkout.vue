@@ -170,7 +170,7 @@
             class="flex items-center space-x-4 text-xs"
           >
             <img 
-              :src="item.variant?.product?.productImages?.[0]?.url" 
+              :src="formatImageUrl(item.variant?.product?.productImages?.[0]?.url, 'https://via.placeholder.com/150')" 
               :alt="item.variant?.product?.name"
               class="w-14 h-18 object-cover rounded-lg bg-slate-100 border border-slate-200 shrink-0"
             />

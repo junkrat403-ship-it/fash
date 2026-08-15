@@ -66,7 +66,7 @@
             class="flex space-x-4 p-4 rounded-2xl bg-[#FAF6F1] border border-[#E4D8CC] shadow-xs"
           >
             <img 
-              :src="item.variant?.product?.productImages?.[0]?.url || 'https://via.placeholder.com/150'" 
+              :src="formatImageUrl(item.variant?.product?.productImages?.[0]?.url, 'https://via.placeholder.com/150')" 
               :alt="item.variant?.product?.name"
               loading="lazy"
               decoding="async"

@@ -50,13 +50,13 @@
               :key="img.id || idx"
               @click="selectedImage = img.url"
               :class="[
-                activeMainImage === img.url 
+                activeMainImage === formatImageUrl(img.url) || activeMainImage === img.url
                   ? 'ring-2 ring-[#1A170F] scale-95 opacity-100 border-transparent shadow-md' 
                   : 'opacity-65 hover:opacity-100 hover:scale-105 border-[#E4D8CC]'
               ]"
               class="w-16 h-20 sm:w-20 sm:h-24 rounded-2xl overflow-hidden bg-[#FAF6F1] shrink-0 border transition-all duration-200 cursor-pointer"
             >
-              <img :src="img.url" :alt="img.altText || product.name" loading="lazy" decoding="async" class="w-full h-full object-cover" />
+              <img :src="formatImageUrl(img.url)" :alt="img.altText || product.name" loading="lazy" decoding="async" class="w-full h-full object-cover" />
             </button>
           </div>
         </div>
@@ -207,7 +207,7 @@
               
               <div class="relative w-full flex-1 rounded-xl sm:rounded-2xl overflow-hidden bg-slate-200 min-h-0 transition-all duration-300 ease-in-out">
                 <img 
-                  :src="rel.productImages?.[0]?.url || 'https://via.placeholder.com/400x500'" 
+                  :src="formatImageUrl(rel.productImages?.[0]?.url)" 
                   :alt="rel.name" 
                   loading="lazy"
                   decoding="async"
@@ -388,8 +388,8 @@ const allImages = computed(() => {
 });
 
 const activeMainImage = computed(() => {
-  if (selectedImage.value) return selectedImage.value;
-  if (product.value?.productImages?.[0]?.url) return product.value.productImages[0].url;
+  if (selectedImage.value) return formatImageUrl(selectedImage.value);
+  if (product.value?.productImages?.[0]?.url) return formatImageUrl(product.value.productImages[0].url);
   return 'https://via.placeholder.com/600x800';
 });
 

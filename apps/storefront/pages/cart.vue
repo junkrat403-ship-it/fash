@@ -24,7 +24,7 @@
           class="bg-[#FAF6F1] p-4 sm:p-6 rounded-3xl border border-[#E4D8CC] shadow-md flex space-x-4 sm:space-x-6 items-center"
         >
           <img 
-            :src="item.variant?.product?.productImages?.[0]?.url" 
+            :src="formatImageUrl(item.variant?.product?.productImages?.[0]?.url, 'https://via.placeholder.com/150')" 
             :alt="item.variant?.product?.name" 
             loading="lazy"
             decoding="async"
