@@ -330,6 +330,15 @@ onMounted(async () => {
     updateScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', updateHeroHeight, { passive: true });
+
+    try {
+      const nuxtApp = useNuxtApp();
+      if ((nuxtApp as any).$lenis) {
+        (nuxtApp as any).$lenis.on('scroll', (e: any) => {
+          scrollY.value = e.scroll ?? window.scrollY;
+        });
+      }
+    } catch {}
   }
 
   try {
