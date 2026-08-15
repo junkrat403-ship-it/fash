@@ -255,27 +255,20 @@ const updateHeroHeight = () => {
   }
 };
 
-const heroProgress = computed(() => {
-  if (!heroHeight.value) return 0;
-  return Math.min(Math.max(scrollY.value / heroHeight.value, 0), 1);
-});
-
 const modelParallaxStyle = computed(() => {
-  const p = heroProgress.value;
-  if (p === 0) return {};
-  const translateY = p * 160;
-  const opacity = Math.max(1 - p * 1.3, 0);
+  const y = scrollY.value;
+  if (y === 0) return {};
+  const translateY = y * 0.65;
   return {
     transform: `translate3d(0, ${translateY.toFixed(1)}px, 0)`,
-    opacity: opacity.toFixed(3),
-    willChange: 'transform, opacity',
+    willChange: 'transform',
   };
 });
 
 const headingParallaxStyle = computed(() => {
-  const p = heroProgress.value;
-  if (p === 0) return {};
-  const translateY = p * 65;
+  const y = scrollY.value;
+  if (y === 0) return {};
+  const translateY = y * 0.15;
   return {
     transform: `translate3d(0, ${translateY.toFixed(1)}px, 0)`,
     willChange: 'transform',
