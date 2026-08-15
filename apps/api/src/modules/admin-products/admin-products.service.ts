@@ -102,7 +102,6 @@ export class AdminProductsService {
         },
       });
 
-      // Images
       if (dto.images?.length) {
         for (let idx = 0; idx < dto.images.length; idx++) {
           const img = dto.images[idx];
@@ -150,7 +149,6 @@ export class AdminProductsService {
       return product;
     });
 
-    // Return full product with relations after transaction has committed to DB
     return this.findOne(createdProduct.id);
   }
 

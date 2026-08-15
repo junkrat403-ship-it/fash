@@ -11,7 +11,6 @@ export class CheckoutService {
   ) {}
 
   async processCheckout(dto: CheckoutDto, customerId?: string) {
-    // 1. Locate Cart
     let cart;
     if (dto.cartId) {
       cart = await this.prisma.cart.findUnique({
@@ -34,7 +33,6 @@ export class CheckoutService {
       throw new BadRequestException('Your cart is empty');
     }
 
-    // 2. Validate stock for all items
     for (const item of cart.cartItems) {
       if (!item.variant || !item.variant.isActive || item.variant.product.status !== 'published') {
         throw new BadRequestException(`Product variant "${item.variant?.sku || 'Item'}" is no longer available`);
@@ -46,7 +44,6 @@ export class CheckoutService {
       }
     }
 
-    // 3. Generate Sequential Order Number (ORD-YYYYMMDD-XXXX)
     const todayStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
     const orderCountToday = await this.prisma.order.count({
       where: {
@@ -58,7 +55,6 @@ export class CheckoutService {
     const seq = String(orderCountToday + 1).padStart(4, '0');
     const orderNumber = `ORD-${todayStr}-${seq}`;
 
-    // 4. Calculate subtotal & line totals
     let subtotal = 0;
     const orderItemsData = cart.cartItems.map((item) => {
       const unitPrice = Number(item.variant.priceOverride || item.variant.product.basePrice);
@@ -122,7 +118,6 @@ export class CheckoutService {
 
     // 7. Transaction: Create Order, Deduct Stock + Inventory Audit, Record Status History, Clear Cart
     const order = await this.prisma.$transaction(async (tx) => {
-      // Create Order
       const newOrder = await tx.order.create({
         data: {
           orderNumber,
@@ -143,7 +138,6 @@ export class CheckoutService {
         },
       });
 
-      // Record Order Status History
       await tx.orderStatusHistory.create({
         data: {
           orderId: newOrder.id,
@@ -152,7 +146,6 @@ export class CheckoutService {
         },
       });
 
-      // Deduct stock and log inventory adjustments
       for (const item of cart.cartItems) {
         await tx.productVariant.update({
           where: { id: item.variantId },
@@ -173,7 +166,6 @@ export class CheckoutService {
         });
       }
 
-      // Clear Cart Items
       await tx.cartItem.deleteMany({
         where: { cartId: cart.id },
       });

@@ -19,7 +19,6 @@ export const useToast = () => {
 
     toasts.value.unshift(newToast);
 
-    // Keep maximum 3 active toasts visible at once
     if (toasts.value.length > 3) {
       toasts.value.pop();
     }

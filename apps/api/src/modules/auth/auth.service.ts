@@ -38,7 +38,6 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    // Update last login
     await this.prisma.adminUser.update({
       where: { id: admin.id },
       data: { lastLoginAt: new Date() },

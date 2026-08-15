@@ -6,7 +6,6 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('Seeding initial database content with 50+ fashion products...');
 
-  // 1. Permissions
   const permissionsData = [
     { code: 'products.read', description: 'View products and catalog' },
     { code: 'products.write', description: 'Create, edit, delete products' },
@@ -38,7 +37,6 @@ async function main() {
     permissionsMap[p.code] = perm.id;
   }
 
-  // 2. Roles
   const rolesData = [
     {
       name: 'Owner',
@@ -103,7 +101,6 @@ async function main() {
     }
   }
 
-  // 3. Admin User
   const defaultAdminPassword = await bcrypt.hash('AdminPass123!', 10);
   await prisma.adminUser.upsert({
     where: { email: 'admin@fashionstore.com' },
@@ -117,7 +114,6 @@ async function main() {
     },
   });
 
-  // 4. Categories
   const categoriesData = [
     {
       name: 'Tops & Shirts',
@@ -159,7 +155,6 @@ async function main() {
     categoryMap[c.slug] = cat.id;
   }
 
-  // 5. Collections
   const collectionsData = [
     {
       name: 'Summer Drop 2026',
@@ -183,7 +178,6 @@ async function main() {
     });
   }
 
-  // 6. Marketing Banners
   const existingBanners = await prisma.banner.count();
   if (existingBanners === 0) {
     await prisma.banner.create({
@@ -198,9 +192,7 @@ async function main() {
     });
   }
 
-  // 7. Comprehensive 52 Products Dataset
   const sampleProducts = [
-    // --- TOPS & SHIRTS (16 Products) ---
     {
       name: 'Oversized Linen Shirt',
       slug: 'oversized-linen-shirt',
@@ -399,7 +391,6 @@ async function main() {
       vars: [{ sku: 'TS-SOL-S-BLK', size: 'S', color: 'Black', hex: '#000000', stock: 3 }], // Low stock
     },
 
-    // --- OUTERWEAR (12 Products) ---
     {
       name: 'Structured Boxy Blazer',
       slug: 'structured-boxy-blazer',
@@ -534,7 +525,6 @@ async function main() {
       vars: [{ sku: 'OW-USK-OS-NVY', size: 'One Size', color: 'Navy', hex: '#000080', stock: 15 }],
     },
 
-    // --- BOTTOMS (12 Products) ---
     {
       name: 'Wide Leg Tailored Trousers',
       slug: 'wide-leg-tailored-trousers',
@@ -666,7 +656,6 @@ async function main() {
       vars: [{ sku: 'BT-DLS-M-WHT', size: 'M', color: 'White', hex: '#FFFFFF', stock: 16 }],
     },
 
-    // --- ACCESSORIES (12 Products) ---
     {
       name: 'Minimalist Leather Tote Bag',
       slug: 'minimalist-leather-tote-bag',
@@ -822,7 +811,6 @@ async function main() {
       },
     });
 
-    // Replace product images
     await prisma.productImage.deleteMany({ where: { productId: createdProduct.id } });
     for (let idx = 0; idx < p.images.length; idx++) {
       await prisma.productImage.create({
@@ -836,7 +824,6 @@ async function main() {
       });
     }
 
-    // Upsert variants and record inventory adjustment logs
     for (const v of p.vars) {
       const variant = await prisma.productVariant.upsert({
         where: { sku: v.sku },
@@ -870,7 +857,6 @@ async function main() {
     }
   }
 
-  // 8. Default Store Settings
   const settingsData = [
     {
       key: 'store_info',

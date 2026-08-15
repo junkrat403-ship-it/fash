@@ -15,8 +15,7 @@
     </div>
 
     <div v-else class="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
-      
-      <!-- Checkout Form Column -->
+
       <div class="lg:col-span-2 bg-[#F6FAFD] p-6 sm:p-10 rounded-3xl border border-[#B3CFE5]/50 shadow-xs space-y-8">
         
         <form @submit.prevent="submitCheckout" class="space-y-8" novalidate>
@@ -24,7 +23,6 @@
             {{ error }}
           </div>
 
-          <!-- Step 1: Customer Contact Information -->
           <div class="space-y-4">
             <h2 class="font-serif font-bold text-lg text-[#0A1931] pb-2 border-b border-[#B3CFE5]/40 flex items-center gap-2">
               <span class="w-6 h-6 rounded-full bg-[#0A1931] text-white text-xs flex items-center justify-center font-sans font-semibold">1</span>
@@ -80,7 +78,6 @@
             </div>
           </div>
 
-          <!-- Step 2: Shipping Address -->
           <div class="space-y-4 pt-4 border-t border-[#B3CFE5]/40">
             <h2 class="font-serif font-bold text-lg text-[#0A1931] pb-2 border-b border-[#B3CFE5]/40 flex items-center gap-2">
               <span class="w-6 h-6 rounded-full bg-[#0A1931] text-white text-xs flex items-center justify-center font-sans font-semibold">2</span>
@@ -140,7 +137,6 @@
             </div>
           </div>
 
-          <!-- Step 3: Order Notes -->
           <div class="space-y-4 pt-4 border-t border-[#B3CFE5]/40">
             <label class="block text-xs font-semibold text-[#1A3D63] uppercase tracking-wider mb-2">Delivery Notes (Optional)</label>
             <textarea 
@@ -151,7 +147,6 @@
             ></textarea>
           </div>
 
-          <!-- Submit Button -->
           <button 
             type="submit" 
             :disabled="submitting"
@@ -163,7 +158,6 @@
 
       </div>
 
-      <!-- Order Summary Column -->
       <div class="bg-[#F6FAFD] p-6 sm:p-8 rounded-3xl border border-[#B3CFE5]/50 shadow-xs space-y-6">
         <h2 class="font-serif font-bold text-xl text-[#0A1931] pb-4 border-b border-[#B3CFE5]/40">
           Order Summary ({{ cartStore.totalItems }})
@@ -225,6 +219,13 @@ const router = useRouter();
 const cartStore = useCartStore();
 const { fetchApi } = useApi();
 
+useSeoMeta({
+  title: 'Checkout — Jubi & Lee Studio',
+  description: 'Complete your delivery details to place an order via WhatsApp with Jubi & Lee Studio.',
+  ogTitle: 'Checkout — Jubi & Lee Studio',
+  ogDescription: 'Complete your delivery details to place an order via WhatsApp with Jubi & Lee Studio.',
+});
+
 const form = ref({
   customer: {
     name: '',
@@ -266,7 +267,6 @@ const validateForm = (): boolean => {
   fieldErrors.value = {};
   let isValid = true;
 
-  // 1. Full Name
   const trimmedName = form.value.customer.name.trim();
   if (!trimmedName) {
     fieldErrors.value.name = 'Please enter your full name.';
@@ -287,7 +287,6 @@ const validateForm = (): boolean => {
     isValid = false;
   }
 
-  // 3. Email (Optional)
   const trimmedEmail = form.value.customer.email.trim();
   if (trimmedEmail !== '') {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -297,7 +296,6 @@ const validateForm = (): boolean => {
     }
   }
 
-  // 4. Street Address
   const trimmedLine1 = form.value.shippingAddress.line1.trim();
   if (!trimmedLine1) {
     fieldErrors.value.line1 = 'Please enter your street address.';
@@ -307,7 +305,6 @@ const validateForm = (): boolean => {
     isValid = false;
   }
 
-  // 5. City / District
   const trimmedCity = form.value.shippingAddress.city.trim();
   if (!trimmedCity) {
     fieldErrors.value.city = 'Please enter your city or district.';
@@ -356,7 +353,12 @@ const submitCheckout = async () => {
     });
 
     await cartStore.fetchCart();
-    router.push(`/order/confirmation/${res.orderNumber}?autoRedirect=true`);
+
+    if (res?.whatsappRedirectUrl) {
+      window.location.href = res.whatsappRedirectUrl;
+    } else {
+      router.push(`/order/confirmation/${res.orderNumber}`);
+    }
   } catch (e: any) {
     const rawMsg = e?.data?.message || e.message || '';
     if (typeof rawMsg === 'string' && rawMsg.length > 0) {

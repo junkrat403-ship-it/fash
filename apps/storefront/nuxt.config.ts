@@ -1,6 +1,5 @@
 import tailwindcss from '@tailwindcss/vite';
 
-// https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2026-07-30',
   devtools: { enabled: true },
@@ -12,9 +11,12 @@ export default defineNuxtConfig({
       allowedHosts: true,
     },
   },
+  routeRules: {
+    '/api/v1/**': { proxy: process.env.BACKEND_URL ? `${process.env.BACKEND_URL}/api/v1/**` : 'http://localhost:3001/api/v1/**' },
+  },
   runtimeConfig: {
     public: {
-      apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:3000/api/v1',
+      apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:3001/api/v1',
     },
   },
   app: {

@@ -49,7 +49,7 @@
 
           <!-- Mobile Filters Button (Opens Centered Filter Modal) -->
           <button 
-            @click="mobileFilterOpen = true"
+            @click="openMobileFilter"
             class="lg:hidden px-3.5 py-2.5 rounded-xl bg-[#1A170F] text-[#F4ECE5] hover:bg-[#E04F26] text-xs font-bold flex items-center gap-1.5 cursor-pointer transition shadow-2xs"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -318,21 +318,35 @@
     </div>
 
     <!-- Centered Mobile Filter Popup Modal -->
-    <Transition
-      enter-active-class="transition duration-200 ease-out"
-      enter-from-class="opacity-0 scale-95"
-      enter-to-class="opacity-100 scale-100"
-      leave-active-class="transition duration-150 ease-in"
-      leave-from-class="opacity-100 scale-100"
-      leave-to-class="opacity-0 scale-95"
-    >
-      <div 
-        v-if="mobileFilterOpen" 
-        class="lg:hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/65"
-        @click="mobileFilterOpen = false"
+    <div v-if="mobileFilterOpen" class="lg:hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+      <!-- Backdrop (Pure fade animation, never scales) -->
+      <Transition
+        enter-active-class="transition duration-200 ease-out"
+        enter-from-class="opacity-0"
+        enter-to-class="opacity-100"
+        leave-active-class="transition duration-150 ease-in"
+        leave-from-class="opacity-100"
+        leave-to-class="opacity-0"
       >
         <div 
-          class="bg-[#FAF6F1] text-[#1A170F] w-full max-w-md max-h-[85vh] rounded-3xl p-6 shadow-2xl border border-[#E4D8CC] flex flex-col justify-between overflow-hidden relative"
+          v-if="mobileFilterOpen" 
+          class="fixed inset-0 bg-black/65"
+          @click="closeMobileFilter"
+        ></div>
+      </Transition>
+
+      <!-- Modal Dialog (Scale & Fade transition) -->
+      <Transition
+        enter-active-class="transition duration-200 ease-out"
+        enter-from-class="opacity-0 scale-95"
+        enter-to-class="opacity-100 scale-100"
+        leave-active-class="transition duration-150 ease-in"
+        leave-from-class="opacity-100 scale-100"
+        leave-to-class="opacity-0 scale-95"
+      >
+        <div 
+          v-if="mobileFilterOpen" 
+          class="bg-[#FAF6F1] text-[#1A170F] w-full max-w-md max-h-[85vh] rounded-3xl p-6 shadow-2xl border border-[#E4D8CC] flex flex-col justify-between overflow-hidden relative z-10"
           @click.stop
           data-lenis-prevent
         >
@@ -343,7 +357,7 @@
               <h2 class="font-serif text-xl font-bold text-[#1A170F]">Filter Products</h2>
             </div>
             <button 
-              @click="mobileFilterOpen = false" 
+              @click="closeMobileFilter" 
               class="w-8 h-8 rounded-full bg-[#E4D8CC]/50 hover:bg-[#E4D8CC] text-[#1A170F] flex items-center justify-center transition cursor-pointer text-sm font-bold"
               title="Close filter modal"
               aria-label="Close"
@@ -359,8 +373,8 @@
               <h3 class="text-xs font-bold uppercase tracking-wider text-[#1A170F] mb-3">Categories</h3>
               <div class="grid grid-cols-2 gap-2">
                 <button 
-                  @click="setCategory('')"
-                  :class="[!filters.category ? 'font-bold text-[#E04F26] bg-[#F4ECE5] border-[#E04F26]' : 'text-[#1A170F]/80 bg-white/60 border-[#E4D8CC]']"
+                  @click="togglePendingCategory('')"
+                  :class="[!pendingFilters.category ? 'font-bold text-[#E04F26] bg-[#F4ECE5] border-[#E04F26]' : 'text-[#1A170F]/80 bg-white/60 border-[#E4D8CC]']"
                   class="w-full text-left text-xs px-3 py-2.5 rounded-xl border transition cursor-pointer truncate"
                 >
                   All Categories
@@ -368,8 +382,8 @@
                 <button 
                   v-for="cat in categories" 
                   :key="cat.id"
-                  @click="setCategory(cat.slug)"
-                  :class="[filters.category === cat.slug ? 'font-bold text-[#E04F26] bg-[#F4ECE5] border-[#E04F26]' : 'text-[#1A170F]/80 bg-white/60 border-[#E4D8CC]']"
+                  @click="togglePendingCategory(cat.slug)"
+                  :class="[pendingFilters.category === cat.slug ? 'font-bold text-[#E04F26] bg-[#F4ECE5] border-[#E04F26]' : 'text-[#1A170F]/80 bg-white/60 border-[#E4D8CC]']"
                   class="w-full text-left text-xs px-3 py-2.5 rounded-xl border transition cursor-pointer truncate"
                 >
                   {{ cat.name }}
@@ -384,8 +398,8 @@
                 <button 
                   v-for="size in availableSizes" 
                   :key="size"
-                  @click="toggleSize(size)"
-                  :class="[filters.size === size ? 'bg-[#1A170F] text-[#F4ECE5]' : 'bg-[#F4ECE5] text-[#1A170F] border border-[#E4D8CC]']"
+                  @click="togglePendingSize(size)"
+                  :class="[pendingFilters.size === size ? 'bg-[#1A170F] text-[#F4ECE5]' : 'bg-[#F4ECE5] text-[#1A170F] border border-[#E4D8CC]']"
                   class="w-10 h-10 text-xs font-bold rounded-xl transition cursor-pointer flex items-center justify-center"
                 >
                   {{ size }}
@@ -403,10 +417,10 @@
                   class="relative group/swatch flex items-center justify-center"
                 >
                   <button 
-                    @click="toggleColor(c)"
+                    @click="togglePendingColor(c)"
                     :style="getColorStyle(c)"
                     :class="[
-                      filters.color === c 
+                      pendingFilters.color === c 
                         ? 'ring-2 ring-[#E04F26] ring-offset-2 ring-offset-[#FAF6F1] scale-110' 
                         : 'border border-[#1A170F]/15 shadow-2xs'
                     ]"
@@ -414,7 +428,7 @@
                     :aria-label="`Filter by ${c}`"
                   >
                     <svg 
-                      v-if="filters.color === c" 
+                      v-if="pendingFilters.color === c" 
                       :class="isDarkColor(c) ? 'text-white' : 'text-[#1A170F]'" 
                       class="w-4 h-4 font-bold" 
                       fill="none" 
@@ -447,11 +461,11 @@
                     type="radio" 
                     name="mobilePriceRange" 
                     :value="range.id" 
-                    :checked="filters.priceRange === range.id"
-                    @click="selectPriceRange(range)"
+                    :checked="pendingFilters.priceRange === range.id"
+                    @click="selectPendingPriceRange(range)"
                     class="w-4 h-4 text-[#E04F26] border-[#E4D8CC] focus:ring-[#E04F26] accent-[#E04F26] cursor-pointer"
                   />
-                  <span :class="[filters.priceRange === range.id ? 'font-bold text-[#E04F26]' : 'font-normal']">
+                  <span :class="[pendingFilters.priceRange === range.id ? 'font-bold text-[#E04F26]' : 'font-normal']">
                     {{ range.label }}
                   </span>
                 </label>
@@ -462,38 +476,52 @@
           <!-- Modal Footer -->
           <div class="pt-4 border-t border-[#E4D8CC] flex items-center gap-3 shrink-0">
             <button 
-              @click="clearAllFilters"
+              @click="clearPendingFilters"
               class="flex-1 py-3 rounded-xl border border-[#E4D8CC] text-[#1A170F] font-bold text-xs uppercase tracking-wider hover:bg-[#F4ECE5] transition cursor-pointer"
             >
               Clear All
             </button>
             <button 
-              @click="mobileFilterOpen = false"
+              @click="applyMobileFilters"
               class="flex-1 py-3 rounded-xl bg-[#E04F26] text-white font-extrabold text-xs uppercase tracking-wider shadow-md hover:bg-[#C8431E] transition cursor-pointer text-center"
             >
               Apply & View
             </button>
           </div>
         </div>
-      </div>
-    </Transition>
+      </Transition>
+    </div>
 
     <!-- Centered Mobile Sort Popup Modal -->
-    <Transition
-      enter-active-class="transition duration-200 ease-out"
-      enter-from-class="opacity-0 scale-95"
-      enter-to-class="opacity-100 scale-100"
-      leave-active-class="transition duration-150 ease-in"
-      leave-from-class="opacity-100 scale-100"
-      leave-to-class="opacity-0 scale-95"
-    >
-      <div 
-        v-if="mobileSortOpen" 
-        class="lg:hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/65"
-        @click="mobileSortOpen = false"
+    <div v-if="mobileSortOpen" class="lg:hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+      <!-- Backdrop (Pure fade animation, never scales) -->
+      <Transition
+        enter-active-class="transition duration-200 ease-out"
+        enter-from-class="opacity-0"
+        enter-to-class="opacity-100"
+        leave-active-class="transition duration-150 ease-in"
+        leave-from-class="opacity-100"
+        leave-to-class="opacity-0"
       >
         <div 
-          class="bg-[#FAF6F1] text-[#1A170F] w-full max-w-sm rounded-3xl p-6 shadow-2xl border border-[#E4D8CC] flex flex-col justify-between overflow-hidden relative"
+          v-if="mobileSortOpen" 
+          class="fixed inset-0 bg-black/65"
+          @click="mobileSortOpen = false"
+        ></div>
+      </Transition>
+
+      <!-- Modal Dialog (Scale & Fade transition) -->
+      <Transition
+        enter-active-class="transition duration-200 ease-out"
+        enter-from-class="opacity-0 scale-95"
+        enter-to-class="opacity-100 scale-100"
+        leave-active-class="transition duration-150 ease-in"
+        leave-from-class="opacity-100 scale-100"
+        leave-to-class="opacity-0 scale-95"
+      >
+        <div 
+          v-if="mobileSortOpen" 
+          class="bg-[#FAF6F1] text-[#1A170F] w-full max-w-sm rounded-3xl p-6 shadow-2xl border border-[#E4D8CC] flex flex-col justify-between overflow-hidden relative z-10"
           @click.stop
           data-lenis-prevent
         >
@@ -550,8 +578,8 @@
             </button>
           </div>
         </div>
-      </div>
-    </Transition>
+      </Transition>
+    </div>
 
   </main>
 </template>
@@ -758,6 +786,79 @@ const filters = ref({
   page: Number(route.query.page || 1),
 });
 
+// Local draft state for mobile filter modal (only applied on "Apply & View" click)
+const pendingFilters = ref({
+  category: '',
+  size: '',
+  color: '',
+  minPrice: '',
+  maxPrice: '',
+  priceRange: '',
+});
+
+const openMobileFilter = () => {
+  pendingFilters.value = {
+    category: filters.value.category,
+    size: filters.value.size,
+    color: filters.value.color,
+    minPrice: filters.value.minPrice,
+    maxPrice: filters.value.maxPrice,
+    priceRange: filters.value.priceRange,
+  };
+  mobileFilterOpen.value = true;
+};
+
+const closeMobileFilter = () => {
+  mobileFilterOpen.value = false;
+};
+
+const togglePendingCategory = (slug: string) => {
+  pendingFilters.value.category = pendingFilters.value.category === slug ? '' : slug;
+};
+
+const togglePendingSize = (size: string) => {
+  pendingFilters.value.size = pendingFilters.value.size === size ? '' : size;
+};
+
+const togglePendingColor = (c: string) => {
+  pendingFilters.value.color = pendingFilters.value.color === c ? '' : c;
+};
+
+const selectPendingPriceRange = (range: PriceRangeOption) => {
+  if (pendingFilters.value.priceRange === range.id) {
+    pendingFilters.value.priceRange = '';
+    pendingFilters.value.minPrice = '';
+    pendingFilters.value.maxPrice = '';
+  } else {
+    pendingFilters.value.priceRange = range.id;
+    pendingFilters.value.minPrice = range.min !== null ? String(range.min) : '';
+    pendingFilters.value.maxPrice = range.max !== null ? String(range.max) : '';
+  }
+};
+
+const clearPendingFilters = () => {
+  pendingFilters.value = {
+    category: '',
+    size: '',
+    color: '',
+    minPrice: '',
+    maxPrice: '',
+    priceRange: '',
+  };
+};
+
+const applyMobileFilters = () => {
+  filters.value.category = pendingFilters.value.category;
+  filters.value.size = pendingFilters.value.size;
+  filters.value.color = pendingFilters.value.color;
+  filters.value.minPrice = pendingFilters.value.minPrice;
+  filters.value.maxPrice = pendingFilters.value.maxPrice;
+  filters.value.priceRange = pendingFilters.value.priceRange;
+  filters.value.page = 1;
+  fetchProducts();
+  mobileFilterOpen.value = false;
+};
+
 const meta = ref({
   total: 0,
   page: 1,
@@ -816,15 +917,33 @@ const fetchProducts = async () => {
   try {
     loading.value = true;
     const queryParams = new URLSearchParams();
-    if (filters.value.category) queryParams.set('category', filters.value.category);
-    if (filters.value.size) queryParams.set('size', filters.value.size);
-    if (filters.value.color) queryParams.set('color', filters.value.color);
-    if (filters.value.minPrice) queryParams.set('minPrice', filters.value.minPrice);
-    if (filters.value.maxPrice) queryParams.set('maxPrice', filters.value.maxPrice);
-    if (filters.value.priceRange) queryParams.set('priceRange', filters.value.priceRange);
-    if (filters.value.sort) queryParams.set('sort', filters.value.sort);
-    if (filters.value.q) queryParams.set('q', filters.value.q);
-    queryParams.set('page', String(filters.value.page));
+    if (filters.value.category && filters.value.category.trim() !== '') {
+      queryParams.set('category', filters.value.category.trim());
+    }
+    if (filters.value.size && filters.value.size.trim() !== '') {
+      queryParams.set('size', filters.value.size.trim());
+    }
+    if (filters.value.color && filters.value.color.trim() !== '') {
+      queryParams.set('color', filters.value.color.trim());
+    }
+    if (filters.value.minPrice && String(filters.value.minPrice).trim() !== '' && !isNaN(Number(filters.value.minPrice))) {
+      queryParams.set('minPrice', String(filters.value.minPrice).trim());
+    }
+    if (filters.value.maxPrice && String(filters.value.maxPrice).trim() !== '' && !isNaN(Number(filters.value.maxPrice))) {
+      queryParams.set('maxPrice', String(filters.value.maxPrice).trim());
+    }
+    if (filters.value.priceRange && filters.value.priceRange.trim() !== '') {
+      queryParams.set('priceRange', filters.value.priceRange.trim());
+    }
+    if (filters.value.sort && filters.value.sort !== 'newest') {
+      queryParams.set('sort', filters.value.sort);
+    }
+    if (filters.value.q && filters.value.q.trim() !== '') {
+      queryParams.set('q', filters.value.q.trim());
+    }
+    if (filters.value.page > 1) {
+      queryParams.set('page', String(filters.value.page));
+    }
 
     router.replace({ query: Object.fromEntries(queryParams.entries()) });
 
@@ -832,7 +951,7 @@ const fetchProducts = async () => {
     products.value = sortInStockFirst(res.items || []);
     meta.value = res.meta || { total: 0, page: 1, limit: 12, totalPages: 1 };
   } catch (e) {
-    console.error(e);
+    console.error('Fetch products error:', e);
   } finally {
     loading.value = false;
   }

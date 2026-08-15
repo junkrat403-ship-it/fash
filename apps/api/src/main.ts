@@ -8,10 +8,8 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Global Prefix
   app.setGlobalPrefix('api/v1');
 
-  // Trust reverse proxy headers (Render, Cloudflare, Nginx)
   const instance = app.getHttpAdapter().getInstance();
   if (instance && typeof instance.set === 'function') {
     instance.set('trust proxy', true);
@@ -29,10 +27,8 @@ async function bootstrap() {
   // Production & Development CORS Handler
   app.enableCors({
     origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean | string) => void) => {
-      // Allow non-browser requests (curl, Postman, server-to-server)
       if (!origin) return callback(null, true);
 
-      // Check against explicit allowed origins list or pattern match (Render apps, Dev Tunnels, localhost)
       const isAllowedDomain =
         allowedOrigins.some((allowed) => origin.startsWith(allowed) || allowed === origin) ||
         /(\.onrender\.com|\.devtunnels\.ms|\.ngrok-free\.app|\.loca\.lt|\.trycloudflare\.com)(:\d+)?$/.test(origin) ||
@@ -50,13 +46,10 @@ async function bootstrap() {
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'X-Guest-Token'],
   });
 
-  // Cookie Parser
   app.use(cookieParser());
 
-  // Global Filters
   app.useGlobalFilters(new HttpExceptionFilter());
 
-  // Global Validation Pipe
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -65,7 +58,6 @@ async function bootstrap() {
     }),
   );
 
-  // Swagger Documentation Setup
   const config = new DocumentBuilder()
     .setTitle('Fashion E-Commerce API')
     .setDescription('REST API contract for storefront and admin panel')

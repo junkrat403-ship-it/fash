@@ -34,7 +34,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
         ? exception.message
         : 'Unexpected error occurred';
 
-    // Clean up raw DTO object path prefixes like "customer.email" => "email"
     const cleanMessage = (msg: string) => {
       return msg
         .replace(/^customer\./i, '')

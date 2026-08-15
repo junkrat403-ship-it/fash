@@ -1,4 +1,3 @@
-/// <reference types="vite/client" />
 
 const getApiBaseUrl = (): string => {
   const envUrl = (import.meta as any).env?.VITE_API_BASE_URL;

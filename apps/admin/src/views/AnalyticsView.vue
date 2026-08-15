@@ -6,7 +6,6 @@
         <p class="text-xs text-slate-500 mt-1">Track store revenue performance, order volume, and top-selling products</p>
       </div>
 
-      <!-- KPI Summary Row -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
         <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-2xs">
           <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Confirmed Revenue</span>
@@ -27,7 +26,6 @@
         </div>
       </div>
 
-      <!-- Top Selling Products Table -->
       <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
         <h3 class="font-serif font-bold text-lg text-slate-900">Top Selling Products</h3>
         

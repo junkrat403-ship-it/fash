@@ -49,7 +49,6 @@
         </table>
       </div>
 
-      <!-- Category Modal -->
       <div v-if="showModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-3xl p-6 max-w-md w-full space-y-4 shadow-2xl">
           <h2 class="font-serif font-bold text-lg text-slate-900">{{ editingId ? 'Edit Category' : 'Create Category' }}</h2>

@@ -17,12 +17,10 @@ export class AdminAnalyticsService {
       topSellingProducts,
       recentOrders,
     ] = await Promise.all([
-      // Total confirmed revenue
       this.prisma.order.aggregate({
         _sum: { total: true },
         where: { status: { in: ['confirmed', 'processing', 'shipped', 'delivered'] } },
       }),
-      // Today revenue
       this.prisma.order.aggregate({
         _sum: { total: true },
         where: {
@@ -30,11 +28,8 @@ export class AdminAnalyticsService {
           status: { in: ['confirmed', 'processing', 'shipped', 'delivered'] },
         },
       }),
-      // Total orders
       this.prisma.order.count(),
-      // Pending WA orders
       this.prisma.order.count({ where: { status: 'pending_whatsapp' } }),
-      // Top selling products
       this.prisma.product.findMany({
         take: 5,
         orderBy: { salesCount: 'desc' },
@@ -46,7 +41,6 @@ export class AdminAnalyticsService {
           basePrice: true,
         },
       }),
-      // Recent orders
       this.prisma.order.findMany({
         take: 5,
         orderBy: { createdAt: 'desc' },

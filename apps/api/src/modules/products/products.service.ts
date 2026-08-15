@@ -10,14 +10,13 @@ export class ProductsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async findAll(query: ProductQueryDto) {
-    const { category, minPrice, maxPrice, size, color, sort, q, page = 1, limit = 12 } = query;
+    const { category, minPrice, maxPrice, priceRange, size, color, sort, q, page = 1, limit = 12 } = query;
     const skip = (page - 1) * limit;
 
     const where: Prisma.ProductWhereInput = {
       status: 'published',
     };
 
-    // Category filter (safely check UUID before querying category.id)
     if (category) {
       const isCategoryUuid = UUID_REGEX.test(category);
       where.category = {
@@ -28,14 +27,32 @@ export class ProductsService {
       };
     }
 
-    // Price range filter
-    if (minPrice !== undefined || maxPrice !== undefined) {
-      where.basePrice = {};
-      if (minPrice !== undefined) where.basePrice.gte = minPrice;
-      if (maxPrice !== undefined) where.basePrice.lte = maxPrice;
+    let effMinPrice = minPrice;
+    let effMaxPrice = maxPrice;
+    if (effMinPrice === undefined && effMaxPrice === undefined && priceRange) {
+      if (priceRange === 'under-200k') {
+        effMaxPrice = 200000;
+      } else if (priceRange === '200k-350k') {
+        effMinPrice = 200000;
+        effMaxPrice = 350000;
+      } else if (priceRange === '350k-500k') {
+        effMinPrice = 350000;
+        effMaxPrice = 500000;
+      } else if (priceRange === '500k-plus') {
+        effMinPrice = 500000;
+      }
     }
 
-    // Variant size/color filter
+    if (effMinPrice !== undefined || effMaxPrice !== undefined) {
+      where.basePrice = {};
+      if (effMinPrice !== undefined && !isNaN(Number(effMinPrice))) {
+        where.basePrice.gte = Number(effMinPrice);
+      }
+      if (effMaxPrice !== undefined && !isNaN(Number(effMaxPrice))) {
+        where.basePrice.lte = Number(effMaxPrice);
+      }
+    }
+
     if (size || color) {
       where.productVariants = {
         some: {
@@ -46,7 +63,6 @@ export class ProductsService {
       };
     }
 
-    // Keyword search
     if (q && q.trim() !== '') {
       const searchTerm = q.trim();
       where.OR = [
@@ -63,7 +79,6 @@ export class ProductsService {
       ];
     }
 
-    // Secondary sorting logic within stock groups
     let orderBy: Prisma.ProductOrderByWithRelationInput = { createdAt: 'desc' };
     if (sort === ProductSortOption.BESTSELLING) {
       orderBy = { salesCount: 'desc' };
@@ -75,7 +90,6 @@ export class ProductsService {
       orderBy = { createdAt: 'desc' };
     }
 
-    // Fetch entire matching dataset to apply primary stock status sorting across all pages before pagination
     const allMatchingProducts = await this.prisma.product.findMany({
       where,
       orderBy,
@@ -92,8 +106,6 @@ export class ProductsService {
       },
     });
 
-    // Primary sort: In-stock products first, out-of-stock products last
-    // Secondary sort: Preserves requested orderBy (Price, Newest, Bestselling) within each group
     const sortedAll = allMatchingProducts.sort((a, b) => {
       const aStock = a.productVariants?.reduce((sum, v) => sum + (v.stockQuantity || 0), 0) || 0;
       const bStock = b.productVariants?.reduce((sum, v) => sum + (v.stockQuantity || 0), 0) || 0;

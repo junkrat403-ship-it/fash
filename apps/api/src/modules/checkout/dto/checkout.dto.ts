@@ -2,7 +2,6 @@ import { IsEmail, IsNotEmpty, IsOptional, IsString, MaxLength, MinLength, Matche
 import { Type, Transform } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
-// Helper to convert empty strings or whitespace-only strings to undefined for optional fields
 const transformOptionalString = ({ value }: { value: any }) => {
   if (typeof value === 'string') {
     const trimmed = value.trim();
@@ -11,7 +10,6 @@ const transformOptionalString = ({ value }: { value: any }) => {
   return value;
 };
 
-// Helper to trim required string fields
 const transformTrimmedString = ({ value }: { value: any }) => {
   return typeof value === 'string' ? value.trim() : value;
 };

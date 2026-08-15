@@ -34,3 +34,12 @@
     </div>
   </main>
 </template>
+
+<script setup lang="ts">
+useSeoMeta({
+  title: 'About Our Studio — Jubi & Lee Studio',
+  description: 'Learn about the philosophy, craftsmanship, natural fibers, and personalized service behind Jubi & Lee Studio.',
+  ogTitle: 'About Our Studio — Jubi & Lee Studio',
+  ogDescription: 'Learn about the philosophy, craftsmanship, and natural fibers behind Jubi & Lee Studio.',
+});
+</script>

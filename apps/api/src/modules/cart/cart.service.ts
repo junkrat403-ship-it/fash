@@ -41,7 +41,6 @@ export class CartService {
   }
 
   async addItem(dto: AddCartItemDto, customerId?: string) {
-    // 1. Verify variant exists and has sufficient stock
     const variant = await this.prisma.productVariant.findUnique({
       where: { id: dto.variantId },
       include: { product: true },
@@ -57,10 +56,8 @@ export class CartService {
       );
     }
 
-    // 2. Get or create cart
     const cart = await this.getOrCreateCart(customerId, dto.guestToken);
 
-    // 3. Upsert cart item
     const existingItem = await this.prisma.cartItem.findUnique({
       where: {
         cartId_variantId: {
@@ -105,7 +102,6 @@ export class CartService {
       throw new NotFoundException('Cart item not found');
     }
 
-    // Handle variant change
     if (dto.variantId && dto.variantId !== item.variantId) {
       const newVariant = await this.prisma.productVariant.findUnique({
         where: { id: dto.variantId },
@@ -120,7 +116,6 @@ export class CartService {
         throw new BadRequestException(`Only ${newVariant.stockQuantity} item(s) available in stock`);
       }
 
-      // Check if an item with newVariantId already exists in this cart
       const existingSameVariantItem = await this.prisma.cartItem.findUnique({
         where: {
           cartId_variantId: {
@@ -151,7 +146,6 @@ export class CartService {
         });
       }
     } else if (dto.quantity !== undefined) {
-      // Standard quantity update
       if (item.variant.stockQuantity < dto.quantity) {
         throw new BadRequestException(`Only ${item.variant.stockQuantity} item(s) available in stock`);
       }

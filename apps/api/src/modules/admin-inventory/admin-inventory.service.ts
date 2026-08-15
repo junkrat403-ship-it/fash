@@ -66,7 +66,6 @@ export class AdminInventoryService {
     }
 
     return this.prisma.$transaction(async (tx) => {
-      // 1. Update variant stock quantity
       const updatedVariant = await tx.productVariant.update({
         where: { id: variantId },
         data: {

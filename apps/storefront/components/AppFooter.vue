@@ -1,10 +1,9 @@
 <template>
-  <!-- Footer styled with #1A170F (Charcoal Black Token) and Warm Accents -->
+  
   <footer class="bg-[#1A170F] text-[#F4ECE5] pt-16 pb-12 border-t border-white/10">
     <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
       <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-        
-        <!-- Brand Info -->
+
         <div class="md:col-span-1">
           <div class="flex items-center gap-2 mb-4">
             <div class="px-2 py-1 rounded-lg bg-[#E04F26] text-white flex items-center justify-center font-serif font-black text-xs">
@@ -22,7 +21,6 @@
           </div>
         </div>
 
-        <!-- Quick Links -->
         <div>
           <h4 class="text-xs font-bold text-white uppercase tracking-widest mb-4">Shop</h4>
           <ul class="space-y-2.5 text-xs text-slate-300 font-medium">
@@ -33,7 +31,6 @@
           </ul>
         </div>
 
-        <!-- Brand Story -->
         <div>
           <h4 class="text-xs font-bold text-white uppercase tracking-widest mb-4">Information</h4>
           <ul class="space-y-2.5 text-xs text-slate-300 font-medium">
@@ -44,7 +41,6 @@
           </ul>
         </div>
 
-        <!-- Direct Support & WhatsApp Order Handoff Info -->
         <div>
           <h4 class="text-xs font-bold text-white uppercase tracking-widest mb-4">Direct Order Support</h4>
           <p class="text-xs text-slate-300 leading-relaxed mb-4 font-light">

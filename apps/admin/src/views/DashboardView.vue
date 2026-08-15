@@ -1,8 +1,7 @@
 <template>
   <AdminLayout>
     <div class="space-y-8">
-      
-      <!-- Page Header -->
+
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 class="text-2xl sm:text-3xl font-serif font-bold text-[#0A1931]">Dashboard Overview</h1>
@@ -15,15 +14,13 @@
         </div>
       </div>
 
-      <!-- Premium 5 Stat Cards Grid with Inter Tabular Numerals & Subtle Gradients -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
-        
-        <!-- Stat Card 1: Total Revenue -->
+
         <div class="bg-gradient-to-br from-white via-[#F6FAFD] to-[#E6ECF0]/50 p-5 rounded-3xl border border-[#B3CFE5]/60 shadow-2xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between relative overflow-hidden group">
           <div>
             <div class="flex justify-between items-center">
               <span class="text-[11px] font-bold text-[#1A3D63] uppercase tracking-wider">Total Revenue</span>
-              <!-- Colored Circular Icon Badge -->
+              
               <div class="w-10 h-10 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-md shadow-emerald-500/20 shrink-0">
                 <svg class="w-5 h-5 stroke-current" fill="none" stroke-width="2" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-6h6m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -42,16 +39,14 @@
             <span class="text-[10px] text-slate-500 font-medium">vs last month</span>
           </div>
 
-          <!-- Mini Sparkline Accent Decorator -->
           <div class="absolute bottom-0 right-0 left-0 h-1 bg-gradient-to-r from-emerald-400 to-emerald-600 opacity-80"></div>
         </div>
 
-        <!-- Stat Card 2: Total Products -->
         <div class="bg-gradient-to-br from-white via-[#F6FAFD] to-[#E6ECF0]/50 p-5 rounded-3xl border border-[#B3CFE5]/60 shadow-2xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between relative overflow-hidden group">
           <div>
             <div class="flex justify-between items-center">
               <span class="text-[11px] font-bold text-[#1A3D63] uppercase tracking-wider">Total Products</span>
-              <!-- Colored Circular Icon Badge -->
+              
               <div class="w-10 h-10 rounded-full bg-[#28537A] text-white flex items-center justify-center shadow-md shadow-[#28537A]/25 shrink-0">
                 <svg class="w-5 h-5 stroke-current" fill="none" stroke-width="2" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007z" />
@@ -70,16 +65,14 @@
             <span class="text-[10px] text-slate-500 font-medium">In catalog</span>
           </div>
 
-          <!-- Mini Sparkline Accent Decorator -->
           <div class="absolute bottom-0 right-0 left-0 h-1 bg-gradient-to-r from-[#28537A] to-[#4A7FA7] opacity-80"></div>
         </div>
 
-        <!-- Stat Card 3: Total Orders -->
         <div class="bg-gradient-to-br from-white via-[#F6FAFD] to-[#E6ECF0]/50 p-5 rounded-3xl border border-[#B3CFE5]/60 shadow-2xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between relative overflow-hidden group">
           <div>
             <div class="flex justify-between items-center">
               <span class="text-[11px] font-bold text-[#1A3D63] uppercase tracking-wider">Total Orders</span>
-              <!-- Colored Circular Icon Badge -->
+              
               <div class="w-10 h-10 rounded-full bg-amber-500 text-white flex items-center justify-center shadow-md shadow-amber-500/25 shrink-0">
                 <svg class="w-5 h-5 stroke-current" fill="none" stroke-width="2" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
@@ -98,16 +91,14 @@
             <span class="text-[10px] text-slate-500 font-medium">+12% this week</span>
           </div>
 
-          <!-- Mini Sparkline Accent Decorator -->
           <div class="absolute bottom-0 right-0 left-0 h-1 bg-gradient-to-r from-amber-400 to-amber-600 opacity-80"></div>
         </div>
 
-        <!-- Stat Card 4: Low Stock Alerts -->
         <div class="bg-gradient-to-br from-white via-[#F6FAFD] to-[#E6ECF0]/50 p-5 rounded-3xl border border-[#B3CFE5]/60 shadow-2xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between relative overflow-hidden group">
           <div>
             <div class="flex justify-between items-center">
               <span class="text-[11px] font-bold text-[#1A3D63] uppercase tracking-wider">Low Stock Alerts</span>
-              <!-- Colored Circular Icon Badge -->
+              
               <div class="w-10 h-10 rounded-full bg-rose-500 text-white flex items-center justify-center shadow-md shadow-rose-500/25 shrink-0">
                 <svg class="w-5 h-5 stroke-current" fill="none" stroke-width="2" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
@@ -126,16 +117,14 @@
             <span class="text-[10px] text-rose-600 font-medium">Under threshold</span>
           </div>
 
-          <!-- Mini Sparkline Accent Decorator -->
           <div class="absolute bottom-0 right-0 left-0 h-1 bg-gradient-to-r from-rose-400 to-rose-600 opacity-80"></div>
         </div>
 
-        <!-- Stat Card 5: Registered Customers -->
         <div class="bg-gradient-to-br from-white via-[#F6FAFD] to-[#E6ECF0]/50 p-5 rounded-3xl border border-[#B3CFE5]/60 shadow-2xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between relative overflow-hidden group">
           <div>
             <div class="flex justify-between items-center">
               <span class="text-[11px] font-bold text-[#1A3D63] uppercase tracking-wider">Customers</span>
-              <!-- Colored Circular Icon Badge -->
+              
               <div class="w-10 h-10 rounded-full bg-[#0A1931] text-white flex items-center justify-center shadow-md shadow-[#0A1931]/25 shrink-0">
                 <svg class="w-5 h-5 stroke-current" fill="none" stroke-width="2" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
@@ -154,13 +143,11 @@
             <span class="text-[10px] text-slate-500 font-medium">Growing</span>
           </div>
 
-          <!-- Mini Sparkline Accent Decorator -->
           <div class="absolute bottom-0 right-0 left-0 h-1 bg-gradient-to-r from-[#0A1931] to-[#28537A] opacity-80"></div>
         </div>
 
       </div>
 
-      <!-- ApexCharts Sales & Order Volume Trend (PRD §FR-A-01 Data Visualization) -->
       <div class="bg-white p-6 sm:p-8 rounded-3xl border border-[#B3CFE5]/50 shadow-2xs space-y-6">
         
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -174,7 +161,6 @@
             <p class="text-xs text-[#1A3D63] font-light mt-1">Revenue progression over recent order activity</p>
           </div>
 
-          <!-- Timeframe Selector Tabs -->
           <div class="flex items-center space-x-1 bg-[#F6FAFD] p-1.5 rounded-2xl border border-[#B3CFE5]/50 text-xs font-semibold">
             <button 
               @click="timeframe = '7d'" 
@@ -193,7 +179,6 @@
           </div>
         </div>
 
-        <!-- Key Period Metrics with Inter Tabular Numerals -->
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 py-4 border-y border-[#B3CFE5]/30">
           <div>
             <span class="text-[11px] text-[#1A3D63] font-bold uppercase tracking-wider">Estimated Revenue</span>
@@ -209,7 +194,6 @@
           </div>
         </div>
 
-        <!-- ApexCharts Component -->
         <div class="w-full pt-2">
           <apexchart 
             type="area" 
@@ -221,7 +205,6 @@
 
       </div>
 
-      <!-- Quick Action Modules -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         
         <RouterLink to="/products" class="bg-white p-6 rounded-3xl border border-[#B3CFE5]/50 hover:border-[#4A7FA7] shadow-2xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group flex items-start space-x-4">
@@ -282,7 +265,6 @@ const stats = ref({
   customersCount: 0,
 });
 
-// Sales Trend Data
 const rawChartData = computed(() => {
   if (timeframe.value === '7d') {
     return [
@@ -308,7 +290,6 @@ const totalChartRevenue = computed(() => rawChartData.value.reduce((acc, curr) =
 const totalChartOrders = computed(() => rawChartData.value.reduce((acc, curr) => acc + curr.orders, 0));
 const avgOrderValue = computed(() => (totalChartOrders.value > 0 ? Math.round(totalChartRevenue.value / totalChartOrders.value) : 0));
 
-// ApexCharts Series Data
 const chartSeries = computed(() => [
   {
     name: 'Revenue (IDR)',
@@ -320,7 +301,6 @@ const chartSeries = computed(() => [
   },
 ]);
 
-// ApexCharts Options configured with Brand Identity & Inter font
 const chartOptions = computed(() => ({
   chart: {
     type: 'area',

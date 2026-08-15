@@ -4,13 +4,13 @@
       v-if="shouldShow" 
       class="fixed top-3 bottom-3 right-1 sm:right-1.5 z-[9999] w-2 flex flex-col justify-start pointer-events-none select-none"
     >
-      <!-- Track area (Clickable) -->
+      
       <div 
         ref="trackRef"
         @click="handleTrackClick"
         class="relative w-full h-full pointer-events-auto cursor-pointer"
       >
-        <!-- Floating Pill Thumb (Sleeker 6px width, closer 4px/6px viewport margin) -->
+        
         <div 
           @mousedown.prevent="startDrag"
           @touchstart.prevent="startTouchDrag"

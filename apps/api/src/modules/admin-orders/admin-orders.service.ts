@@ -79,7 +79,6 @@ export class AdminOrdersService {
     const order = await this.findOne(id);
 
     return this.prisma.$transaction(async (tx) => {
-      // Update Order Status
       const updatedOrder = await tx.order.update({
         where: { id },
         data: {
@@ -90,7 +89,6 @@ export class AdminOrdersService {
         },
       });
 
-      // Write Order Status History Log
       await tx.orderStatusHistory.create({
         data: {
           orderId: id,

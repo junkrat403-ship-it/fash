@@ -1,17 +1,16 @@
 <template>
-  <!-- Full-Width Seamless Navbar -->
+  
   <header 
     :class="[
       isVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'
     ]"
     class="fixed top-0 left-0 right-0 z-50 bg-[#F4ECE5] text-[#1A170F] border-b border-[#E4D8CC]/60 transition-all duration-300 transform shadow-xs"
   >
-    <!-- Main Navigation Bar -->
+    
     <div class="max-w-[1600px] mx-auto px-4 sm:px-8 py-3.5 flex items-center justify-between">
-      
-      <!-- Left Section: Mobile Toggle & Brand Logo -->
+
       <div class="flex items-center gap-4">
-        <!-- Mobile Menu Toggle Button -->
+        
         <button 
           @click="mobileMenuOpen = !mobileMenuOpen"
           class="lg:hidden p-1.5 rounded-lg text-[#1A170F] hover:bg-[#E4D8CC]/40 transition cursor-pointer"
@@ -22,7 +21,6 @@
           </svg>
         </button>
 
-        <!-- Brand Logo -->
         <NuxtLink to="/" class="inline-flex items-center gap-2 group cursor-pointer">
           <div class="px-2 py-1 rounded-lg bg-[#1A170F] text-[#F4ECE5] flex items-center justify-center font-serif font-black text-xs tracking-wider">
             J&L
@@ -34,7 +32,6 @@
         </NuxtLink>
       </div>
 
-      <!-- Center Desktop Navigation Links (HOME, CATALOG, ABOUT, CONTACT) -->
       <nav class="hidden lg:flex items-center space-x-8 font-sans">
         <NuxtLink 
           v-for="item in navLinks" 
@@ -51,7 +48,6 @@
         </NuxtLink>
       </nav>
 
-      <!-- Right Action Icons & Cart Drawer Trigger -->
       <div class="flex items-center space-x-3">
         <button 
           @click="navigateTo('/products')"
@@ -85,7 +81,6 @@
 
     </div>
 
-    <!-- Mobile Drawer Menu Overlay -->
     <div 
       v-if="mobileMenuOpen" 
       class="lg:hidden fixed inset-0 top-16 bg-slate-950/60 backdrop-blur-xs z-40"
