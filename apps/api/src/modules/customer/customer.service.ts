@@ -2,6 +2,7 @@ import { Injectable, NotFoundException, ForbiddenException, BadRequestException 
 import { PrismaService } from '../../prisma/prisma.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { CreateAddressDto } from './dto/create-address.dto';
+import { UpdateAddressDto } from './dto/update-address.dto';
 
 @Injectable()
 export class CustomerService {
@@ -201,6 +202,43 @@ export class CustomerService {
         postalCode: dto.postalCode || null,
         country: dto.country || 'Indonesia',
         isDefault: dto.isDefault ?? isFirstAddress,
+      },
+    });
+  }
+
+  async updateAddress(customerId: string, addressId: string, dto: UpdateAddressDto) {
+    const address = await this.prisma.address.findUnique({
+      where: { id: addressId },
+    });
+
+    if (!address) {
+      throw new NotFoundException('Address not found');
+    }
+
+    if (address.customerId !== customerId) {
+      throw new ForbiddenException('You do not have access to modify this address');
+    }
+
+    if (dto.isDefault) {
+      await this.prisma.address.updateMany({
+        where: { customerId },
+        data: { isDefault: false },
+      });
+    }
+
+    return this.prisma.address.update({
+      where: { id: addressId },
+      data: {
+        ...(dto.label !== undefined && { label: dto.label }),
+        ...(dto.recipientName !== undefined && { recipientName: dto.recipientName }),
+        ...(dto.phone !== undefined && { phone: dto.phone }),
+        ...(dto.line1 !== undefined && { line1: dto.line1 }),
+        ...(dto.line2 !== undefined && { line2: dto.line2 }),
+        ...(dto.city !== undefined && { city: dto.city }),
+        ...(dto.province !== undefined && { province: dto.province }),
+        ...(dto.postalCode !== undefined && { postalCode: dto.postalCode }),
+        ...(dto.country !== undefined && { country: dto.country }),
+        ...(dto.isDefault !== undefined && { isDefault: dto.isDefault }),
       },
     });
   }

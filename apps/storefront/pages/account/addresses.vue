@@ -51,7 +51,7 @@
       </div>
 
       <button
-        @click="showAddModal = true"
+        @click="openAddModal"
         class="h-9 px-4 rounded-xl bg-[#1A170F] text-[#FAF6F1] hover:bg-[#E04F26] text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-xs"
       >
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -79,7 +79,7 @@
         Save your delivery destinations for quick one-click autofill during checkout.
       </p>
       <button
-        @click="showAddModal = true"
+        @click="openAddModal"
         class="inline-flex items-center justify-center h-11 px-6 rounded-xl bg-[#1A170F] text-[#FAF6F1] hover:bg-[#E04F26] font-bold text-xs uppercase tracking-wider transition shadow-sm cursor-pointer"
       >
         Add Address Now →
@@ -117,7 +117,17 @@
           </p>
         </div>
 
-        <div class="mt-6 pt-4 border-t border-[#E4D8CC]/70 flex items-center justify-end">
+        <div class="mt-6 pt-4 border-t border-[#E4D8CC]/70 flex items-center justify-between">
+          <button
+            @click="openEditModal(addr)"
+            class="text-xs font-bold text-[#1A170F] hover:text-[#E04F26] transition cursor-pointer flex items-center gap-1.5"
+          >
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+            </svg>
+            Edit
+          </button>
+
           <button
             @click="handleDelete(addr.id)"
             class="text-xs font-bold text-[#E04F26] hover:underline cursor-pointer flex items-center gap-1"
@@ -131,22 +141,24 @@
       </article>
     </div>
 
-    <!-- Add Address Modal -->
-    <div v-if="showAddModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
+    <!-- Add / Edit Address Modal -->
+    <div v-if="showModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
       <div class="bg-[#FAF6F1] border border-[#E4D8CC] rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl relative max-h-[90vh] overflow-y-auto">
         <div class="flex items-center justify-between mb-6 pb-3 border-b border-[#E4D8CC]">
-          <h3 class="font-serif font-bold text-xl text-[#1A170F]">Add Delivery Address</h3>
-          <button @click="showAddModal = false" class="text-[#8C8275] hover:text-[#1A170F] p-1 font-bold">✕</button>
+          <h3 class="font-serif font-bold text-xl text-[#1A170F]">
+            {{ editingId ? 'Edit Delivery Address' : 'Add Delivery Address' }}
+          </h3>
+          <button @click="showModal = false" class="text-[#8C8275] hover:text-[#1A170F] p-1 font-bold cursor-pointer">✕</button>
         </div>
 
-        <form @submit.prevent="handleCreateAddress" class="space-y-4">
+        <form @submit.prevent="handleSaveAddress" class="space-y-4">
           <div>
             <label class="block text-xs uppercase tracking-wider font-extrabold text-[#1A170F]/70 mb-1" for="label">
               Label (e.g. Home, Office, Studio)
             </label>
             <input
               id="label"
-              v-model="newForm.label"
+              v-model="addressForm.label"
               type="text"
               placeholder="Home"
               class="w-full h-10 px-3.5 rounded-xl bg-white border border-[#E4D8CC] text-[#1A170F] text-xs sm:text-sm focus:outline-none focus:border-[#E04F26]"
@@ -156,11 +168,11 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label class="block text-xs uppercase tracking-wider font-extrabold text-[#1A170F]/70 mb-1" for="recipientName">
-                Recipient Name
+                Recipient Name *
               </label>
               <input
                 id="recipientName"
-                v-model="newForm.recipientName"
+                v-model="addressForm.recipientName"
                 type="text"
                 required
                 placeholder="Full Name"
@@ -168,12 +180,12 @@
               />
             </div>
             <div>
-              <label class="block text-xs uppercase tracking-wider font-extrabold text-[#1A170F]/70 mb-1" for="newPhone">
-                Recipient Phone
+              <label class="block text-xs uppercase tracking-wider font-extrabold text-[#1A170F]/70 mb-1" for="phone">
+                Recipient Phone *
               </label>
               <input
-                id="newPhone"
-                v-model="newForm.phone"
+                id="phone"
+                v-model="addressForm.phone"
                 type="tel"
                 required
                 placeholder="081234567890"
@@ -184,11 +196,11 @@
 
           <div>
             <label class="block text-xs uppercase tracking-wider font-extrabold text-[#1A170F]/70 mb-1" for="line1">
-              Street Address
+              Street Address *
             </label>
             <input
               id="line1"
-              v-model="newForm.line1"
+              v-model="addressForm.line1"
               type="text"
               required
               placeholder="Jl. Thamrin No. 10"
@@ -202,7 +214,7 @@
             </label>
             <input
               id="line2"
-              v-model="newForm.line2"
+              v-model="addressForm.line2"
               type="text"
               placeholder="Tower A, Unit 12B"
               class="w-full h-10 px-3.5 rounded-xl bg-white border border-[#E4D8CC] text-[#1A170F] text-xs sm:text-sm focus:outline-none focus:border-[#E04F26]"
@@ -212,11 +224,11 @@
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <label class="block text-xs uppercase tracking-wider font-extrabold text-[#1A170F]/70 mb-1" for="city">
-                City
+                City / District *
               </label>
               <input
                 id="city"
-                v-model="newForm.city"
+                v-model="addressForm.city"
                 type="text"
                 required
                 placeholder="Jakarta Selatan"
@@ -229,7 +241,7 @@
               </label>
               <input
                 id="province"
-                v-model="newForm.province"
+                v-model="addressForm.province"
                 type="text"
                 placeholder="DKI Jakarta"
                 class="w-full h-10 px-3.5 rounded-xl bg-white border border-[#E4D8CC] text-[#1A170F] text-xs sm:text-sm focus:outline-none focus:border-[#E04F26]"
@@ -241,7 +253,7 @@
               </label>
               <input
                 id="postalCode"
-                v-model="newForm.postalCode"
+                v-model="addressForm.postalCode"
                 type="text"
                 placeholder="12190"
                 class="w-full h-10 px-3.5 rounded-xl bg-white border border-[#E4D8CC] text-[#1A170F] text-xs sm:text-sm focus:outline-none focus:border-[#E04F26]"
@@ -252,7 +264,7 @@
           <div class="flex items-center gap-2 pt-2">
             <input
               id="isDefault"
-              v-model="newForm.isDefault"
+              v-model="addressForm.isDefault"
               type="checkbox"
               class="w-4 h-4 rounded text-[#E04F26] focus:ring-[#E04F26]"
             />
@@ -264,17 +276,17 @@
           <div class="pt-4 flex items-center justify-end gap-3 border-t border-[#E4D8CC]">
             <button
               type="button"
-              @click="showAddModal = false"
-              class="h-10 px-4 rounded-xl text-xs font-bold text-[#8C8275] hover:text-[#1A170F]"
+              @click="showModal = false"
+              class="h-10 px-4 rounded-xl text-xs font-bold text-[#8C8275] hover:text-[#1A170F] cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               :disabled="isSubmitting"
-              class="h-10 px-5 rounded-xl bg-[#1A170F] text-[#FAF6F1] hover:bg-[#E04F26] text-xs font-bold uppercase tracking-wider transition disabled:opacity-50"
+              class="h-10 px-5 rounded-xl bg-[#1A170F] text-[#FAF6F1] hover:bg-[#E04F26] text-xs font-bold uppercase tracking-wider transition disabled:opacity-50 cursor-pointer"
             >
-              {{ isSubmitting ? 'Saving...' : 'Save Address' }}
+              {{ isSubmitting ? 'Saving...' : (editingId ? 'Update Address' : 'Save Address') }}
             </button>
           </div>
         </form>
@@ -300,10 +312,11 @@ const { fetchApi } = useApi();
 
 const addresses = ref<any[]>([]);
 const isLoading = ref(true);
-const showAddModal = ref(false);
+const showModal = ref(false);
+const editingId = ref<string | null>(null);
 const isSubmitting = ref(false);
 
-const newForm = ref({
+const addressForm = ref({
   label: 'Home',
   recipientName: '',
   phone: '',
@@ -325,11 +338,6 @@ onMounted(async () => {
     return;
   }
 
-  if (authStore.user) {
-    newForm.value.recipientName = authStore.user.name || '';
-    newForm.value.phone = authStore.user.phone || '';
-  }
-
   await loadAddresses();
 });
 
@@ -344,25 +352,53 @@ const loadAddresses = async () => {
   }
 };
 
-const handleCreateAddress = async () => {
+const openAddModal = () => {
+  editingId.value = null;
+  addressForm.value = {
+    label: 'Home',
+    recipientName: authStore.user?.name || '',
+    phone: authStore.user?.phone || '',
+    line1: '',
+    line2: '',
+    city: '',
+    province: '',
+    postalCode: '',
+    isDefault: addresses.value.length === 0,
+  };
+  showModal.value = true;
+};
+
+const openEditModal = (addr: any) => {
+  editingId.value = addr.id;
+  addressForm.value = {
+    label: addr.label || 'Home',
+    recipientName: addr.recipientName || '',
+    phone: addr.phone || '',
+    line1: addr.line1 || '',
+    line2: addr.line2 || '',
+    city: addr.city || '',
+    province: addr.province || '',
+    postalCode: addr.postalCode || '',
+    isDefault: !!addr.isDefault,
+  };
+  showModal.value = true;
+};
+
+const handleSaveAddress = async () => {
   try {
     isSubmitting.value = true;
-    await fetchApi('/customer/addresses', {
-      method: 'POST',
-      body: newForm.value,
-    });
-    showAddModal.value = false;
-    newForm.value = {
-      label: 'Home',
-      recipientName: authStore.user?.name || '',
-      phone: authStore.user?.phone || '',
-      line1: '',
-      line2: '',
-      city: '',
-      province: '',
-      postalCode: '',
-      isDefault: false,
-    };
+    if (editingId.value) {
+      await fetchApi(`/customer/addresses/${editingId.value}`, {
+        method: 'PUT',
+        body: addressForm.value,
+      });
+    } else {
+      await fetchApi('/customer/addresses', {
+        method: 'POST',
+        body: addressForm.value,
+      });
+    }
+    showModal.value = false;
     await loadAddresses();
   } catch (e: any) {
     alert(e?.data?.message || 'Failed to save address');

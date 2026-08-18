@@ -81,7 +81,17 @@ export const useCartStore = defineStore('cart', () => {
     }
   };
 
-  const addItem = async (variantId: string, quantity: number = 1) => {
+  const addItem = async (variantId: string, quantity: number = 1, customRedirectUrl?: string) => {
+    const authStore = useCustomerAuthStore();
+    if (!authStore.isAuthenticated) {
+      if (import.meta.client) {
+        const returnUrl = customRedirectUrl || window.location.pathname + window.location.search;
+        sessionStorage.setItem('pending_add_to_cart', JSON.stringify({ variantId, quantity, returnUrl }));
+        await navigateTo(`/login?redirect=${encodeURIComponent(returnUrl)}`);
+      }
+      return;
+    }
+
     const { fetchApi } = useApi();
     try {
       isLoading.value = true;

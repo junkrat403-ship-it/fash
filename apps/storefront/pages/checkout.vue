@@ -3,7 +3,7 @@
     <div class="max-w-xl mx-auto text-center mb-10">
       <span class="text-xs uppercase tracking-widest text-[#E04F26] font-bold">Final Step</span>
       <h1 class="font-serif text-3xl sm:text-4xl font-black text-[#1A170F] mt-1 tracking-tight">Order Checkout</h1>
-      <p class="text-xs text-[#8C8275] mt-2 font-medium">Enter your delivery details to generate your WhatsApp order request.</p>
+      <p class="text-xs text-[#8C8275] mt-2 font-medium">Select your delivery destination and submit your WhatsApp order request.</p>
     </div>
 
     <!-- Empty Cart Fallback -->
@@ -15,41 +15,15 @@
       </NuxtLink>
     </div>
 
-    <!-- Active Checkout Form -->
+    <!-- Active Checkout Flow -->
     <div v-else class="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 items-start">
 
       <div class="lg:col-span-2 bg-[#FAF6F1] p-6 sm:p-10 rounded-3xl border border-[#E4D8CC] shadow-xs space-y-8">
         
-        <!-- Guest Login Prompt Banner -->
-        <div 
-          v-if="!authStore.isAuthenticated && showGuestBanner" 
-          class="p-4 rounded-2xl bg-[#E4D8CC]/40 border border-[#E4D8CC] flex items-center justify-between gap-4"
-        >
+        <!-- Logged-in Customer Banner -->
+        <div class="p-4 rounded-2xl bg-white border border-[#E4D8CC] flex items-center justify-between gap-4 shadow-2xs">
           <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-full bg-[#1A170F] text-[#FAF6F1] flex items-center justify-center shrink-0">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-            </div>
-            <p class="text-xs text-[#1A170F]">
-              Have a Jubi & Lee account? 
-              <NuxtLink to="/login?redirect=/checkout" class="font-extrabold text-[#E04F26] hover:underline ml-1">
-                Sign In for faster checkout →
-              </NuxtLink>
-            </p>
-          </div>
-          <button @click="showGuestBanner = false" class="text-[#8C8275] hover:text-[#1A170F] text-xs font-bold p-1">
-            ✕
-          </button>
-        </div>
-
-        <!-- Logged-in Customer Badge -->
-        <div 
-          v-else-if="authStore.isAuthenticated"
-          class="p-4 rounded-2xl bg-white border border-[#E4D8CC] flex items-center justify-between gap-4 shadow-2xs"
-        >
-          <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-full bg-[#1A170F] text-[#FAF6F1] flex items-center justify-center font-serif font-bold text-xs shrink-0">
+            <div class="w-9 h-9 rounded-full bg-[#1A170F] text-[#FAF6F1] flex items-center justify-center font-serif font-bold text-xs shrink-0">
               {{ authStore.userInitials }}
             </div>
             <div>
@@ -57,9 +31,9 @@
               <p class="text-[11px] text-[#8C8275]">{{ authStore.user?.email || authStore.user?.phone }}</p>
             </div>
           </div>
-          <span class="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
-            ✓ Details Autofilled
-          </span>
+          <NuxtLink to="/account/addresses" class="text-[11px] font-bold text-[#E04F26] hover:underline">
+            Manage Saved Addresses →
+          </NuxtLink>
         </div>
 
         <form @submit.prevent="submitCheckout" class="space-y-8" novalidate>
@@ -70,166 +44,240 @@
             <span>{{ error }}</span>
           </div>
 
-          <!-- Section 1: Contact Information -->
-          <div class="space-y-4">
-            <h2 class="font-serif font-black text-lg text-[#1A170F] pb-2 border-b border-[#E4D8CC] flex items-center gap-2.5">
-              <span class="w-6 h-6 rounded-full bg-[#1A170F] text-[#FAF6F1] text-xs flex items-center justify-center font-sans font-bold">1</span>
-              <span>Contact Information</span>
-            </h2>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label class="block text-xs uppercase tracking-wider font-extrabold text-[#1A170F]/70 mb-1.5">Full Name *</label>
-                <input 
-                  v-model="form.customer.name" 
-                  @input="clearFieldError('name')"
-                  type="text" 
-                  placeholder="Dinda Pratiwi"
-                  :class="[fieldErrors.name ? 'border-[#E04F26] ring-1 ring-[#E04F26]' : 'border-[#E4D8CC] focus:border-[#E04F26] focus:ring-1 focus:ring-[#E04F26]']"
-                  class="w-full h-11 px-4 rounded-xl border text-sm bg-white focus:outline-none text-[#1A170F] transition"
-                />
-                <span v-if="fieldErrors.name" class="text-[#E04F26] text-xs font-bold mt-1 block">
-                  {{ fieldErrors.name }}
-                </span>
-              </div>
-
-              <div>
-                <label class="block text-xs uppercase tracking-wider font-extrabold text-[#1A170F]/70 mb-1.5">WhatsApp Phone Number *</label>
-                <input 
-                  v-model="form.customer.phone" 
-                  @input="clearFieldError('phone')"
-                  type="tel" 
-                  placeholder="081234567890"
-                  :class="[fieldErrors.phone ? 'border-[#E04F26] ring-1 ring-[#E04F26]' : 'border-[#E4D8CC] focus:border-[#E04F26] focus:ring-1 focus:ring-[#E04F26]']"
-                  class="w-full h-11 px-4 rounded-xl border text-sm bg-white focus:outline-none text-[#1A170F] transition"
-                />
-                <span v-if="fieldErrors.phone" class="text-[#E04F26] text-xs font-bold mt-1 block">
-                  {{ fieldErrors.phone }}
-                </span>
-                <span v-else class="text-[10px] text-[#8C8275] mt-1 block font-medium">Store staff will confirm your order on this WhatsApp number.</span>
-              </div>
-            </div>
-
-            <div>
-              <label class="block text-xs uppercase tracking-wider font-extrabold text-[#1A170F]/70 mb-1.5">Email Address (Optional)</label>
-              <input 
-                v-model="form.customer.email" 
-                @input="clearFieldError('email')"
-                type="email" 
-                placeholder="dinda@example.com"
-                :class="[fieldErrors.email ? 'border-[#E04F26] ring-1 ring-[#E04F26]' : 'border-[#E4D8CC] focus:border-[#E04F26] focus:ring-1 focus:ring-[#E04F26]']"
-                class="w-full h-11 px-4 rounded-xl border text-sm bg-white focus:outline-none text-[#1A170F] transition"
-              />
-              <span v-if="fieldErrors.email" class="text-[#E04F26] text-xs font-bold mt-1 block">
-                {{ fieldErrors.email }}
-              </span>
-            </div>
-          </div>
-
-          <!-- Section 2: Shipping Address -->
-          <div class="space-y-4 pt-4 border-t border-[#E4D8CC]">
+          <!-- Section: Delivery Address Selection -->
+          <div class="space-y-5">
             <div class="flex items-center justify-between pb-2 border-b border-[#E4D8CC]">
               <h2 class="font-serif font-black text-lg text-[#1A170F] flex items-center gap-2.5">
-                <span class="w-6 h-6 rounded-full bg-[#1A170F] text-[#FAF6F1] text-xs flex items-center justify-center font-sans font-bold">2</span>
-                <span>Shipping Address</span>
+                <span class="w-6 h-6 rounded-full bg-[#1A170F] text-[#FAF6F1] text-xs flex items-center justify-center font-sans font-bold">1</span>
+                <span>Delivery Address</span>
               </h2>
+            </div>
 
-              <!-- Saved Addresses Quick Picker for Logged-In Users -->
-              <div v-if="savedAddresses.length > 0" class="flex items-center gap-2">
-                <span class="text-[11px] font-bold text-[#8C8275]">Use Saved:</span>
-                <select
-                  @change="applySavedAddress(($event.target as HTMLSelectElement).value)"
-                  class="text-xs font-bold px-2.5 py-1 rounded-lg bg-white border border-[#E4D8CC] text-[#1A170F] focus:outline-none focus:border-[#E04F26] cursor-pointer"
+            <!-- Loading Skeleton for Addresses -->
+            <div v-if="isLoadingAddresses" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div v-for="i in 2" :key="i" class="h-36 bg-white/70 border border-[#E4D8CC] rounded-2xl animate-pulse"></div>
+            </div>
+
+            <!-- Case A: Saved Addresses Exist -->
+            <div v-else-if="savedAddresses.length > 0" class="space-y-4">
+              <p class="text-xs font-bold uppercase tracking-wider text-[#1A170F]/70">
+                Select a saved address for this order:
+              </p>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- Address Card -->
+                <div
+                  v-for="addr in savedAddresses"
+                  :key="addr.id"
+                  @click="selectedAddressId = addr.id"
+                  :class="[
+                    selectedAddressId === addr.id
+                      ? 'border-2 border-[#1A170F] bg-white ring-2 ring-[#1A170F]/10 shadow-sm'
+                      : 'border border-[#E4D8CC] bg-[#FAF6F1] hover:border-[#1A170F]/40'
+                  ]"
+                  class="p-5 rounded-2xl transition cursor-pointer flex flex-col justify-between relative"
                 >
-                  <option value="" disabled selected>Select Address</option>
-                  <option v-for="addr in savedAddresses" :key="addr.id" :value="addr.id">
-                    {{ addr.label || 'Address' }} ({{ addr.recipientName }})
-                  </option>
-                </select>
+                  <div>
+                    <div class="flex items-center justify-between gap-2 mb-2">
+                      <span class="px-2.5 py-0.5 rounded-lg bg-[#E4D8CC]/60 text-[#1A170F] text-[10px] font-extrabold uppercase tracking-wider">
+                        {{ addr.label || 'Delivery Address' }}
+                      </span>
+                      <div class="flex items-center gap-1.5">
+                        <span v-if="addr.isDefault" class="px-2 py-0.5 rounded-md bg-[#E04F26]/10 text-[#E04F26] text-[10px] font-bold uppercase tracking-wider">
+                          Default
+                        </span>
+                        <div 
+                          :class="[
+                            selectedAddressId === addr.id
+                              ? 'bg-[#1A170F] border-[#1A170F] text-white'
+                              : 'bg-white border-[#E4D8CC] text-transparent'
+                          ]"
+                          class="w-4 h-4 rounded-full border flex items-center justify-center text-[10px] font-black transition"
+                        >
+                          ✓
+                        </div>
+                      </div>
+                    </div>
+
+                    <h4 class="font-bold text-[#1A170F] text-sm mb-0.5">
+                      {{ addr.recipientName }}
+                    </h4>
+                    <p class="text-xs text-[#8C8275] font-medium mb-2.5">
+                      {{ addr.phone }}
+                    </p>
+
+                    <p class="text-xs text-[#1A170F]/80 leading-relaxed">
+                      {{ addr.line1 }}<span v-if="addr.line2">, {{ addr.line2 }}</span><br />
+                      {{ addr.city }}<span v-if="addr.province">, {{ addr.province }}</span> {{ addr.postalCode }}<br />
+                      {{ addr.country || 'Indonesia' }}
+                    </p>
+                  </div>
+                </div>
+
+                <!-- "+ Add New Address" Card -->
+                <div
+                  @click="selectedAddressId = 'new'"
+                  :class="[
+                    selectedAddressId === 'new'
+                      ? 'border-2 border-[#1A170F] bg-white ring-2 ring-[#1A170F]/10 shadow-sm'
+                      : 'border-2 border-dashed border-[#E4D8CC] bg-white/50 hover:bg-white hover:border-[#1A170F]/40'
+                  ]"
+                  class="p-5 rounded-2xl transition cursor-pointer flex flex-col items-center justify-center text-center min-h-[150px]"
+                >
+                  <div class="w-9 h-9 rounded-full bg-[#E4D8CC]/60 text-[#1A170F] flex items-center justify-center mb-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                  </div>
+                  <span class="font-bold text-xs text-[#1A170F] uppercase tracking-wider">+ Add New Address</span>
+                  <span class="text-[11px] text-[#8C8275] mt-0.5">Ship to a different destination</span>
+                </div>
               </div>
             </div>
 
-            <div>
-              <label class="block text-xs uppercase tracking-wider font-extrabold text-[#1A170F]/70 mb-1.5">Street Address *</label>
-              <input 
-                v-model="form.shippingAddress.line1" 
-                @input="clearFieldError('line1')"
-                type="text" 
-                placeholder="Jl. Senopati No. 45"
-                :class="[fieldErrors.line1 ? 'border-[#E04F26] ring-1 ring-[#E04F26]' : 'border-[#E4D8CC] focus:border-[#E04F26] focus:ring-1 focus:ring-[#E04F26]']"
-                class="w-full h-11 px-4 rounded-xl border text-sm bg-white focus:outline-none text-[#1A170F] transition"
-              />
-              <span v-if="fieldErrors.line1" class="text-[#E04F26] text-xs font-bold mt-1 block">
-                {{ fieldErrors.line1 }}
-              </span>
-            </div>
+            <!-- Case B: Manual Entry Form (Shown if '+ Add New Address' is selected OR user has 0 saved addresses) -->
+            <div v-if="selectedAddressId === 'new' || (!isLoadingAddresses && savedAddresses.length === 0)" class="space-y-4 pt-2">
+              <div v-if="savedAddresses.length > 0" class="flex items-center justify-between pb-2 border-b border-[#E4D8CC]/70">
+                <span class="text-xs font-bold uppercase tracking-wider text-[#1A170F]">Enter New Destination Details:</span>
+                <button
+                  type="button"
+                  @click="selectedAddressId = defaultAddressId"
+                  class="text-xs font-bold text-[#E04F26] hover:underline"
+                >
+                  ← Use Saved Address
+                </button>
+              </div>
+              <p v-else class="text-xs font-bold uppercase tracking-wider text-[#1A170F]/70">
+                Enter your delivery destination:
+              </p>
 
-            <div>
-              <label class="block text-xs uppercase tracking-wider font-extrabold text-[#1A170F]/70 mb-1.5">Apartment / Unit / Landmark (Optional)</label>
-              <input 
-                v-model="form.shippingAddress.line2" 
-                type="text" 
-                placeholder="Apartemen Senopati, Tower 2 Lt. 12"
-                class="w-full h-11 px-4 rounded-xl border border-[#E4D8CC] focus:border-[#E04F26] focus:ring-1 focus:ring-[#E04F26] text-sm bg-white focus:outline-none text-[#1A170F] transition"
-              />
-            </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs uppercase tracking-wider font-extrabold text-[#1A170F]/70 mb-1.5">Recipient Name *</label>
+                  <input 
+                    v-model="newAddressForm.recipientName" 
+                    @input="clearFieldError('recipientName')"
+                    type="text" 
+                    placeholder="Dinda Pratiwi"
+                    :class="[fieldErrors.recipientName ? 'border-[#E04F26] ring-1 ring-[#E04F26]' : 'border-[#E4D8CC] focus:border-[#E04F26] focus:ring-1 focus:ring-[#E04F26]']"
+                    class="w-full h-11 px-4 rounded-xl border text-sm bg-white focus:outline-none text-[#1A170F] transition"
+                  />
+                  <span v-if="fieldErrors.recipientName" class="text-[#E04F26] text-xs font-bold mt-1 block">
+                    {{ fieldErrors.recipientName }}
+                  </span>
+                </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label class="block text-xs uppercase tracking-wider font-extrabold text-[#1A170F]/70 mb-1.5">WhatsApp Phone *</label>
+                  <input 
+                    v-model="newAddressForm.phone" 
+                    @input="clearFieldError('phone')"
+                    type="tel" 
+                    placeholder="081234567890"
+                    :class="[fieldErrors.phone ? 'border-[#E04F26] ring-1 ring-[#E04F26]' : 'border-[#E4D8CC] focus:border-[#E04F26] focus:ring-1 focus:ring-[#E04F26]']"
+                    class="w-full h-11 px-4 rounded-xl border text-sm bg-white focus:outline-none text-[#1A170F] transition"
+                  />
+                  <span v-if="fieldErrors.phone" class="text-[#E04F26] text-xs font-bold mt-1 block">
+                    {{ fieldErrors.phone }}
+                  </span>
+                </div>
+              </div>
+
               <div>
-                <label class="block text-xs uppercase tracking-wider font-extrabold text-[#1A170F]/70 mb-1.5">City / District *</label>
+                <label class="block text-xs uppercase tracking-wider font-extrabold text-[#1A170F]/70 mb-1.5">Street Address *</label>
                 <input 
-                  v-model="form.shippingAddress.city" 
-                  @input="clearFieldError('city')"
+                  v-model="newAddressForm.line1" 
+                  @input="clearFieldError('line1')"
                   type="text" 
-                  placeholder="Jakarta Selatan"
-                  :class="[fieldErrors.city ? 'border-[#E04F26] ring-1 ring-[#E04F26]' : 'border-[#E4D8CC] focus:border-[#E04F26] focus:ring-1 focus:ring-[#E04F26]']"
+                  placeholder="Jl. Senopati No. 45"
+                  :class="[fieldErrors.line1 ? 'border-[#E04F26] ring-1 ring-[#E04F26]' : 'border-[#E4D8CC] focus:border-[#E04F26] focus:ring-1 focus:ring-[#E04F26]']"
                   class="w-full h-11 px-4 rounded-xl border text-sm bg-white focus:outline-none text-[#1A170F] transition"
                 />
-                <span v-if="fieldErrors.city" class="text-[#E04F26] text-xs font-bold mt-1 block">
-                  {{ fieldErrors.city }}
+                <span v-if="fieldErrors.line1" class="text-[#E04F26] text-xs font-bold mt-1 block">
+                  {{ fieldErrors.line1 }}
                 </span>
               </div>
 
               <div>
-                <label class="block text-xs uppercase tracking-wider font-extrabold text-[#1A170F]/70 mb-1.5">Province</label>
+                <label class="block text-xs uppercase tracking-wider font-extrabold text-[#1A170F]/70 mb-1.5">Apartment / Unit / Landmark (Optional)</label>
                 <input 
-                  v-model="form.shippingAddress.province" 
+                  v-model="newAddressForm.line2" 
                   type="text" 
-                  placeholder="DKI Jakarta"
+                  placeholder="Apartemen Senopati, Tower 2 Lt. 12"
                   class="w-full h-11 px-4 rounded-xl border border-[#E4D8CC] focus:border-[#E04F26] focus:ring-1 focus:ring-[#E04F26] text-sm bg-white focus:outline-none text-[#1A170F] transition"
                 />
               </div>
 
-              <div>
-                <label class="block text-xs uppercase tracking-wider font-extrabold text-[#1A170F]/70 mb-1.5">Postal Code</label>
-                <input 
-                  v-model="form.shippingAddress.postalCode" 
-                  type="text" 
-                  placeholder="12190"
-                  class="w-full h-11 px-4 rounded-xl border border-[#E4D8CC] focus:border-[#E04F26] focus:ring-1 focus:ring-[#E04F26] text-sm bg-white focus:outline-none text-[#1A170F] transition"
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label class="block text-xs uppercase tracking-wider font-extrabold text-[#1A170F]/70 mb-1.5">City / District *</label>
+                  <input 
+                    v-model="newAddressForm.city" 
+                    @input="clearFieldError('city')"
+                    type="text" 
+                    placeholder="Jakarta Selatan"
+                    :class="[fieldErrors.city ? 'border-[#E04F26] ring-1 ring-[#E04F26]' : 'border-[#E4D8CC] focus:border-[#E04F26] focus:ring-1 focus:ring-[#E04F26]']"
+                    class="w-full h-11 px-4 rounded-xl border text-sm bg-white focus:outline-none text-[#1A170F] transition"
+                  />
+                  <span v-if="fieldErrors.city" class="text-[#E04F26] text-xs font-bold mt-1 block">
+                    {{ fieldErrors.city }}
+                  </span>
+                </div>
+
+                <div>
+                  <label class="block text-xs uppercase tracking-wider font-extrabold text-[#1A170F]/70 mb-1.5">Province</label>
+                  <input 
+                    v-model="newAddressForm.province" 
+                    type="text" 
+                    placeholder="DKI Jakarta"
+                    class="w-full h-11 px-4 rounded-xl border border-[#E4D8CC] focus:border-[#E04F26] focus:ring-1 focus:ring-[#E04F26] text-sm bg-white focus:outline-none text-[#1A170F] transition"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-xs uppercase tracking-wider font-extrabold text-[#1A170F]/70 mb-1.5">Postal Code</label>
+                  <input 
+                    v-model="newAddressForm.postalCode" 
+                    type="text" 
+                    placeholder="12190"
+                    class="w-full h-11 px-4 rounded-xl border border-[#E4D8CC] focus:border-[#E04F26] focus:ring-1 focus:ring-[#E04F26] text-sm bg-white focus:outline-none text-[#1A170F] transition"
+                  />
+                </div>
+              </div>
+
+              <!-- Option to save new address to account -->
+              <div class="flex items-center gap-2 pt-2">
+                <input
+                  id="saveNewAddress"
+                  v-model="saveNewAddress"
+                  type="checkbox"
+                  class="w-4 h-4 rounded text-[#E04F26] focus:ring-[#E04F26]"
                 />
+                <label for="saveNewAddress" class="text-xs text-[#1A170F] font-bold cursor-pointer">
+                  Save this address to my account for future orders
+                </label>
               </div>
             </div>
           </div>
 
-          <!-- Section 3: Notes -->
+          <!-- Section: Order Notes -->
           <div class="space-y-4 pt-4 border-t border-[#E4D8CC]">
             <h2 class="font-serif font-black text-lg text-[#1A170F] pb-2 border-b border-[#E4D8CC] flex items-center gap-2.5">
-              <span class="w-6 h-6 rounded-full bg-[#1A170F] text-[#FAF6F1] text-xs flex items-center justify-center font-sans font-bold">3</span>
+              <span class="w-6 h-6 rounded-full bg-[#1A170F] text-[#FAF6F1] text-xs flex items-center justify-center font-sans font-bold">2</span>
               <span>Order Notes (Optional)</span>
             </h2>
 
             <div>
               <textarea 
-                v-model="form.notes" 
+                v-model="notes" 
                 rows="2"
-                placeholder="Special delivery instructions or gifting notes..."
+                placeholder="Special delivery instructions, packaging notes, or delivery timing preferences..."
                 class="w-full p-4 rounded-xl border border-[#E4D8CC] focus:border-[#E04F26] focus:ring-1 focus:ring-[#E04F26] text-sm bg-white focus:outline-none text-[#1A170F] transition resize-none"
               ></textarea>
             </div>
           </div>
 
-          <!-- Submit Action -->
+          <!-- Submit WhatsApp Checkout -->
           <button 
             type="submit" 
             :disabled="submitting"
@@ -323,33 +371,29 @@ useSeoMeta({
   description: 'Complete your delivery details to place an order via WhatsApp with Jubi & Lee.',
 });
 
-const showGuestBanner = ref(true);
 const savedAddresses = ref<any[]>([]);
+const defaultAddressId = ref<string>('');
+const selectedAddressId = ref<string>('new');
+const isLoadingAddresses = ref<boolean>(true);
+const saveNewAddress = ref<boolean>(true);
+const notes = ref<string>('');
 
-const form = ref({
-  customer: {
-    name: '',
-    phone: '',
-    email: '',
-  },
-  shippingAddress: {
-    line1: '',
-    line2: '',
-    city: '',
-    province: '',
-    postalCode: '',
-    country: 'Indonesia',
-  },
-  notes: '',
+const newAddressForm = ref({
+  recipientName: '',
+  phone: '',
+  line1: '',
+  line2: '',
+  city: '',
+  province: '',
+  postalCode: '',
+  country: 'Indonesia',
 });
 
 interface FieldErrors {
-  name?: string;
+  recipientName?: string;
   phone?: string;
-  email?: string;
   line1?: string;
   city?: string;
-  notes?: string;
 }
 
 const fieldErrors = ref<FieldErrors>({});
@@ -357,36 +401,42 @@ const submitting = ref(false);
 const error = ref('');
 
 onMounted(async () => {
-  if (authStore.isAuthenticated && authStore.user) {
-    form.value.customer.name = authStore.user.name || '';
-    form.value.customer.phone = authStore.user.phone || '';
-    form.value.customer.email = authStore.user.email || '';
-
-    try {
-      savedAddresses.value = await fetchApi<any[]>('/customer/addresses');
-      const defaultAddr = savedAddresses.value.find((a) => a.isDefault) || savedAddresses.value[0];
-      if (defaultAddr) {
-        applyAddressObject(defaultAddr);
-      }
-    } catch {}
+  if (!authStore.isAuthenticated) {
+    await authStore.initAuth();
   }
+
+  if (!authStore.isAuthenticated) {
+    await navigateTo('/login?redirect=/checkout');
+    return;
+  }
+
+  if (authStore.user) {
+    newAddressForm.value.recipientName = authStore.user.name || '';
+    newAddressForm.value.phone = authStore.user.phone || '';
+  }
+
+  await loadAddresses();
 });
 
-const applySavedAddress = (addressId: string) => {
-  const addr = savedAddresses.value.find((a) => a.id === addressId);
-  if (addr) {
-    applyAddressObject(addr);
+const loadAddresses = async () => {
+  try {
+    isLoadingAddresses.value = true;
+    const data = await fetchApi<any[]>('/customer/addresses');
+    savedAddresses.value = Array.isArray(data) ? data : [];
+    
+    if (savedAddresses.value.length > 0) {
+      const defaultAddr = savedAddresses.value.find((a) => a.isDefault) || savedAddresses.value[0];
+      defaultAddressId.value = defaultAddr.id;
+      selectedAddressId.value = defaultAddr.id;
+    } else {
+      selectedAddressId.value = 'new';
+    }
+  } catch (err) {
+    savedAddresses.value = [];
+    selectedAddressId.value = 'new';
+  } finally {
+    isLoadingAddresses.value = false;
   }
-};
-
-const applyAddressObject = (addr: any) => {
-  if (addr.recipientName) form.value.customer.name = addr.recipientName;
-  if (addr.phone) form.value.customer.phone = addr.phone;
-  form.value.shippingAddress.line1 = addr.line1 || '';
-  form.value.shippingAddress.line2 = addr.line2 || '';
-  form.value.shippingAddress.city = addr.city || '';
-  form.value.shippingAddress.province = addr.province || '';
-  form.value.shippingAddress.postalCode = addr.postalCode || '';
 };
 
 const clearFieldError = (field: keyof FieldErrors) => {
@@ -396,92 +446,140 @@ const clearFieldError = (field: keyof FieldErrors) => {
   }
 };
 
-const validateForm = (): boolean => {
+const validateNewAddressForm = (): boolean => {
   fieldErrors.value = {};
   let isValid = true;
 
-  const trimmedName = form.value.customer.name.trim();
+  const trimmedName = newAddressForm.value.recipientName.trim();
   if (!trimmedName) {
-    fieldErrors.value.name = 'Please enter your full name.';
+    fieldErrors.value.recipientName = 'Please enter recipient name.';
     isValid = false;
   } else if (trimmedName.length < 2) {
-    fieldErrors.value.name = 'Full name must be at least 2 characters long.';
+    fieldErrors.value.recipientName = 'Name must be at least 2 characters long.';
     isValid = false;
   }
 
-  const trimmedPhone = form.value.customer.phone.trim();
+  const trimmedPhone = newAddressForm.value.phone.trim();
   const phoneRegex = /^(\+?[0-9\s\-]{8,18})$/;
   if (!trimmedPhone) {
-    fieldErrors.value.phone = 'Please enter your WhatsApp phone number.';
+    fieldErrors.value.phone = 'Please enter WhatsApp phone number.';
     isValid = false;
   } else if (!phoneRegex.test(trimmedPhone)) {
     fieldErrors.value.phone = 'Please enter a valid phone number (at least 8 digits).';
     isValid = false;
   }
 
-  const trimmedEmail = form.value.customer.email.trim();
-  if (trimmedEmail !== '') {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(trimmedEmail)) {
-      fieldErrors.value.email = 'Please enter a valid email address.';
-      isValid = false;
-    }
-  }
-
-  const trimmedLine1 = form.value.shippingAddress.line1.trim();
+  const trimmedLine1 = newAddressForm.value.line1.trim();
   if (!trimmedLine1) {
-    fieldErrors.value.line1 = 'Please enter your street address.';
+    fieldErrors.value.line1 = 'Please enter street address.';
     isValid = false;
   } else if (trimmedLine1.length < 5) {
     fieldErrors.value.line1 = 'Street address must be at least 5 characters long.';
     isValid = false;
   }
 
-  const trimmedCity = form.value.shippingAddress.city.trim();
+  const trimmedCity = newAddressForm.value.city.trim();
   if (!trimmedCity) {
-    fieldErrors.value.city = 'Please enter your city or district.';
+    fieldErrors.value.city = 'Please enter city or district.';
     isValid = false;
   } else if (trimmedCity.length < 2) {
-    fieldErrors.value.city = 'City / District must be at least 2 characters long.';
+    fieldErrors.value.city = 'City must be at least 2 characters long.';
     isValid = false;
   }
 
   if (!isValid) {
-    error.value = 'Please correct the highlighted fields below.';
+    error.value = 'Please fill out all required address fields below.';
   }
 
   return isValid;
 };
 
 const submitCheckout = async () => {
-  if (!validateForm()) return;
-
   try {
     submitting.value = true;
     error.value = '';
 
-    const sanitizedPayload = {
+    let recipientName = '';
+    let phone = '';
+    let email = authStore.user?.email || undefined;
+    let line1 = '';
+    let line2: string | undefined = undefined;
+    let city = '';
+    let province: string | undefined = undefined;
+    let postalCode: string | undefined = undefined;
+    let country = 'Indonesia';
+
+    if (selectedAddressId.value !== 'new') {
+      const selectedAddr = savedAddresses.value.find((a) => a.id === selectedAddressId.value);
+      if (!selectedAddr) {
+        error.value = 'Please select a delivery address.';
+        submitting.value = false;
+        return;
+      }
+      recipientName = selectedAddr.recipientName;
+      phone = selectedAddr.phone;
+      line1 = selectedAddr.line1;
+      line2 = selectedAddr.line2 || undefined;
+      city = selectedAddr.city;
+      province = selectedAddr.province || undefined;
+      postalCode = selectedAddr.postalCode || undefined;
+      country = selectedAddr.country || 'Indonesia';
+    } else {
+      if (!validateNewAddressForm()) {
+        submitting.value = false;
+        return;
+      }
+      recipientName = newAddressForm.value.recipientName.trim();
+      phone = newAddressForm.value.phone.trim();
+      line1 = newAddressForm.value.line1.trim();
+      line2 = newAddressForm.value.line2?.trim() || undefined;
+      city = newAddressForm.value.city.trim();
+      province = newAddressForm.value.province?.trim() || undefined;
+      postalCode = newAddressForm.value.postalCode?.trim() || undefined;
+
+      if (saveNewAddress.value) {
+        try {
+          await fetchApi('/customer/addresses', {
+            method: 'POST',
+            body: {
+              label: 'Delivery Address',
+              recipientName,
+              phone,
+              line1,
+              line2,
+              city,
+              province,
+              postalCode,
+              country,
+              isDefault: savedAddresses.value.length === 0,
+            },
+          });
+        } catch {}
+      }
+    }
+
+    const payload = {
       customer: {
-        name: form.value.customer.name.trim(),
-        phone: form.value.customer.phone.trim(),
-        email: form.value.customer.email.trim() || undefined,
+        name: recipientName,
+        phone,
+        email,
       },
       shippingAddress: {
-        line1: form.value.shippingAddress.line1.trim(),
-        line2: form.value.shippingAddress.line2?.trim() || undefined,
-        city: form.value.shippingAddress.city.trim(),
-        province: form.value.shippingAddress.province?.trim() || undefined,
-        postalCode: form.value.shippingAddress.postalCode?.trim() || undefined,
-        country: 'Indonesia',
+        line1,
+        line2,
+        city,
+        province,
+        postalCode,
+        country,
       },
-      notes: form.value.notes?.trim() || undefined,
+      notes: notes.value?.trim() || undefined,
       cartId: cartStore.cart?.id,
       guestToken: cartStore.guestToken,
     };
 
     const res = await fetchApi<any>('/checkout', {
       method: 'POST',
-      body: sanitizedPayload,
+      body: payload,
     });
 
     await cartStore.fetchCart();

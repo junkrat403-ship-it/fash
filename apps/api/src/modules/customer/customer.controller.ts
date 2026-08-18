@@ -5,6 +5,7 @@ import { CustomerAuthGuard } from '../../common/guards/customer-auth.guard';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { CreateAddressDto } from './dto/create-address.dto';
+import { UpdateAddressDto } from './dto/update-address.dto';
 
 @ApiTags('Customer Account')
 @ApiBearerAuth()
@@ -64,6 +65,17 @@ export class CustomerController {
   @ApiResponse({ status: 201, description: 'Address created' })
   async createAddress(@CurrentUser() user: any, @Body() dto: CreateAddressDto) {
     return this.customerService.createAddress(user.userId, dto);
+  }
+
+  @Put('addresses/:id')
+  @ApiOperation({ summary: 'Update an existing saved shipping address' })
+  @ApiResponse({ status: 200, description: 'Address updated' })
+  async updateAddress(
+    @CurrentUser() user: any,
+    @Param('id') id: string,
+    @Body() dto: UpdateAddressDto,
+  ) {
+    return this.customerService.updateAddress(user.userId, id, dto);
   }
 
   @Delete('addresses/:id')

@@ -50,10 +50,10 @@
         </NuxtLink>
       </nav>
 
-      <!-- Right: Search, Account & Cart Controls -->
+      <!-- Right: Search, Cart & Account/"Get Started" Controls (in order: Search -> Cart -> Account) -->
       <div class="flex items-center gap-2 sm:gap-3 shrink-0 relative" ref="searchContainerRef">
         
-        <!-- Desktop Search Form (Inline Expanding) -->
+        <!-- 1. Desktop Search Form (Inline Expanding) -->
         <div class="hidden sm:flex items-center">
           <div 
             :class="[
@@ -106,7 +106,7 @@
           </div>
         </div>
 
-        <!-- Mobile Search Button -->
+        <!-- 1b. Mobile Search Button -->
         <button 
           @click="openMobileSearch"
           class="sm:hidden w-10 h-10 rounded-full flex items-center justify-center text-[#1A170F] hover:bg-[#E4D8CC]/50 transition cursor-pointer"
@@ -118,93 +118,9 @@
           </svg>
         </button>
 
-        <!-- Account Button / Dropdown -->
-        <div class="relative" ref="accountMenuRef">
-          <!-- Logged In State: Avatar Initial Pill -->
-          <button
-            v-if="authStore.isAuthenticated"
-            @click="isAccountMenuOpen = !isAccountMenuOpen"
-            class="w-10 h-10 rounded-full bg-[#1A170F] text-[#FAF6F1] hover:bg-[#E04F26] flex items-center justify-center font-serif font-black text-xs transition-all duration-200 cursor-pointer shadow-xs select-none"
-            title="My Account"
-            aria-label="My Account"
-          >
-            {{ authStore.userInitials }}
-          </button>
-
-          <!-- Logged Out State: User Icon -->
-          <NuxtLink
-            v-else
-            to="/login"
-            class="w-10 h-10 rounded-full bg-[#E4D8CC]/60 hover:bg-[#E4D8CC] hover:text-[#E04F26] text-[#1A170F] flex items-center justify-center transition-all duration-200 cursor-pointer shadow-2xs"
-            title="Sign In / Register"
-            aria-label="Sign In / Register"
-          >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
-          </NuxtLink>
-
-          <!-- Account Dropdown Popover -->
-          <Transition
-            enter-active-class="transition duration-150 ease-out"
-            enter-from-class="opacity-0 scale-95 -translate-y-1"
-            enter-to-class="opacity-100 scale-100 translate-y-0"
-            leave-active-class="transition duration-100 ease-in"
-            leave-from-class="opacity-100 scale-100 translate-y-0"
-            leave-to-class="opacity-0 scale-95 -translate-y-1"
-          >
-            <div
-              v-if="isAccountMenuOpen && authStore.isAuthenticated"
-              class="absolute right-0 mt-2 w-56 bg-[#FAF6F1] border border-[#E4D8CC] rounded-2xl shadow-xl py-2 z-50 overflow-hidden"
-            >
-              <div class="px-4 py-3 border-b border-[#E4D8CC]/70">
-                <p class="font-bold text-xs text-[#1A170F] truncate">{{ authStore.user?.name }}</p>
-                <p class="text-[11px] text-[#8C8275] truncate mt-0.5">{{ authStore.user?.email || authStore.user?.phone }}</p>
-              </div>
-
-              <div class="py-1">
-                <NuxtLink
-                  to="/account/orders"
-                  @click="isAccountMenuOpen = false"
-                  class="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-[#1A170F] hover:bg-[#E4D8CC]/40 transition"
-                >
-                  <svg class="w-4 h-4 text-[#8C8275]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                  </svg>
-                  My Orders
-                </NuxtLink>
-
-                <NuxtLink
-                  to="/account/addresses"
-                  @click="isAccountMenuOpen = false"
-                  class="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-[#1A170F] hover:bg-[#E4D8CC]/40 transition"
-                >
-                  <svg class="w-4 h-4 text-[#8C8275]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  </svg>
-                  Saved Addresses
-                </NuxtLink>
-              </div>
-
-              <div class="pt-1 border-t border-[#E4D8CC]/70">
-                <button
-                  type="button"
-                  @click="handleLogout"
-                  class="w-full text-left flex items-center gap-2.5 px-4 py-2 text-xs font-bold text-[#E04F26] hover:bg-[#FBEAE5] transition cursor-pointer"
-                >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                  </svg>
-                  Sign Out
-                </button>
-              </div>
-            </div>
-          </Transition>
-        </div>
-
-        <!-- Cart Button (Icon only with badge) -->
+        <!-- 2. Cart Button (Icon only with badge) -->
         <button 
-          @click="cartStore.toggleDrawer()"
+          @click="handleCartClick"
           class="w-10 h-10 rounded-full bg-[#E4D8CC]/60 hover:bg-[#E4D8CC] hover:text-[#E04F26] text-[#1A170F] flex items-center justify-center relative transition-all duration-200 cursor-pointer shrink-0 shadow-2xs"
           title="Shopping Cart"
           aria-label="Shopping Cart"
@@ -219,6 +135,89 @@
             {{ cartStore.totalItems }}
           </span>
         </button>
+
+        <!-- 3. Account / "Get Started" Button (Rightmost) -->
+        <div class="relative shrink-0" ref="accountMenuRef">
+          <!-- Logged In State: Avatar Initial Pill with Dropdown -->
+          <template v-if="authStore.isAuthenticated">
+            <button
+              @click="isAccountMenuOpen = !isAccountMenuOpen"
+              class="w-10 h-10 rounded-full bg-[#1A170F] text-[#FAF6F1] hover:bg-[#E04F26] flex items-center justify-center font-serif font-black text-xs transition-all duration-200 cursor-pointer shadow-xs select-none"
+              title="My Account"
+              aria-label="My Account"
+            >
+              {{ authStore.userInitials }}
+            </button>
+
+            <!-- Account Dropdown Popover -->
+            <Transition
+              enter-active-class="transition duration-150 ease-out"
+              enter-from-class="opacity-0 scale-95 -translate-y-1"
+              enter-to-class="opacity-100 scale-100 translate-y-0"
+              leave-active-class="transition duration-100 ease-in"
+              leave-from-class="opacity-100 scale-100 translate-y-0"
+              leave-to-class="opacity-0 scale-95 -translate-y-1"
+            >
+              <div
+                v-if="isAccountMenuOpen"
+                class="absolute right-0 mt-2 w-56 bg-[#FAF6F1] border border-[#E4D8CC] rounded-2xl shadow-xl py-2 z-50 overflow-hidden"
+              >
+                <div class="px-4 py-3 border-b border-[#E4D8CC]/70">
+                  <p class="font-bold text-xs text-[#1A170F] truncate">{{ authStore.user?.name }}</p>
+                  <p class="text-[11px] text-[#8C8275] truncate mt-0.5">{{ authStore.user?.email || authStore.user?.phone }}</p>
+                </div>
+
+                <div class="py-1">
+                  <NuxtLink
+                    to="/account/orders"
+                    @click="isAccountMenuOpen = false"
+                    class="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-[#1A170F] hover:bg-[#E4D8CC]/40 transition"
+                  >
+                    <svg class="w-4 h-4 text-[#8C8275]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                    </svg>
+                    My Orders
+                  </NuxtLink>
+
+                  <NuxtLink
+                    to="/account/addresses"
+                    @click="isAccountMenuOpen = false"
+                    class="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-[#1A170F] hover:bg-[#E4D8CC]/40 transition"
+                  >
+                    <svg class="w-4 h-4 text-[#8C8275]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    </svg>
+                    Saved Addresses
+                  </NuxtLink>
+                </div>
+
+                <div class="pt-1 border-t border-[#E4D8CC]/70">
+                  <button
+                    type="button"
+                    @click="handleLogout"
+                    class="w-full text-left flex items-center gap-2.5 px-4 py-2 text-xs font-bold text-[#E04F26] hover:bg-[#FBEAE5] transition cursor-pointer"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    Sign Out
+                  </button>
+                </div>
+              </div>
+            </Transition>
+          </template>
+
+          <!-- Logged Out State: "Get Started" Button -->
+          <template v-else>
+            <NuxtLink
+              to="/login"
+              class="h-10 px-4 sm:px-5 rounded-full bg-[#1A170F] text-[#FAF6F1] hover:bg-[#E04F26] text-xs uppercase tracking-wider font-extrabold flex items-center justify-center transition-all duration-200 shadow-xs shrink-0 cursor-pointer whitespace-nowrap"
+            >
+              Get Started
+            </NuxtLink>
+          </template>
+        </div>
+
       </div>
 
       <!-- Mobile Full-Width Search Overlay Bar -->
@@ -424,6 +423,14 @@ const submitSearch = () => {
   }
   closeSearch();
   closeMobileSearch();
+};
+
+const handleCartClick = () => {
+  if (!authStore.isAuthenticated) {
+    router.push('/login?redirect=/cart');
+  } else {
+    cartStore.toggleDrawer();
+  }
 };
 
 const handleLogout = async () => {

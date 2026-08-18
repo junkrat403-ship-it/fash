@@ -120,6 +120,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useCustomerAuthStore } from '~/stores/customerAuth';
+import { useCartStore } from '~/stores/cart';
 
 useHead({
   title: 'Create Account — Jubi & Lee',
@@ -131,6 +132,7 @@ useHead({
 const route = useRoute();
 const router = useRouter();
 const authStore = useCustomerAuthStore();
+const cartStore = useCartStore();
 
 const name = ref('');
 const email = ref('');
@@ -156,6 +158,24 @@ const handleRegister = async () => {
     error.value = null;
     await authStore.register(name.value, email.value, phone.value, password.value);
     
+    if (import.meta.client) {
+      const pendingRaw = sessionStorage.getItem('pending_add_to_cart');
+      if (pendingRaw) {
+        sessionStorage.removeItem('pending_add_to_cart');
+        try {
+          const pending = JSON.parse(pendingRaw);
+          if (pending.variantId) {
+            await cartStore.addItem(pending.variantId, pending.quantity || 1);
+            cartStore.isDrawerOpen = true;
+          }
+          if (pending.returnUrl) {
+            await router.push(pending.returnUrl);
+            return;
+          }
+        } catch {}
+      }
+    }
+
     const redirectUrl = (route.query.redirect as string) || '/account/orders';
     await router.push(redirectUrl);
   } catch (err: any) {
