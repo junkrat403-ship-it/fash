@@ -114,11 +114,17 @@ export const useCustomerAuthStore = defineStore('customerAuth', () => {
   const logout = async () => {
     token.value = null;
     user.value = null;
+    const cartStore = useCartStore();
+    cartStore.cart = null;
+
     if (import.meta.client) {
       localStorage.removeItem('jl_customer_token');
+      const newGuestToken = 'guest_' + Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
+      localStorage.setItem('guest_cart_token', newGuestToken);
+      cartStore.guestToken = newGuestToken;
     }
-    const cartStore = useCartStore();
-    await cartStore.initCart();
+
+    await cartStore.fetchCart();
     await navigateTo('/');
   };
 

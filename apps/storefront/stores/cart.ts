@@ -86,7 +86,6 @@ export const useCartStore = defineStore('cart', () => {
     if (!authStore.isAuthenticated) {
       if (import.meta.client) {
         const returnUrl = customRedirectUrl || window.location.pathname + window.location.search;
-        sessionStorage.setItem('pending_add_to_cart', JSON.stringify({ variantId, quantity, returnUrl }));
         await navigateTo(`/login?redirect=${encodeURIComponent(returnUrl)}`);
       }
       return;

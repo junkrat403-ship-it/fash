@@ -92,7 +92,7 @@ export class CartService {
     return this.getOrCreateCart(customerId, cart.guestToken || undefined);
   }
 
-  async updateItemQuantity(itemId: string, dto: UpdateCartItemDto) {
+  async updateItemQuantity(itemId: string, dto: UpdateCartItemDto, customerId?: string) {
     const item = await this.prisma.cartItem.findUnique({
       where: { id: itemId },
       include: { variant: true },
@@ -162,7 +162,7 @@ export class CartService {
     });
   }
 
-  async removeItem(itemId: string) {
+  async removeItem(itemId: string, customerId?: string) {
     const item = await this.prisma.cartItem.findUnique({
       where: { id: itemId },
     });

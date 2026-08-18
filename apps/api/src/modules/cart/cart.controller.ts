@@ -4,6 +4,7 @@ import { CartService } from './cart.service';
 import { AddCartItemDto } from './dto/add-cart-item.dto';
 import { UpdateCartItemDto } from './dto/update-cart-item.dto';
 import { CustomerAuthGuard } from '../../common/guards/customer-auth.guard';
+import { OptionalCustomerAuthGuard } from '../../common/guards/optional-customer-auth.guard';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 
 @ApiTags('Cart')
@@ -12,31 +13,45 @@ export class CartController {
   constructor(private readonly cartService: CartService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Get active cart by guest token' })
+  @UseGuards(OptionalCustomerAuthGuard)
+  @ApiOperation({ summary: 'Get active cart by customer or guest token' })
   @ApiQuery({ name: 'guestToken', required: false })
-  async getCart(@Query('guestToken') guestToken?: string) {
-    return this.cartService.getOrCreateCart(undefined, guestToken);
+  async getCart(
+    @CurrentUser() user: any,
+    @Query('guestToken') guestToken?: string,
+  ) {
+    return this.cartService.getOrCreateCart(user?.userId, guestToken);
   }
 
   @Post('items')
+  @UseGuards(OptionalCustomerAuthGuard)
   @ApiOperation({ summary: 'Add item to cart with stock validation' })
-  async addItem(@Body() dto: AddCartItemDto) {
-    return this.cartService.addItem(dto);
+  async addItem(
+    @CurrentUser() user: any,
+    @Body() dto: AddCartItemDto,
+  ) {
+    return this.cartService.addItem(dto, user?.userId);
   }
 
   @Patch('items/:itemId')
+  @UseGuards(OptionalCustomerAuthGuard)
   @ApiOperation({ summary: 'Update cart item quantity' })
   async updateItem(
+    @CurrentUser() user: any,
     @Param('itemId') itemId: string,
     @Body() dto: UpdateCartItemDto,
   ) {
-    return this.cartService.updateItemQuantity(itemId, dto);
+    return this.cartService.updateItemQuantity(itemId, dto, user?.userId);
   }
 
   @Delete('items/:itemId')
+  @UseGuards(OptionalCustomerAuthGuard)
   @ApiOperation({ summary: 'Remove item from cart' })
-  async removeItem(@Param('itemId') itemId: string) {
-    return this.cartService.removeItem(itemId);
+  async removeItem(
+    @CurrentUser() user: any,
+    @Param('itemId') itemId: string,
+  ) {
+    return this.cartService.removeItem(itemId, user?.userId);
   }
 
   @Post('merge')
