@@ -198,6 +198,23 @@ export const useCartStore = defineStore('cart', () => {
     isDrawerOpen.value = !isDrawerOpen.value;
   };
 
+  const mergeWithCustomer = async () => {
+    const { fetchApi } = useApi();
+    try {
+      if (guestToken.value) {
+        const data = await fetchApi<CartData>('/cart/merge', {
+          method: 'POST',
+          body: { guestToken: guestToken.value },
+        });
+        cart.value = data;
+      } else {
+        await fetchCart();
+      }
+    } catch {
+      await fetchCart();
+    }
+  };
+
   return {
     cart,
     guestToken,
@@ -214,5 +231,6 @@ export const useCartStore = defineStore('cart', () => {
     updateItemVariant,
     removeItem,
     toggleDrawer,
+    mergeWithCustomer,
   };
 });

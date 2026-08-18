@@ -39,12 +39,8 @@
           <h2 class="font-serif font-bold text-lg text-slate-900">{{ editingId ? 'Edit Banner' : 'Create Banner' }}</h2>
           <form @submit.prevent="saveBanner" class="space-y-3">
             <div>
-              <label class="block font-semibold">Placement</label>
-              <select v-model="form.placement" class="w-full p-2 border rounded-xl bg-white">
-                <option value="hero">Hero Carousel</option>
-                <option value="promo_strip">Promo Strip</option>
-                <option value="category_page">Category Header</option>
-              </select>
+              <label class="block font-semibold mb-1">Placement</label>
+              <AppSelect v-model="form.placement" :options="placementOptions" :full-width="true" />
             </div>
             <div>
               <label class="block font-semibold">Title</label>
@@ -77,12 +73,19 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import AdminLayout from '../components/AdminLayout.vue';
+import AppSelect from '../components/AppSelect.vue';
 import { useAuthStore } from '../stores/auth';
 
 const authStore = useAuthStore();
 const banners = ref<any[]>([]);
 const showModal = ref(false);
 const editingId = ref<string | null>(null);
+
+const placementOptions = [
+  { value: 'hero', label: 'Hero Carousel' },
+  { value: 'promo_strip', label: 'Promo Strip' },
+  { value: 'category_page', label: 'Category Header' },
+];
 
 const form = ref({ placement: 'hero', title: '', subtitle: '', imageUrl: '', linkUrl: '', isActive: true });
 

@@ -26,16 +26,12 @@
           class="px-3.5 py-2 rounded-xl border border-slate-200 text-xs flex-1 min-w-[200px] focus:outline-none focus:ring-2 focus:ring-slate-900"
         />
 
-        <select 
+        <AppSelect 
           v-model="statusFilter" 
-          @change="fetchProducts"
-          class="px-3.5 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-slate-900 bg-white"
-        >
-          <option value="">All Statuses</option>
-          <option value="published">Published</option>
-          <option value="draft">Draft</option>
-          <option value="archived">Archived</option>
-        </select>
+          :options="statusFilterOptions" 
+          icon="filter" 
+          @change="fetchProducts" 
+        />
       </div>
 
       <div class="bg-white rounded-2xl border border-slate-200/80 shadow-2xs overflow-hidden">
@@ -142,10 +138,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
                 <label class="block font-semibold text-slate-700 uppercase tracking-wider mb-1">Category</label>
-                <select v-model="form.categoryId" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs bg-white">
-                  <option value="">Unassigned</option>
-                  <option v-for="c in categories" :key="c.id" :value="c.id">{{ c.name }}</option>
-                </select>
+                <AppSelect v-model="form.categoryId" :options="categoryOptions" :full-width="true" />
               </div>
 
               <div>
@@ -155,11 +148,7 @@
 
               <div>
                 <label class="block font-semibold text-slate-700 uppercase tracking-wider mb-1">Status</label>
-                <select v-model="form.status" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs bg-white">
-                  <option value="published">Published</option>
-                  <option value="draft">Draft</option>
-                  <option value="archived">Archived</option>
-                </select>
+                <AppSelect v-model="form.status" :options="productStatusOptions" :full-width="true" />
               </div>
             </div>
 
@@ -205,14 +194,33 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import AdminLayout from '../components/AdminLayout.vue';
+import AppSelect from '../components/AppSelect.vue';
 import { useAuthStore } from '../stores/auth';
 
 const authStore = useAuthStore();
 const products = ref<any[]>([]);
 const categories = ref<any[]>([]);
 const loading = ref(true);
+
+const statusFilterOptions = [
+  { value: '', label: 'All Statuses' },
+  { value: 'published', label: 'Published' },
+  { value: 'draft', label: 'Draft' },
+  { value: 'archived', label: 'Archived' },
+];
+
+const productStatusOptions = [
+  { value: 'published', label: 'Published' },
+  { value: 'draft', label: 'Draft' },
+  { value: 'archived', label: 'Archived' },
+];
+
+const categoryOptions = computed(() => [
+  { value: '', label: 'Unassigned' },
+  ...categories.value.map(c => ({ value: c.id, label: c.name }))
+]);
 const saving = ref(false);
 const showModal = ref(false);
 const editingId = ref<string | null>(null);

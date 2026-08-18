@@ -1,8 +1,10 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, Query } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiQuery } from '@nestjs/swagger';
+import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
 import { CartService } from './cart.service';
 import { AddCartItemDto } from './dto/add-cart-item.dto';
 import { UpdateCartItemDto } from './dto/update-cart-item.dto';
+import { CustomerAuthGuard } from '../../common/guards/customer-auth.guard';
+import { CurrentUser } from '../../common/decorators/current-user.decorator';
 
 @ApiTags('Cart')
 @Controller('cart')
@@ -35,5 +37,16 @@ export class CartController {
   @ApiOperation({ summary: 'Remove item from cart' })
   async removeItem(@Param('itemId') itemId: string) {
     return this.cartService.removeItem(itemId);
+  }
+
+  @Post('merge')
+  @UseGuards(CustomerAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Merge guest cart with customer cart upon login' })
+  async mergeCart(
+    @CurrentUser() user: any,
+    @Body('guestToken') guestToken: string,
+  ) {
+    return this.cartService.mergeGuestCart(guestToken, user.userId);
   }
 }

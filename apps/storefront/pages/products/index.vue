@@ -23,17 +23,16 @@
             </svg>
           </div>
 
-          <!-- Desktop Sort Dropdown -->
-          <select 
-            v-model="filters.sort" 
-            @change="fetchProducts"
-            class="hidden lg:block px-3 py-2.5 rounded-xl border border-[#E4D8CC] text-xs bg-[#FAF6F1] focus:outline-none focus:ring-2 focus:ring-[#E04F26] font-medium text-[#1A170F] cursor-pointer"
-          >
-            <option value="newest">Newest Arrivals</option>
-            <option value="bestselling">Best Selling</option>
-            <option value="price_asc">Price: Low to High</option>
-            <option value="price_desc">Price: High to Low</option>
-          </select>
+          <!-- Desktop Sort Control (AppSelect) -->
+          <div class="hidden lg:block">
+            <AppSelect 
+              v-model="filters.sort" 
+              :options="sortOptions" 
+              icon="sort" 
+              align="right"
+              @change="onSortChange"
+            />
+          </div>
 
           <!-- Mobile Sort Button (Opens Centered Sort Modal) -->
           <button 
@@ -91,21 +90,21 @@
         <aside class="hidden lg:block space-y-8 pl-1 pr-6 border-r border-[#E4D8CC] sticky top-28 self-start max-h-[calc(100vh-130px)] overflow-y-auto">
 
           <div>
-            <h3 class="text-xs font-bold uppercase tracking-wider text-[#1A170F] mb-3">Categories</h3>
-            <div class="space-y-2">
+            <h3 class="text-sm font-extrabold uppercase tracking-widest text-[#1A170F] mb-3.5">Categories</h3>
+            <div class="space-y-2.5">
               <button 
                 @click="setCategory('')"
-                :class="[!filters.category ? 'font-bold text-[#E04F26]' : 'text-[#1A170F]/80']"
-                class="block text-xs hover:text-[#E04F26] transition text-left cursor-pointer"
+                :class="[!filters.category ? 'font-extrabold text-[#E04F26]' : 'text-[#1A170F]/80 hover:text-[#E04F26]']"
+                class="block text-sm transition text-left cursor-pointer py-0.5"
               >
                 All Categories
               </button>
               <button 
                 v-for="cat in categories" 
-                :key="cat.id"
+                :key="cat.id" 
                 @click="setCategory(cat.slug)"
-                :class="[filters.category === cat.slug ? 'font-bold text-[#E04F26]' : 'text-[#1A170F]/80']"
-                class="block text-xs hover:text-[#E04F26] transition text-left cursor-pointer"
+                :class="[filters.category === cat.slug ? 'font-extrabold text-[#E04F26]' : 'text-[#1A170F]/80 hover:text-[#E04F26]']"
+                class="block text-sm transition text-left cursor-pointer py-0.5"
               >
                 {{ cat.name }}
               </button>
@@ -113,14 +112,14 @@
           </div>
 
           <div>
-            <h3 class="text-xs font-bold uppercase tracking-wider text-[#1A170F] mb-3">Sizes</h3>
+            <h3 class="text-sm font-extrabold uppercase tracking-widest text-[#1A170F] mb-3.5">Sizes</h3>
             <div class="flex flex-wrap gap-2">
               <button 
                 v-for="size in availableSizes" 
                 :key="size"
                 @click="toggleSize(size)"
-                :class="[filters.size === size ? 'bg-[#1A170F] text-[#F4ECE5]' : 'bg-[#FAF6F1] text-[#1A170F] border border-[#E4D8CC] hover:border-[#1A170F]']"
-                class="w-9 h-9 text-xs font-semibold rounded-xl transition cursor-pointer flex items-center justify-center"
+                :class="[filters.size === size ? 'bg-[#1A170F] text-[#F4ECE5] font-extrabold shadow-xs' : 'bg-[#FAF6F1] text-[#1A170F] font-semibold border border-[#E4D8CC] hover:border-[#1A170F]']"
+                class="min-w-10 h-10 px-2.5 text-sm rounded-xl transition cursor-pointer flex items-center justify-center"
               >
                 {{ size }}
               </button>
@@ -128,28 +127,32 @@
           </div>
 
           <div>
-            <h3 class="text-xs font-bold uppercase tracking-wider text-[#1A170F] mb-3">Colors</h3>
+            <h3 class="text-sm font-extrabold uppercase tracking-widest text-[#1A170F] mb-3.5">Colors</h3>
             <div class="flex flex-wrap gap-3 p-1 -m-1">
               <div 
                 v-for="c in availableColors" 
                 :key="c"
-                class="relative group/swatch flex items-center justify-center p-0.5"
+                class="flex items-center justify-center p-0.5"
               >
                 <button 
                   @click="toggleColor(c)"
+                  @mouseenter="showColorTooltip(c, $event)"
+                  @mouseleave="hideColorTooltip"
+                  @focus="showColorTooltip(c, $event)"
+                  @blur="hideColorTooltip"
                   :style="getColorStyle(c)"
                   :class="[
                     filters.color === c 
                       ? 'ring-2 ring-[#E04F26] ring-offset-2 ring-offset-[#FAF6F1] scale-110' 
                       : 'hover:scale-105 border border-[#1A170F]/15 shadow-2xs'
                   ]"
-                  class="w-7 h-7 sm:w-8 sm:h-8 rounded-full transition-all duration-200 cursor-pointer relative flex items-center justify-center origin-center"
+                  class="w-8 h-8 rounded-full transition-all duration-200 cursor-pointer relative flex items-center justify-center origin-center"
                   :aria-label="`Filter by ${c}`"
                 >
                   <svg 
                     v-if="filters.color === c" 
                     :class="isDarkColor(c) ? 'text-white' : 'text-[#1A170F]'" 
-                    class="w-3.5 h-3.5 font-bold" 
+                    class="w-4 h-4 font-bold" 
                     fill="none" 
                     stroke="currentColor" 
                     stroke-width="3" 
@@ -158,22 +161,17 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                   </svg>
                 </button>
-
-                <div class="absolute bottom-full mb-1.5 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-[#1A170F] text-[#FAF6F1] text-[10px] font-bold rounded-md shadow-md opacity-0 pointer-events-none group-hover/swatch:opacity-100 group-hover/swatch:-translate-y-0.5 transition-all duration-150 whitespace-nowrap z-50">
-                  {{ c }}
-                  <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[#1A170F]"></div>
-                </div>
               </div>
             </div>
           </div>
 
           <div>
-            <h3 class="text-xs font-bold uppercase tracking-wider text-[#1A170F] mb-3">Price</h3>
-            <div class="space-y-2.5">
+            <h3 class="text-sm font-extrabold uppercase tracking-widest text-[#1A170F] mb-3.5">Price</h3>
+            <div class="space-y-3">
               <label 
                 v-for="range in priceRanges" 
                 :key="range.id"
-                class="flex items-center gap-2.5 text-xs text-[#1A170F]/80 hover:text-[#E04F26] cursor-pointer group transition select-none"
+                class="flex items-center gap-3 text-sm text-[#1A170F]/85 hover:text-[#E04F26] cursor-pointer group transition select-none"
               >
                 <input 
                   type="radio" 
@@ -181,9 +179,9 @@
                   :value="range.id" 
                   :checked="filters.priceRange === range.id"
                   @click="selectPriceRange(range)"
-                  class="w-3.5 h-3.5 text-[#E04F26] border-[#E4D8CC] focus:ring-[#E04F26] accent-[#E04F26] cursor-pointer"
+                  class="w-4 h-4 text-[#E04F26] border-[#E4D8CC] focus:ring-[#E04F26] accent-[#E04F26] cursor-pointer"
                 />
-                <span :class="[filters.priceRange === range.id ? 'font-bold text-[#E04F26]' : 'font-normal']">
+                <span :class="[filters.priceRange === range.id ? 'font-extrabold text-[#E04F26]' : 'font-normal']">
                   {{ range.label }}
                 </span>
               </label>
@@ -214,7 +212,7 @@
                   ? 'bg-[#FAF6F1] text-[#1A170F]' 
                   : 'bg-[#FAF6F1]/80 text-[#1A170F]/70 border-[#E4D8CC]/80'
               ]"
-              class="group rounded-2xl sm:rounded-3xl p-2.5 sm:p-4 shadow-lg hover:shadow-2xl transition-all duration-300 border border-[#E4D8CC] hover:border-[#E04F26] flex flex-col justify-between overflow-hidden h-[300px] xs:h-[350px] sm:h-[490px]"
+              class="group rounded-2xl sm:rounded-3xl p-2.5 sm:p-4 shadow-lg hover:shadow-2xl transition-all duration-300 border border-[#E4D8CC] hover:border-[#E04F26] flex flex-col justify-between overflow-hidden h-[340px] sm:h-[490px]"
             >
               
               <div 
@@ -238,28 +236,28 @@
 
                   <span 
                     v-if="!isProductInStock(p)"
-                    class="absolute top-2 left-2 xs:top-3 xs:left-3 bg-[#1A170F]/80 backdrop-blur-xs text-white text-[7px] xs:text-[9px] uppercase font-bold tracking-wider px-1.5 xs:px-2.5 py-0.5 xs:py-1 rounded-md z-10"
+                    class="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 bg-[#1A170F]/80 backdrop-blur-xs text-white text-[8px] sm:text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md z-10"
                   >
                     OUT OF STOCK
                   </span>
                   <span 
                     v-else
-                    class="absolute top-2 left-2 xs:top-3 xs:left-3 bg-[#1A170F] text-white text-[7px] xs:text-[9px] uppercase font-bold tracking-wider px-1.5 xs:px-2.5 py-0.5 xs:py-1 rounded-md z-10"
+                    class="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 bg-[#1A170F] text-white text-[8px] sm:text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md z-10"
                   >
                     {{ p.category?.name || 'Item' }}
                   </span>
                 </div>
 
-                <div class="px-0.5 xs:px-1 pt-2 sm:pt-3 shrink-0">
+                <div class="px-1 pt-2 sm:pt-3 shrink-0">
                   <h3 
                     :class="[isProductInStock(p) ? 'text-[#1A170F] group-hover:text-[#E04F26]' : 'text-[#1A170F]/60']"
-                    class="font-serif font-bold text-xs xs:text-sm sm:text-base transition leading-snug line-clamp-1"
+                    class="font-serif font-bold text-xs sm:text-base transition leading-snug line-clamp-1"
                   >
                     {{ p.name }}
                   </h3>
                   <p 
                     :class="[isProductInStock(p) ? 'text-[#1A170F]' : 'text-[#1A170F]/60']"
-                    class="text-xs xs:text-sm sm:text-base font-extrabold mt-0.5 xs:mt-1 tnum"
+                    class="text-xs sm:text-base font-extrabold mt-0.5 sm:mt-1 tnum"
                   >
                     Rp{{ formatPrice(p.basePrice) }}
                   </p>
@@ -275,7 +273,7 @@
                   type="button"
                   @click.stop.prevent="quickAddToCart(p, $event)"
                   :disabled="addingProductId === p.id"
-                  class="w-full py-1.5 xs:py-2 sm:py-2.5 rounded-xl border-2 border-[#1A170F] text-[#1A170F] hover:bg-[#1A170F] hover:text-[#F4ECE5] font-extrabold text-[9px] xs:text-[11px] sm:text-xs uppercase tracking-wider transition-all duration-200 cursor-pointer shadow-xs disabled:opacity-50 flex items-center justify-center gap-1"
+                  class="w-full py-2 sm:py-2.5 rounded-xl border-2 border-[#1A170F] text-[#1A170F] hover:bg-[#1A170F] hover:text-[#F4ECE5] font-extrabold text-[10px] sm:text-xs uppercase tracking-wider transition-all duration-200 cursor-pointer shadow-xs disabled:opacity-50 flex items-center justify-center gap-1"
                 >
                   <span v-if="addedProductId === p.id" class="text-emerald-700 font-black">ADDED ✓</span>
                   <span v-else-if="addingProductId === p.id">ADDING...</span>
@@ -286,7 +284,7 @@
                   v-else
                   type="button"
                   disabled
-                  class="w-full py-1.5 xs:py-2 sm:py-2.5 rounded-xl border-2 border-slate-300 bg-slate-200 text-slate-500 font-extrabold text-[9px] xs:text-[11px] sm:text-xs uppercase tracking-wider cursor-not-allowed opacity-80 flex items-center justify-center"
+                  class="w-full py-2 sm:py-2.5 rounded-xl border-2 border-slate-300 bg-slate-200 text-slate-500 font-extrabold text-[10px] sm:text-xs uppercase tracking-wider cursor-not-allowed opacity-80 flex items-center justify-center"
                 >
                   OUT OF STOCK
                 </button>
@@ -400,10 +398,14 @@
                 <div 
                   v-for="c in availableColors" 
                   :key="c"
-                  class="relative group/swatch flex items-center justify-center"
+                  class="flex items-center justify-center p-0.5"
                 >
                   <button 
                     @click="toggleColor(c)"
+                    @mouseenter="showColorTooltip(c, $event)"
+                    @mouseleave="hideColorTooltip"
+                    @focus="showColorTooltip(c, $event)"
+                    @blur="hideColorTooltip"
                     :style="getColorStyle(c)"
                     :class="[
                       filters.color === c 
@@ -425,11 +427,6 @@
                       <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                     </svg>
                   </button>
-
-                  <div class="absolute bottom-full mb-1.5 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-[#1A170F] text-[#FAF6F1] text-[10px] font-bold rounded-md shadow-md opacity-0 pointer-events-none group-hover/swatch:opacity-100 transition-all duration-150 whitespace-nowrap z-30">
-                    {{ c }}
-                    <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[#1A170F]"></div>
-                  </div>
                 </div>
               </div>
             </div>
@@ -553,6 +550,34 @@
       </div>
     </Transition>
 
+    <!-- Teleported Floating Color Swatch Tooltip (Immune to Sidebar/Modal Overflow Clipping) -->
+    <Teleport to="body">
+      <Transition
+        enter-active-class="transition duration-150 ease-out"
+        enter-from-class="opacity-0 -translate-y-1 scale-95"
+        enter-to-class="opacity-100 translate-y-0 scale-100"
+        leave-active-class="transition duration-100 ease-in"
+        leave-from-class="opacity-100 translate-y-0 scale-100"
+        leave-to-class="opacity-0 -translate-y-1 scale-95"
+      >
+        <div
+          v-if="hoveredColor"
+          :style="{
+            position: 'fixed',
+            top: `${tooltipPos.top}px`,
+            left: `${tooltipPos.left}px`,
+            transform: 'translate(-50%, -100%)',
+            zIndex: 999999,
+            pointerEvents: 'none'
+          }"
+          class="px-2.5 py-1 bg-[#1A170F] text-[#FAF6F1] text-[11px] font-bold rounded-lg shadow-xl whitespace-nowrap"
+        >
+          {{ hoveredColor }}
+          <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[#1A170F]"></div>
+        </div>
+      </Transition>
+    </Teleport>
+
   </main>
 </template>
 
@@ -662,6 +687,12 @@ const currentSortLabel = computed(() => {
   return found ? found.label : 'Sort';
 });
 
+const onSortChange = (val: string | number) => {
+  filters.value.sort = String(val);
+  filters.value.page = 1;
+  fetchProducts();
+};
+
 const selectSortOption = (val: string) => {
   filters.value.sort = val;
   filters.value.page = 1;
@@ -730,6 +761,26 @@ const isDarkColor = (colorName: string) => {
   const normalized = (colorName || '').toLowerCase().trim();
   const found = colorHexMap[normalized];
   return !found?.textDark;
+};
+
+// Teleported Floating Tooltip State
+const hoveredColor = ref<string | null>(null);
+const tooltipPos = ref({ top: 0, left: 0 });
+
+const showColorTooltip = (colorName: string, e: Event) => {
+  hoveredColor.value = colorName;
+  const target = e.currentTarget as HTMLElement;
+  if (target) {
+    const rect = target.getBoundingClientRect();
+    tooltipPos.value = {
+      top: rect.top - 8,
+      left: rect.left + rect.width / 2,
+    };
+  }
+};
+
+const hideColorTooltip = () => {
+  hoveredColor.value = null;
 };
 
 interface PriceRangeOption {
@@ -922,6 +973,9 @@ const formatPrice = (val: any) => {
 };
 
 onMounted(async () => {
+  if (typeof window !== 'undefined') {
+    window.addEventListener('scroll', hideColorTooltip, { passive: true });
+  }
   try {
     const categoriesData = await fetchApi<any[]>('/categories').catch(() => []);
     categories.value = categoriesData || [];
@@ -929,5 +983,18 @@ onMounted(async () => {
     console.error(e);
   }
   fetchProducts();
+});
+
+onUnmounted(() => {
+  if (typeof document !== 'undefined') {
+    document.body.style.overflow = '';
+    const nuxtApp = useNuxtApp();
+    if ((nuxtApp as any).$lenis) {
+      (nuxtApp as any).$lenis.start();
+    }
+  }
+  if (typeof window !== 'undefined') {
+    window.removeEventListener('scroll', hideColorTooltip);
+  }
 });
 </script>

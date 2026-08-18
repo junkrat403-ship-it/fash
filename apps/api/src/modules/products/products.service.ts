@@ -10,7 +10,7 @@ export class ProductsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async findAll(query: ProductQueryDto) {
-    const { category, minPrice, maxPrice, priceRange, size, color, sort, q, page = 1, limit = 12 } = query;
+    const { category, minPrice, maxPrice, size, color, sort, q, page = 1, limit = 12 } = query;
     const skip = (page - 1) * limit;
 
     const where: Prisma.ProductWhereInput = {
@@ -27,30 +27,10 @@ export class ProductsService {
       };
     }
 
-    let effMinPrice = minPrice;
-    let effMaxPrice = maxPrice;
-    if (effMinPrice === undefined && effMaxPrice === undefined && priceRange) {
-      if (priceRange === 'under-200k') {
-        effMaxPrice = 200000;
-      } else if (priceRange === '200k-350k') {
-        effMinPrice = 200000;
-        effMaxPrice = 350000;
-      } else if (priceRange === '350k-500k') {
-        effMinPrice = 350000;
-        effMaxPrice = 500000;
-      } else if (priceRange === '500k-plus') {
-        effMinPrice = 500000;
-      }
-    }
-
-    if (effMinPrice !== undefined || effMaxPrice !== undefined) {
+    if (minPrice !== undefined || maxPrice !== undefined) {
       where.basePrice = {};
-      if (effMinPrice !== undefined && !isNaN(Number(effMinPrice))) {
-        where.basePrice.gte = Number(effMinPrice);
-      }
-      if (effMaxPrice !== undefined && !isNaN(Number(effMaxPrice))) {
-        where.basePrice.lte = Number(effMaxPrice);
-      }
+      if (minPrice !== undefined) where.basePrice.gte = minPrice;
+      if (maxPrice !== undefined) where.basePrice.lte = maxPrice;
     }
 
     if (size || color) {

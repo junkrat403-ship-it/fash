@@ -10,6 +10,7 @@ import { BannersModule } from './modules/banners/banners.module';
 import { ContactMessagesModule } from './modules/contact-messages/contact-messages.module';
 import { CartModule } from './modules/cart/cart.module';
 import { CheckoutModule } from './modules/checkout/checkout.module';
+import { CustomerModule } from './modules/customer/customer.module';
 
 import { AdminProductsModule } from './modules/admin-products/admin-products.module';
 import { AdminCategoriesModule } from './modules/admin-categories/admin-categories.module';
@@ -41,6 +42,7 @@ import { AdminAnalyticsModule } from './modules/admin-analytics/admin-analytics.
     ContactMessagesModule,
     CartModule,
     CheckoutModule,
+    CustomerModule,
     AdminProductsModule,
     AdminCategoriesModule,
     AdminInventoryModule,

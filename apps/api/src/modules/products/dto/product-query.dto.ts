@@ -29,11 +29,6 @@ export class ProductQueryDto {
   @Min(0)
   maxPrice?: number;
 
-  @ApiPropertyOptional({ description: 'Price range identifier e.g. under-200k' })
-  @IsOptional()
-  @IsString()
-  priceRange?: string;
-
   @ApiPropertyOptional({ description: 'Filter by variant size e.g. S, M, L, XL' })
   @IsOptional()
   @IsString()

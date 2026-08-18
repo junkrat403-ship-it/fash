@@ -56,11 +56,8 @@
             </div>
             <div class="grid grid-cols-2 gap-3">
               <div>
-                <label class="block font-semibold">Type</label>
-                <select v-model="form.type" class="w-full p-2 border rounded-xl bg-white">
-                  <option value="percentage">Percentage (%)</option>
-                  <option value="fixed_amount">Fixed Amount (IDR)</option>
-                </select>
+                <label class="block font-semibold mb-1">Type</label>
+                <AppSelect v-model="form.type" :options="discountTypeOptions" :full-width="true" />
               </div>
               <div>
                 <label class="block font-semibold">Value *</label>
@@ -86,11 +83,17 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import AdminLayout from '../components/AdminLayout.vue';
+import AppSelect from '../components/AppSelect.vue';
 import { useAuthStore } from '../stores/auth';
 
 const authStore = useAuthStore();
 const discounts = ref<any[]>([]);
 const showModal = ref(false);
+
+const discountTypeOptions = [
+  { value: 'percentage', label: 'Percentage (%)' },
+  { value: 'fixed_amount', label: 'Fixed Amount (IDR)' },
+];
 
 const form = ref({ code: 'SUMMER20', type: 'percentage', value: 20, minOrderValue: 100000, isActive: true });
 

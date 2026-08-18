@@ -50,13 +50,13 @@
               :key="img.id || idx"
               @click="selectedImage = img.url"
               :class="[
-                activeMainImage === formatImageUrl(img.url) || activeMainImage === img.url
+                activeMainImage === img.url 
                   ? 'ring-2 ring-[#1A170F] scale-95 opacity-100 border-transparent shadow-md' 
                   : 'opacity-65 hover:opacity-100 hover:scale-105 border-[#E4D8CC]'
               ]"
               class="w-16 h-20 sm:w-20 sm:h-24 rounded-2xl overflow-hidden bg-[#FAF6F1] shrink-0 border transition-all duration-200 cursor-pointer"
             >
-              <img :src="formatImageUrl(img.url)" :alt="img.altText || product.name" loading="lazy" decoding="async" class="w-full h-full object-cover" />
+              <img :src="img.url" :alt="img.altText || product.name" loading="lazy" decoding="async" class="w-full h-full object-cover" />
             </button>
           </div>
         </div>
@@ -197,7 +197,7 @@
                 ? 'bg-[#FAF6F1] text-[#1A170F]' 
                 : 'bg-[#FAF6F1]/80 text-[#1A170F]/70 border-[#E4D8CC]/80'
             ]"
-            class="group rounded-2xl sm:rounded-3xl p-2.5 sm:p-4 shadow-lg hover:shadow-2xl transition-all duration-300 border border-[#E4D8CC] hover:border-[#E04F26] flex flex-col justify-between overflow-hidden h-[300px] xs:h-[350px] sm:h-[460px]"
+            class="group rounded-2xl sm:rounded-3xl p-2.5 sm:p-4 shadow-lg hover:shadow-2xl transition-all duration-300 border border-[#E4D8CC] hover:border-[#E04F26] flex flex-col justify-between overflow-hidden h-[340px] sm:h-[460px]"
           >
             
             <div 
@@ -207,7 +207,7 @@
               
               <div class="relative w-full flex-1 rounded-xl sm:rounded-2xl overflow-hidden bg-slate-200 min-h-0 transition-all duration-300 ease-in-out">
                 <img 
-                  :src="formatImageUrl(rel.productImages?.[0]?.url)" 
+                  :src="rel.productImages?.[0]?.url || 'https://via.placeholder.com/400x500'" 
                   :alt="rel.name" 
                   loading="lazy"
                   decoding="async"
@@ -221,28 +221,28 @@
 
                 <span 
                   v-if="!isProductInStock(rel)"
-                  class="absolute top-2 left-2 xs:top-3 xs:left-3 bg-[#1A170F]/80 backdrop-blur-xs text-white text-[7px] xs:text-[9px] uppercase font-bold tracking-wider px-1.5 xs:px-2.5 py-0.5 xs:py-1 rounded-md z-10"
+                  class="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 bg-[#1A170F]/80 backdrop-blur-xs text-white text-[8px] sm:text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md z-10"
                 >
                   OUT OF STOCK
                 </span>
                 <span 
                   v-else
-                  class="absolute top-2 left-2 xs:top-3 xs:left-3 bg-[#1A170F] text-white text-[7px] xs:text-[9px] uppercase font-bold tracking-wider px-1.5 xs:px-2.5 py-0.5 xs:py-1 rounded-md z-10"
+                  class="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 bg-[#1A170F] text-white text-[8px] sm:text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md z-10"
                 >
                   {{ rel.category?.name || 'Apparel' }}
                 </span>
               </div>
 
-              <div class="px-0.5 xs:px-1 pt-2 sm:pt-3 shrink-0">
+              <div class="px-1 pt-2 sm:pt-3 shrink-0">
                 <h3 
                   :class="[isProductInStock(rel) ? 'text-[#1A170F] group-hover:text-[#E04F26]' : 'text-[#1A170F]/60']"
-                  class="font-serif font-bold text-xs xs:text-sm sm:text-base transition leading-snug line-clamp-1"
+                  class="font-serif font-bold text-xs sm:text-base transition leading-snug line-clamp-1"
                 >
                   {{ rel.name }}
                 </h3>
                 <p 
                   :class="[isProductInStock(rel) ? 'text-[#1A170F]' : 'text-[#1A170F]/60']"
-                  class="text-xs xs:text-sm sm:text-base font-extrabold mt-0.5 xs:mt-1 tnum"
+                  class="text-xs sm:text-base font-extrabold mt-0.5 sm:mt-1 tnum"
                 >
                   Rp{{ formatPrice(rel.basePrice) }}
                 </p>
@@ -258,7 +258,7 @@
                 type="button"
                 @click.stop.prevent="quickAddToCart(rel, $event)"
                 :disabled="addingRelId === rel.id"
-                class="w-full py-1.5 xs:py-2 sm:py-2.5 rounded-xl border-2 border-[#1A170F] text-[#1A170F] hover:bg-[#1A170F] hover:text-[#F4ECE5] font-extrabold text-[9px] xs:text-[11px] sm:text-xs uppercase tracking-wider transition-all duration-200 cursor-pointer shadow-xs disabled:opacity-50 flex items-center justify-center gap-1"
+                class="w-full py-2 sm:py-2.5 rounded-xl border-2 border-[#1A170F] text-[#1A170F] hover:bg-[#1A170F] hover:text-[#F4ECE5] font-extrabold text-[10px] sm:text-xs uppercase tracking-wider transition-all duration-200 cursor-pointer shadow-xs disabled:opacity-50 flex items-center justify-center gap-1"
               >
                 <span v-if="addedRelId === rel.id" class="text-emerald-700 font-black">ADDED ✓</span>
                 <span v-else-if="addingRelId === rel.id">ADDING...</span>
@@ -269,7 +269,7 @@
                 v-else
                 type="button"
                 disabled
-                class="w-full py-1.5 xs:py-2 sm:py-2.5 rounded-xl border-2 border-slate-300 bg-slate-200 text-slate-500 font-extrabold text-[9px] xs:text-[11px] sm:text-xs uppercase tracking-wider cursor-not-allowed opacity-80 flex items-center justify-center"
+                class="w-full py-2 sm:py-2.5 rounded-xl border-2 border-slate-300 bg-slate-200 text-slate-500 font-extrabold text-[10px] sm:text-xs uppercase tracking-wider cursor-not-allowed opacity-80 flex items-center justify-center"
               >
                 OUT OF STOCK
               </button>
@@ -388,8 +388,8 @@ const allImages = computed(() => {
 });
 
 const activeMainImage = computed(() => {
-  if (selectedImage.value) return formatImageUrl(selectedImage.value);
-  if (product.value?.productImages?.[0]?.url) return formatImageUrl(product.value.productImages[0].url);
+  if (selectedImage.value) return selectedImage.value;
+  if (product.value?.productImages?.[0]?.url) return product.value.productImages[0].url;
   return 'https://via.placeholder.com/600x800';
 });
 

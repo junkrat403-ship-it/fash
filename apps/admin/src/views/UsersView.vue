@@ -59,10 +59,8 @@
               <input v-model="form.password" type="password" required class="w-full p-2 border rounded-xl" />
             </div>
             <div>
-              <label class="block font-semibold">Role *</label>
-              <select v-model="form.roleId" required class="w-full p-2 border rounded-xl bg-white">
-                <option v-for="r in roles" :key="r.id" :value="r.id">{{ r.name }} - {{ r.description }}</option>
-              </select>
+              <label class="block font-semibold mb-1">Role *</label>
+              <AppSelect v-model="form.roleId" :options="roleOptions" placeholder="Select role..." :full-width="true" />
             </div>
             <div class="flex justify-end space-x-2 pt-3 border-t">
               <button type="button" @click="showModal = false" class="px-4 py-2 border rounded-xl">Cancel</button>
@@ -77,14 +75,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import AdminLayout from '../components/AdminLayout.vue';
+import AppSelect from '../components/AppSelect.vue';
 import { useAuthStore } from '../stores/auth';
 
 const authStore = useAuthStore();
 const users = ref<any[]>([]);
 const roles = ref<any[]>([]);
 const showModal = ref(false);
+
+const roleOptions = computed(() => {
+  return roles.value.map(r => ({
+    value: r.id,
+    label: `${r.name} - ${r.description}`
+  }));
+});
 
 const form = ref({ name: '', email: '', password: 'StaffPass123!', roleId: '' });
 

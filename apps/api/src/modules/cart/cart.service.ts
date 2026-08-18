@@ -181,6 +181,54 @@ export class CartService {
     });
   }
 
+  async mergeGuestCart(guestToken: string, customerId: string) {
+    const guestCart = await this.prisma.cart.findUnique({
+      where: { guestToken },
+      include: { cartItems: true },
+    });
+
+    if (!guestCart || !guestCart.cartItems.length) {
+      return this.getOrCreateCart(customerId);
+    }
+
+    const customerCart = await this.getOrCreateCart(customerId);
+
+    for (const item of guestCart.cartItems) {
+      const existing = await this.prisma.cartItem.findUnique({
+        where: {
+          cartId_variantId: {
+            cartId: customerCart.id,
+            variantId: item.variantId,
+          },
+        },
+      });
+
+      if (existing) {
+        await this.prisma.cartItem.update({
+          where: { id: existing.id },
+          data: { quantity: existing.quantity + item.quantity },
+        });
+      } else {
+        await this.prisma.cartItem.create({
+          data: {
+            cartId: customerCart.id,
+            variantId: item.variantId,
+            quantity: item.quantity,
+          },
+        });
+      }
+    }
+
+    await this.prisma.cartItem.deleteMany({
+      where: { cartId: guestCart.id },
+    });
+    await this.prisma.cart.delete({
+      where: { id: guestCart.id },
+    });
+
+    return this.getOrCreateCart(customerId);
+  }
+
   private cartInclude() {
     return {
       cartItems: {

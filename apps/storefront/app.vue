@@ -16,6 +16,7 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import { useCartStore } from '~/stores/cart';
+import { useCustomerAuthStore } from '~/stores/customerAuth';
 import AppHeader from '~/components/AppHeader.vue';
 import AppFooter from '~/components/AppFooter.vue';
 import CartDrawer from '~/components/CartDrawer.vue';
@@ -23,8 +24,10 @@ import ToastNotification from '~/components/ToastNotification.vue';
 import FloatingScrollbar from '~/components/FloatingScrollbar.vue';
 
 const cartStore = useCartStore();
+const authStore = useCustomerAuthStore();
 
-onMounted(() => {
-  cartStore.initCart();
+onMounted(async () => {
+  await authStore.initAuth();
+  await cartStore.initCart();
 });
 </script>

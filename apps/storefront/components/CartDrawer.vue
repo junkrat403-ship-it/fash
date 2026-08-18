@@ -66,7 +66,7 @@
             class="flex space-x-4 p-4 rounded-2xl bg-[#FAF6F1] border border-[#E4D8CC] shadow-xs"
           >
             <img 
-              :src="formatImageUrl(item.variant?.product?.productImages?.[0]?.url, 'https://via.placeholder.com/150')" 
+              :src="item.variant?.product?.productImages?.[0]?.url || 'https://via.placeholder.com/150'" 
               :alt="item.variant?.product?.name"
               loading="lazy"
               decoding="async"
@@ -92,21 +92,17 @@
                 </div>
                 
                 <div v-if="item.variant?.product?.productVariants?.length > 1" class="mt-1.5">
-                  <select 
-                    :value="item.variantId" 
-                    @change="changeItemVariant(item.id, ($event.target as HTMLSelectElement).value)"
+                  <AppSelect 
+                    :model-value="item.variantId" 
+                    :options="item.variant.product.productVariants.map((v: any) => ({
+                      value: v.id,
+                      label: `${v.size || 'STD'}${v.color ? ` · ${v.color}` : ''}${v.stockQuantity <= 0 ? ' (Out of stock)' : ''}`,
+                      disabled: v.stockQuantity <= 0
+                    }))"
+                    :compact="true"
                     :disabled="changingVariantItemId === item.id"
-                    class="text-[11px] font-bold bg-[#F4ECE5] border border-[#E4D8CC] rounded-lg px-2 py-1 text-[#1A170F] focus:outline-none focus:ring-1 focus:ring-[#E04F26] cursor-pointer max-w-full disabled:opacity-50"
-                  >
-                    <option 
-                      v-for="v in item.variant.product.productVariants" 
-                      :key="v.id" 
-                      :value="v.id"
-                      :disabled="v.stockQuantity <= 0"
-                    >
-                      {{ v.size || 'STD' }} {{ v.color ? `· ${v.color}` : '' }} {{ v.stockQuantity <= 0 ? '(Out of stock)' : '' }}
-                    </option>
-                  </select>
+                    @change="changeItemVariant(item.id, String($event))"
+                  />
                 </div>
                 <p v-else class="text-xs text-[#1A170F]/70 mt-1 font-light">
                   {{ item.variant?.size ? `Size: ${item.variant.size}` : '' }} 

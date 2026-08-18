@@ -1,11 +1,11 @@
 <template>
   <main class="bg-[#F4ECE5] text-[#1A170F] min-h-screen">
 
-    <section ref="heroRef" class="relative pt-16 xs:pt-18 sm:pt-24 pb-0 max-w-[1600px] mx-auto px-4 sm:px-8 h-screen min-h-[560px] max-h-[1080px] flex flex-col justify-between overflow-hidden">
+    <section ref="heroRef" class="relative pt-16 sm:pt-24 pb-0 max-w-[1600px] mx-auto px-4 sm:px-8 h-screen min-h-[560px] max-h-[1080px] flex flex-col justify-between overflow-hidden">
 
       <div class="flex items-center justify-center gap-4 sm:gap-6 mb-1 sm:mb-2 w-full shrink-0 z-30">
         <div class="h-px bg-[#1A170F]/25 flex-1"></div>
-        <span class="text-[9px] sm:text-xs font-bold uppercase tracking-[0.3em] text-[#1A170F]/80 shrink-0">
+        <span class="text-[10px] sm:text-xs font-bold uppercase tracking-[0.3em] text-[#1A170F]/80 shrink-0">
           Jubi & Lee Studio
         </span>
         <div class="h-px bg-[#1A170F]/25 flex-1"></div>
@@ -13,58 +13,61 @@
 
       <h1 
         :style="headingParallaxStyle"
-        class="font-serif text-[2.75rem] xs:text-5xl sm:text-7xl md:text-8xl lg:text-[9.5rem] xl:text-[12rem] 2xl:text-[14rem] font-black tracking-tighter leading-[0.84] uppercase text-[#1A170F] opacity-95 select-none text-center shrink-0 z-10 relative"
+        class="font-serif text-[6.25rem] sm:text-[8.25rem] lg:text-[10.5rem] font-black tracking-tighter leading-[0.84] uppercase text-[#1A170F] opacity-95 select-none text-center shrink-0 z-10 relative"
       >
         PURE<br />COMFORT
       </h1>
 
-      <div class="relative z-20 flex-1 flex items-end justify-center w-full -mt-10 xs:-mt-14 sm:-mt-16 md:-mt-28 lg:-mt-44 xl:-mt-60 2xl:-mt-76 pointer-events-none select-none">
+      <div class="relative z-20 flex-1 flex items-end justify-center w-full -mt-12 sm:-mt-20 lg:-mt-48 pointer-events-none select-none">
 
+        <!-- Mobile: 1 Solo Model (< 640px) -->
         <img 
           src="/images/models-solo.webp" 
           alt="Jubi & Lee Solo Model"
           loading="eager"
           fetchpriority="high"
           decoding="async"
-          class="block sm:hidden h-[60vh] xs:h-[64vh] max-h-[560px] w-auto object-contain object-bottom drop-shadow-xl align-bottom"
+          class="block sm:hidden h-[60vh] max-h-[560px] w-auto object-contain object-bottom drop-shadow-xl align-bottom"
         />
 
+        <!-- Tablet: 2 Duo Models (640px – 1023px) -->
         <img 
           src="/images/models-duo.webp" 
           alt="Jubi & Lee Duo Collection Models"
           loading="eager"
           fetchpriority="high"
           decoding="async"
-          class="hidden sm:block lg:hidden h-[58vh] md:h-[64vh] max-h-[640px] w-auto object-contain object-bottom drop-shadow-xl align-bottom"
+          class="hidden sm:block lg:hidden h-[62vh] max-h-[640px] w-auto object-contain object-bottom drop-shadow-xl align-bottom"
         />
 
+        <!-- Desktop: 3 Trio Models (≥ 1024px) -->
         <img 
           src="/images/models-hero.webp" 
           alt="Jubi & Lee Collection Models"
           loading="eager"
           fetchpriority="high"
           decoding="async"
-          class="hidden lg:block h-[60vh] xl:h-[65vh] 2xl:h-[68vh] max-h-[780px] w-auto object-contain object-bottom drop-shadow-2xl align-bottom"
+          class="hidden lg:block h-[64vh] max-h-[780px] w-auto object-contain object-bottom drop-shadow-2xl align-bottom"
         />
       </div>
 
-      <div class="absolute bottom-3 left-3 right-3 sm:bottom-6 sm:left-6 sm:right-6 lg:left-8 lg:right-8 z-30 flex flex-row justify-between items-end gap-2.5 sm:gap-4 pointer-events-auto">
+      <div class="absolute bottom-3 left-3 right-3 sm:bottom-6 sm:left-6 sm:right-6 lg:left-8 lg:right-8 z-30 flex flex-row justify-between items-end gap-3 sm:gap-4 pointer-events-auto">
         
-        <p class="text-[10px] xs:text-xs md:text-sm text-[#1A170F]/90 font-normal leading-relaxed text-left max-w-[160px] xs:max-w-[210px] sm:max-w-xs md:max-w-md bg-[#F4ECE5]/95 backdrop-blur-md p-2 xs:p-3 sm:p-3.5 rounded-2xl border border-[#E4D8CC] shadow-xs">
+        <p class="text-xs lg:text-sm text-[#1A170F]/90 font-normal leading-relaxed text-left max-w-[200px] sm:max-w-xs lg:max-w-md bg-[#F4ECE5]/95 backdrop-blur-md p-2.5 sm:p-3.5 rounded-2xl border border-[#E4D8CC] shadow-xs">
           Designed for everyday movement. Soft natural fibers, relaxed silhouettes, and effortless comfort.
         </p>
 
-        <div class="flex flex-col sm:flex-col lg:flex-row justify-end items-end lg:items-center gap-2 xs:gap-2.5 sm:gap-3 shrink-0">
+        <div class="flex flex-col lg:flex-row justify-end items-end lg:items-center gap-2 sm:gap-3 shrink-0">
           <NuxtLink 
             to="/products"
-            class="px-3 xs:px-6 sm:px-8 lg:px-8 xl:px-12 py-2 xs:py-3 sm:py-3.5 lg:py-4 xl:py-5 rounded-2xl bg-[#E04F26] text-white hover:bg-[#C8431E] font-extrabold text-[9px] xs:text-xs lg:text-sm xl:text-base uppercase tracking-widest transition-all duration-200 shadow-xl cursor-pointer text-center"
+            class="px-5 sm:px-8 lg:px-10 py-2.5 sm:py-3.5 lg:py-4 rounded-2xl bg-[#E04F26] text-white hover:bg-[#C8431E] font-extrabold text-xs lg:text-sm uppercase tracking-widest transition-all duration-200 shadow-xl cursor-pointer text-center"
           >
             SHOP THE COLLECTION
           </NuxtLink>
 
           <NuxtLink 
             to="/products?sort=newest"
-            class="px-3 xs:px-6 sm:px-8 lg:px-8 xl:px-12 py-2 xs:py-3 sm:py-3.5 lg:py-4 xl:py-5 rounded-2xl border-2 border-[#1A170F] bg-[#F4ECE5]/85 backdrop-blur-md text-[#1A170F] hover:bg-[#1A170F] hover:text-[#F4ECE5] font-extrabold text-[9px] xs:text-xs lg:text-sm xl:text-base uppercase tracking-widest transition-all duration-200 cursor-pointer text-center"
+            class="px-5 sm:px-8 lg:px-10 py-2.5 sm:py-3.5 lg:py-4 rounded-2xl border-2 border-[#1A170F] bg-[#F4ECE5]/85 backdrop-blur-md text-[#1A170F] hover:bg-[#1A170F] hover:text-[#F4ECE5] font-extrabold text-xs lg:text-sm uppercase tracking-widest transition-all duration-200 cursor-pointer text-center"
           >
             EXPLORE NEW ARRIVALS
           </NuxtLink>
@@ -99,7 +102,7 @@
                 ? 'bg-[#FAF6F1] text-[#1A170F]' 
                 : 'bg-[#FAF6F1]/80 text-[#1A170F]/70 border-[#E4D8CC]/80'
             ]"
-            class="group rounded-2xl sm:rounded-3xl p-2.5 sm:p-4 shadow-lg hover:shadow-2xl transition-all duration-300 border border-white/10 flex flex-col justify-between overflow-hidden h-[300px] xs:h-[350px] sm:h-[490px]"
+            class="group rounded-2xl sm:rounded-3xl p-2.5 sm:p-4 shadow-lg hover:shadow-2xl transition-all duration-300 border border-white/10 flex flex-col justify-between overflow-hidden h-[340px] sm:h-[490px]"
           >
             
             <div 
@@ -123,28 +126,28 @@
 
                 <span 
                   v-if="!isProductInStock(product)"
-                  class="absolute top-2 left-2 xs:top-3 xs:left-3 bg-[#1A170F]/80 backdrop-blur-xs text-white text-[7px] xs:text-[9px] uppercase font-bold tracking-wider px-1.5 xs:px-2.5 py-0.5 xs:py-1 rounded-md z-10"
+                  class="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 bg-[#1A170F]/80 backdrop-blur-xs text-white text-[8px] sm:text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md z-10"
                 >
                   OUT OF STOCK
                 </span>
                 <span 
                   v-else
-                  class="absolute top-2 left-2 xs:top-3 xs:left-3 bg-[#1A170F] text-white text-[7px] xs:text-[9px] uppercase font-bold tracking-wider px-1.5 xs:px-2.5 py-0.5 xs:py-1 rounded-md z-10"
+                  class="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 bg-[#1A170F] text-white text-[8px] sm:text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md z-10"
                 >
                   ● BEST SELLER
                 </span>
               </div>
 
-              <div class="px-0.5 xs:px-1 pt-2 sm:pt-3 shrink-0">
+              <div class="px-1 pt-2 sm:pt-3 shrink-0">
                 <h3 
                   :class="[isProductInStock(product) ? 'text-[#1A170F] group-hover:text-[#E04F26]' : 'text-[#1A170F]/60']"
-                  class="font-serif font-bold text-xs xs:text-sm sm:text-base transition leading-snug line-clamp-1"
+                  class="font-serif font-bold text-xs sm:text-base transition leading-snug line-clamp-1"
                 >
                   {{ product.name }}
                 </h3>
                 <p 
                   :class="[isProductInStock(product) ? 'text-[#1A170F]' : 'text-[#1A170F]/60']"
-                  class="text-xs xs:text-sm sm:text-base font-extrabold mt-0.5 xs:mt-1 tnum"
+                  class="text-xs sm:text-base font-extrabold mt-0.5 sm:mt-1 tnum"
                 >
                   Rp{{ formatPrice(product.basePrice) }}
                 </p>
@@ -160,7 +163,7 @@
                 type="button"
                 @click.stop.prevent="quickAddToCart(product, $event)"
                 :disabled="addingProductId === product.id"
-                class="w-full py-1.5 xs:py-2 sm:py-2.5 rounded-xl border-2 border-[#1A170F] text-[#1A170F] hover:bg-[#1A170F] hover:text-[#F4ECE5] font-extrabold text-[9px] xs:text-[11px] sm:text-xs uppercase tracking-wider transition-all duration-200 cursor-pointer shadow-xs disabled:opacity-50 flex items-center justify-center gap-1"
+                class="w-full py-2 sm:py-2.5 rounded-xl border-2 border-[#1A170F] text-[#1A170F] hover:bg-[#1A170F] hover:text-[#F4ECE5] font-extrabold text-[10px] sm:text-xs uppercase tracking-wider transition-all duration-200 cursor-pointer shadow-xs disabled:opacity-50 flex items-center justify-center gap-1"
               >
                 <span v-if="addedProductId === product.id" class="text-emerald-700 font-black">ADDED ✓</span>
                 <span v-else-if="addingProductId === product.id">ADDING...</span>
@@ -171,7 +174,7 @@
                 v-else
                 type="button"
                 disabled
-                class="w-full py-1.5 xs:py-2 sm:py-2.5 rounded-xl border-2 border-slate-300 bg-slate-200 text-slate-500 font-extrabold text-[9px] xs:text-[11px] sm:text-xs uppercase tracking-wider cursor-not-allowed opacity-80 flex items-center justify-center"
+                class="w-full py-2 sm:py-2.5 rounded-xl border-2 border-slate-300 bg-slate-200 text-slate-500 font-extrabold text-[10px] sm:text-xs uppercase tracking-wider cursor-not-allowed opacity-80 flex items-center justify-center"
               >
                 OUT OF STOCK
               </button>
