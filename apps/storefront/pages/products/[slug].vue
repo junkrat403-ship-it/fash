@@ -360,15 +360,17 @@ const quickAddToCart = async (relProduct: any, e: Event) => {
     }
 
     if (variantId) {
-      await cartStore.addItem(variantId, 1);
-      addedRelId.value = relProduct.id;
-      cartStore.isDrawerOpen = true;
+      const added = await cartStore.addItem(variantId, 1);
+      if (added) {
+        addedRelId.value = relProduct.id;
+        cartStore.isDrawerOpen = true;
 
-      setTimeout(() => {
-        if (addedRelId.value === relProduct.id) {
-          addedRelId.value = null;
-        }
-      }, 2000);
+        setTimeout(() => {
+          if (addedRelId.value === relProduct.id) {
+            addedRelId.value = null;
+          }
+        }, 2000);
+      }
     } else {
       navigateToProduct(relProduct.slug);
     }
@@ -445,14 +447,16 @@ const handleAddToCart = async () => {
   if (!selectedVariant.value) return;
   try {
     adding.value = true;
-    await cartStore.addItem(selectedVariant.value.id, quantity.value);
+    const added = await cartStore.addItem(selectedVariant.value.id, quantity.value);
 
-    const variantDesc = [selectedColor.value, selectedVariant.value.size].filter(Boolean).join(' / ');
-    toast.showAddedToCart(
-      product.value?.name || 'Item',
-      variantDesc,
-      activeMainImage.value
-    );
+    if (added) {
+      const variantDesc = [selectedColor.value, selectedVariant.value.size].filter(Boolean).join(' / ');
+      toast.showAddedToCart(
+        product.value?.name || 'Item',
+        variantDesc,
+        activeMainImage.value
+      );
+    }
   } catch (e: any) {
     alert(e?.data?.message || 'Failed to add item to cart');
   } finally {

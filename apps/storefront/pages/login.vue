@@ -71,6 +71,21 @@
           </div>
         </div>
 
+        <!-- Remember Me Checkbox -->
+        <div class="flex items-center justify-between pt-1">
+          <label class="flex items-center gap-2.5 cursor-pointer select-none group">
+            <input
+              id="rememberMe"
+              v-model="rememberMe"
+              type="checkbox"
+              class="w-4 h-4 rounded-md border border-[#E4D8CC] text-[#1A170F] focus:ring-[#E04F26] accent-[#1A170F] cursor-pointer"
+            />
+            <span class="text-xs text-[#1A170F]/80 group-hover:text-[#1A170F] font-medium transition">
+              Remember me <span class="text-[11px] text-[#8C8275]">(stay logged in for 3 days)</span>
+            </span>
+          </label>
+        </div>
+
         <button
           type="submit"
           :disabled="isLoading"
@@ -119,7 +134,7 @@
           <button
             type="button"
             @click="showForgotModal = false"
-            class="h-10 rounded-xl bg-transparent text-[#1A170F]/60 hover:text-[#1A170F] text-xs font-bold transition"
+            class="h-10 rounded-xl bg-transparent text-[#1A170F]/60 hover:text-[#1A170F] text-xs font-bold transition cursor-pointer"
           >
             Close
           </button>
@@ -147,6 +162,7 @@ const authStore = useCustomerAuthStore();
 
 const email = ref('');
 const password = ref('');
+const rememberMe = ref(false);
 const showPassword = ref(false);
 const showForgotModal = ref(false);
 const isLoading = ref(false);
@@ -161,7 +177,7 @@ const handleLogin = async () => {
   try {
     isLoading.value = true;
     error.value = null;
-    await authStore.login(email.value, password.value);
+    await authStore.login(email.value, password.value, rememberMe.value);
     
     const redirectUrl = (route.query.redirect as string) || '/';
     await router.push(redirectUrl);

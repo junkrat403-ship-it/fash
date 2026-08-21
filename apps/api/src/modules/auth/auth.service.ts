@@ -131,10 +131,13 @@ export class AuthService {
       type: 'customer' as const,
     };
 
-    const accessToken = this.jwtService.sign(payload);
+    const expiresIn = dto.rememberMe ? '3d' : '1h';
+    const expiresInSeconds = dto.rememberMe ? 3 * 24 * 60 * 60 : 60 * 60;
+    const accessToken = this.jwtService.sign(payload, { expiresIn });
 
     return {
       accessToken,
+      expiresIn: expiresInSeconds,
       user: {
         id: customer.id,
         name: customer.name,

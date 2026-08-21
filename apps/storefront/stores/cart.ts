@@ -81,14 +81,15 @@ export const useCartStore = defineStore('cart', () => {
     }
   };
 
-  const addItem = async (variantId: string, quantity: number = 1, customRedirectUrl?: string) => {
+  const addItem = async (variantId: string, quantity: number = 1, customRedirectUrl?: string): Promise<boolean> => {
     const authStore = useCustomerAuthStore();
     if (!authStore.isAuthenticated) {
+      isDrawerOpen.value = false;
       if (import.meta.client) {
         const returnUrl = customRedirectUrl || window.location.pathname + window.location.search;
         await navigateTo(`/login?redirect=${encodeURIComponent(returnUrl)}`);
       }
-      return;
+      return false;
     }
 
     const { fetchApi } = useApi();
@@ -104,6 +105,7 @@ export const useCartStore = defineStore('cart', () => {
         },
       });
       cart.value = data;
+      return true;
     } catch (e: any) {
       error.value = e?.data?.message || e.message || 'Failed to add item to cart';
       throw e;

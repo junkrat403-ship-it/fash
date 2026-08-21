@@ -10,8 +10,15 @@ export const useApi = () => {
 
     if (import.meta.client) {
       const token = localStorage.getItem('jl_customer_token');
-      if (token && !headers['Authorization']) {
-        headers['Authorization'] = `Bearer ${token}`;
+      const tokenExp = localStorage.getItem('jl_customer_token_exp');
+
+      if (token) {
+        if (tokenExp && Date.now() >= Number(tokenExp)) {
+          localStorage.removeItem('jl_customer_token');
+          localStorage.removeItem('jl_customer_token_exp');
+        } else if (!headers['Authorization']) {
+          headers['Authorization'] = `Bearer ${token}`;
+        }
       }
     }
 

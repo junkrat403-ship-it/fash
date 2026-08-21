@@ -309,15 +309,17 @@ const quickAddToCart = async (product: any, e?: Event) => {
     const variantId = defaultVariant?.id;
 
     if (variantId) {
-      await cartStore.addItem(variantId, 1);
-      addedProductId.value = product.id;
-      cartStore.isDrawerOpen = true;
+      const added = await cartStore.addItem(variantId, 1);
+      if (added) {
+        addedProductId.value = product.id;
+        cartStore.isDrawerOpen = true;
 
-      setTimeout(() => {
-        if (addedProductId.value === product.id) {
-          addedProductId.value = null;
-        }
-      }, 2000);
+        setTimeout(() => {
+          if (addedProductId.value === product.id) {
+            addedProductId.value = null;
+          }
+        }, 2000);
+      }
     }
   } catch (err: any) {
     console.error('Quick Add to Cart Error:', err);
